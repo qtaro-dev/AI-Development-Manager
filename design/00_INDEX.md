@@ -1,7 +1,7 @@
 # AI Development Manager 設計資料索引
 
-版: 2.4-p0-018-web-ui
-状態: P0-018完了、React採用候補
+版: 2.5-p0-019-large-attachment
+状態: P0-019完了、React採用候補
 基準日: 2026-08-02
 
 ## 目的
@@ -43,6 +43,7 @@
 - `19_LAN_HTTPS_CONTRACT.md`: P0-016 LAN HTTPS初期設定契約とPoC結果
 - `20_AUTH_TOKEN_CONTRACT.md`: P0-017 Cookie・APIトークン認証契約とPoC結果
 - `21_WEB_UI_CONTRACT.md`: P0-018 共通Web UI・React採否PoC契約と結果
+- `22_LARGE_ATTACHMENT_CONTRACT.md`: P0-019 大容量添付アップロード・閲覧契約と結果
 - `18_P0_015_PERFORMANCE_REVIEW.md`: P0-015性能結果の分析、追加PoC、P0-023性能ゲート
 - `../tickets/phase0/00_PHASE_0_TICKET_INDEX.md`: Phase 0詳細チケット一覧と依存関係
 

@@ -1,7 +1,7 @@
 # AI Development Manager Phase 0 詳細チケット一覧
 
-版: 1.19
-状態: P0-018完了
+版: 1.20
+状態: P0-019完了
 対象: Phase 0のみ
 
 ## 1. 方針
@@ -34,7 +34,7 @@
 | 16 | [P0-016](P0-016_LAN_HTTPS_ONBOARDING_POC.md) | LAN HTTPS初期設定PoC | P0-002, P0-003 | 完了 |
 | 17 | [P0-017](P0-017_AUTH_TOKEN_POC.md) | Cookie・APIトークン認証PoC | P0-016 | 完了 |
 | 18 | [P0-018](P0-018_WEB_UI_TECH_POC.md) | 共通Web UI・React採否PoC | P0-017 | 完了 |
-| 19 | [P0-019](P0-019_LARGE_ATTACHMENT_POC.md) | 大容量添付アップロード・閲覧PoC | P0-011, P0-017, P0-018 | 未着手 |
+| 19 | [P0-019](P0-019_LARGE_ATTACHMENT_POC.md) | 大容量添付アップロード・閲覧PoC | P0-011, P0-017, P0-018 | 完了 |
 | 20 | [P0-020](P0-020_BACKUP_DEDUP_POC.md) | バックアップ重複抑制PoC | P0-008, P0-010, P0-019 | 未着手 |
 | 21 | [P0-021](P0-021_UI_WIREFRAMES.md) | 主要画面ワイヤーフレーム確定 | P0-018, P0-019, UI基準画像 | 入力待ち |
 | 22 | [P0-022](P0-022_DEVTICKETMANAGER_COMPAT_POC.md) | DevTicketManager互換PoC | P0-005, P0-007, 実データ | 入力待ち |
