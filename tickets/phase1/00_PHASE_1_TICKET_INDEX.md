@@ -40,7 +40,7 @@
 | 21 | [P1-021](P1-021_WPF_BRIDGE_ALLOWLIST.md) | D | WPFブリッジ許可境界 | P1-020 | Windows固有操作だけの橋渡し契約を作る | 許可外メッセージ拒否、業務データAPIなし | 完了 |
 | 22 | [P1-022](P1-022_PLAYWRIGHT_E2E_FOUNDATION.md) | D | PlaywrightブラウザE2E基盤 | P1-005, P1-014, P1-018, P1-019 | 共通UIのブラウザ回帰を自動化する | Edge/Chromium系スモークと証拠保存が成功 | 完了 |
 | 23 | [P1-023](P1-023_UI_RUNTIME_COMPATIBILITY.md) | D | Edge・Chrome・WebView2実機互換確認 | P1-018, P1-020, P1-021, P1-022 | React条件付き採用のIME・DPI・実Runtime条件を確認する | 100～200% DPI、IME、主要操作に重大欠陥なし | 完了 |
-| 24 | [P1-024](P1-024_INSTALLER_TECHNOLOGY_ADR.md) | E | 配布・インストーラー方式ADR | P1-012, P1-020 | Server/WPF別パッケージの実装方式を固定する | 権限、更新、削除、署名経路をADR化 | 未着手 |
+| 24 | [P1-024](P1-024_INSTALLER_TECHNOLOGY_ADR.md) | E | 配布・インストーラー方式ADR | P1-012, P1-020 | Server/WPF別パッケージの実装方式を固定する | 権限、更新、削除、署名経路をADR化 | 完了 |
 | 25 | [P1-025](P1-025_SERVER_INSTALLER_SERVICE_REGISTRATION.md) | E | Serverインストーラー・Service登録 | P1-005, P1-008, P1-011, P1-012, P1-024 | 管理者向けServerパッケージを作る | install/update/uninstallとService起動を実機確認 | 未着手 |
 | 26 | [P1-026](P1-026_WPF_CLIENT_INSTALLER.md) | E | WPF Clientインストーラー | P1-021, P1-023, P1-024 | 標準ユーザー向けWPFパッケージを作る | install/update/uninstallとRuntime案内を確認 | 未着手 |
 | 27 | [P1-027](P1-027_PHASE1_INTEGRATION_GATE.md) | A | Phase 1統合・Phase 2引継ぎゲート | P1-001～P1-026 | Phase 1成果物を監査しPhase 2開始可否を判断可能にする | 全条件、証拠、残課題、Phase 2入力が揃う | 未着手 |

@@ -1,0 +1,87 @@
+# P1-024 配布・インストーラー方式ADR
+
+## 1. 判定
+
+P1-024では、ServerとWPF Clientを別パッケージとして配布し、両方のパッケージ形式にWiX Toolset v4のWindows Installer（MSI）を採用する。Serverはper-machine、WPF Clientはper-userとして構成する。
+
+インストーラーの対象はWindows 11 64-bit、x64、.NET 10製品成果物とする。公開配布、正式コード署名証明書の購入、HTTPS証明書、Firewall変更、自動更新Serverは本ADRの対象外である。
+
+## 2. 採用理由
+
+| 候補 | 評価 | 判定 |
+|---|---|---|
+| WiX Toolset v4 / MSI | Windows Service登録、per-machine／per-user、upgrade、repair、uninstall、silent実行、CIでの再現可能な成果物化を一つのWindows Installer契約にまとめられる | 採用 |
+| MSIX | WPFのper-user配布と更新には適するが、Server Service、保存先アクセス、repairの運用境界が異なり、Serverの主パッケージには適さない | 主方式として不採用 |
+| Visual Studio Installer Project | 小規模な試作には利用できるが、Visual Studio拡張に依存し、CIでの明示的な再現性・検査境界を固定しにくい | 不採用 |
+| Inno Setup等の独自ブートストラップ | 柔軟だが、Windows Installerのrepair、upgrade、管理ツール連携を別設計する必要がある | 不採用 |
+
+MSIXを全面採用せず、ServerとWPFで異なる権限モデルを優先する。WPFの標準ユーザー配布はper-user MSIで実現可能かをP1-026のクリーン環境検証で確認し、成立しない場合のみ別方式のADR変更を行う。
+
+## 3. パッケージ境界
+
+### Server package
+
+- `Adm.Server.Host`、Web静的成果物、必要な製品依存ファイルを含む。
+- per-machine、既定のインストール先は管理者が管理するProgram Files配下とする。
+- Windows Serviceの登録・更新・停止・削除はP1-025のWiX ServiceInstall境界で実装する。
+- Serverデータ、設定、ログ、秘密情報をパッケージへ含めない。
+- アンインストール時は利用者データと構成を既定で削除せず、明示的な削除手順へ分離する。
+
+### WPF Client package
+
+- `Adm.Wpf`と必要な製品WPF依存ファイルを含む。
+- per-user、管理者権限を要求しないインストールを目標とし、ユーザー領域へ配置する。
+- Windows Service、Firewall、証明書ストア、任意の共有フォルダーを変更しない。
+- WebView2 SDKのランタイムを製品パッケージへ無断同梱しない。Evergreen Runtimeの有無を検査し、未導入時は分かりやすい案内または承認済みの前提条件処理へ分岐する。
+- WPF ClientのアンインストールでServerデータを削除しない。
+
+成果物の予定配置は次のとおりとする。
+
+```text
+artifacts/packages/<version>/<build>/
+├─server/AI-Development-Manager-Server-<version>-<build>-x64.msi
+├─client/AI-Development-Manager-Client-<version>-<build>-x64.msi
+└─manifest.json
+```
+
+`artifacts/`は生成物の保存場所であり、通常はGit管理対象にしない。
+
+## 4. install / update / repair / uninstall
+
+| 操作 | Server | WPF Client |
+|---|---|---|
+| install | 管理者UAC、Service登録はP1-025 | 標準ユーザーのper-user MSIをP1-026で確認 |
+| update | major upgrade、停止→置換→起動、失敗時ロールバック | 同一ProductCode系統のupgrade、起動中プロセスを安全に扱う |
+| repair | MSI repairでバイナリを復元し、データ・設定は保持 | MSI repairでクライアントファイルを復元し、Serverデータは変更しない |
+| uninstall | Service停止・登録解除、製品ファイル削除、データは保持 | クライアントファイル削除、ユーザーデータ・Serverデータは保持 |
+
+ダウングレードは既定で拒否する。明示的な管理者操作で実施する場合も、対象バージョン、バックアップ、復元可否を事前に確認する。更新中のServer起動失敗は旧バイナリまたは直前のインストール状態へ戻し、データを自動削除しない。
+
+## 5. 署名・版・CI成果物
+
+- MSI、実行ファイル、ブートストラップ成果物は署名対象とし、署名処理はCIの秘密ストアから証明書を受け取る差込境界に分離する。
+- 証明書秘密鍵、PFX、トークン、署名済み本番成果物はリポジトリへ保存しない。
+- 開発・検証では署名なしまたはCI専用テスト証明書を使用し、正式配布の信頼性判定と混同しない。
+- File Version、Informational Version、Build番号は`Directory.Build.props`の単一生成元を使用し、パッケージファイル名・manifest・証拠へ同じ値を記録する。
+- CIではclean restore、publish、MSI生成、パッケージ内容検査、署名状態検査、SHA-256 manifest生成を行う。生成物は`artifacts/ci-evidence`へ保存し、Gitへ追加しない。
+
+## 6. 安全境界
+
+- インストーラーはHTTPS証明書、Windows Firewall、認証情報、プロジェクトデータを自動作成・変更しない。
+- Serverはlocalhost限定の既存Host契約を維持し、LAN公開をインストール操作で有効化しない。
+- Service登録は管理者権限を必要とするServer packageだけに限定する。
+- WPF Bridgeの許可操作、任意コマンド実行、自由なファイルアクセスをインストーラーへ追加しない。
+- 前提条件不足、権限不足、使用中ファイル、WebView2 Runtime不足は内部エラーと利用者向け案内を分離して表示する。
+
+## 7. P1-025/P1-026への入力
+
+- P1-025はWiX v4 Server MSI、per-machine、ServiceInstall、upgrade、repair、uninstall、データ保持、管理者／標準ユーザー境界を実装・検証する。
+- P1-026はWiX v4 WPF per-user MSI、標準ユーザー、WebView2 Runtime前提案内、upgrade、repair、uninstallを実装・検証する。
+- 両チケットは実機またはクリーンVMで、通常・silent・失敗・中断・ロールバックを確認する。
+- P1-026でper-user MSIのOS制約が完了条件を満たさない場合、実装を拡張せずP1-024 ADRの再審議事項として記録する。
+
+## 8. 参照
+
+- [Create a Windows Service installer - .NET](https://learn.microsoft.com/en-us/dotnet/core/extensions/windows-service-with-installer)
+- [Distribute your app and the WebView2 Runtime](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/distribution)
+- [Evergreen vs. fixed version of the WebView2 Runtime](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/evergreen-vs-fixed-version)

@@ -360,6 +360,10 @@ P0-026で、現行`Microsoft.Data.Sqlite 10.0.10`の推移依存`SQLitePCLRaw.li
 
 `src/Adm.Wpf/Bridge/BridgeProtocol.cs`でversion 1のWebMessage Envelope、要求・応答・cancel、要求ID、固定エラー、Source origin検証、未知フィールド・未知操作・payload検査を実装した。許可操作は非業務サンプルの`getHostInfo`だけとし、WPFから安全なHost情報を返す。Web側は`platform-bridge/bridge.ts`でWebView2環境だけに要求を送信し、通常ブラウザでは利用不可として扱う。任意コード実行、任意コマンド実行、自由なファイルアクセス、Markdown・添付・状態・テスト結果操作は許可しない。詳細契約は`design/44_WPF_BRIDGE_CONTRACT.md`に記録した。
 
+## P1-024 配布・インストーラー方式ADR
+
+ServerとWPF Clientを別パッケージとし、両方にWiX Toolset v4のMSIを採用する。Serverは管理者向けper-machine MSIとしてWindows Service登録を閉じ込め、WPF Clientは標準ユーザー向けper-user MSIとしてService、Firewall、証明書ストア、Serverデータを変更しない。WebView2 Evergreen Runtimeは前提条件として検査・案内し、無断同梱や無断昇格を行わない。詳細な候補比較、更新・修復・削除、署名・Build番号・CI成果物境界は`design/46_INSTALLER_DISTRIBUTION_CONTRACT.md`に記録した。
+
 ## 参考にした公式情報
 
 - .NET Support Policy: https://dotnet.microsoft.com/en-us/platform/support/policy
