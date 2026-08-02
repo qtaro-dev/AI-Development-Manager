@@ -1,7 +1,7 @@
 # AI Development Manager 設計資料索引
 
-版: 1.0-p0-004-markdown-corpus
-状態: P0-004完了
+版: 1.1-p0-005-markdown-parser
+状態: P0-005完了
 基準日: 2026-08-02
 
 ## 目的
@@ -28,6 +28,7 @@
 - `06_REPOSITORY_RULES.md`: リポジトリ構成、Build番号、品質ゲート、除外規則
 - `../poc/common/`: P0-003共通評価環境、ワークロード、結果テンプレート
 - `../poc/fixtures/`: P0-004 Markdown検証コーパスとmanifest
+- `07_MARKDOWN_PARSING_CONTRACT.md`: P0-005 Markdown解析契約とPoC結果
 - `../tickets/phase0/00_PHASE_0_TICKET_INDEX.md`: Phase 0詳細チケット一覧と依存関係
 
 ## 人向け概要

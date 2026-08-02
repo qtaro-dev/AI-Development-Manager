@@ -1,21 +1,22 @@
 # AI Development Manager 採用技術案・技術ADR
 
-版: 0.7-p0-002-hosting-boundary
+版: 0.8-p0-005-markdown-parser
 基準日: 2026-08-02
 
 ## 1. 採用技術の確定案
 
 | 領域 | 採用案 | 状態 |
 |---|---|---|
-| Server | .NET 10 LTS / ASP.NET Core 10 / Kestrel | 確定案 |
+| Server | .NET 10 LTS / ASP.NET Core 10 / Kestrel | 確定 |
+| .NET SDK | 10.0.302 / ルート`global.json`で固定 | 確定 |
 | Windows Client | .NET 10 WPF | 確定案 |
 | 埋込Web | Microsoft Edge WebView2 Evergreen Runtime | 確定案 |
 | Web UI | React 19 + TypeScript + Vite | Phase 0 PoC後に確定 |
 | Web UI代替 | Blazor WebAssembly | React PoC不合格時の比較対象 |
 | API | REST / JSON / OpenAPI 3.x | 確定案 |
 | Markdown | CommonMark系Markdown + YAML Front Matter | 確定案 |
-| .NET Markdown解析 | Markdig | PoCで互換性確認後に確定 |
-| YAML解析 | YamlDotNetの安全な型制約付き利用 | PoCで確定 |
+| .NET Markdown解析 | Markdig 0.41.3 | P0-005採用候補 |
+| YAML解析 | YamlDotNet 16.3.0のノード解析 | P0-005採用候補 |
 | ID | ULID + 種別別連番 | 確定案 |
 | 索引 | SQLite FTS5 | PoCで日本語検索品質確認後に確定 |
 | 永続キャッシュアクセス | Microsoft.Data.Sqlite + 明示SQL | PoC後に確定 |
@@ -58,6 +59,8 @@ ASP.NET Core ServerをWPFから独立したプロセスとして配置する。
 
 ServerとWPFは.NET 10 LTSを基準とする。
 
+.NETコードを伴うPhase 0 PoCは、リポジトリ直下の`global.json`で.NET 10 SDK `10.0.302`を`rollForward: disable`として固定する。各PoC結果へ固定値と`dotnet --version`の実測値を記録する。固定SDKがない環境では.NET PoCを開始しない。
+
 ### 理由
 
 設計基準日時点で.NET 10は現行LTSであり、.NET 8はサポート終了が近い。長期開発と保守期間を考慮すると、新規実装を.NET 8で開始する利点が小さい。
@@ -69,6 +72,8 @@ ServerとWPFは.NET 10 LTSを基準とする。
 ### 見直し条件
 
 利用予定ライブラリまたは配布先Windows環境が.NET 10を正式に利用できないPoC結果となった場合。
+
+SDK servicing版を更新する場合は、`global.json`、リポジトリ規約、以後のPoC結果基準を同じチケットで更新する。完了済みPoCは、その変更だけを理由に再実施しない。
 
 ## ADR-003 共通Web UIとReact候補
 
@@ -216,6 +221,20 @@ Markdown、テスト結果、添付、状態の操作はすべてAPIを経由す
 - `Adm.Core`は`Adm.Infrastructure.Windows`を参照せず、Windows ServiceパッケージはAdapter側だけが参照する。
 - Windows Service相当モードでは`AddWindowsService`によるService設定境界を確認した。実Service登録・権限差・インストーラーは本PoC対象外とした。
 - 同一ポートで二重起動するとKestrelが`address already in use`を明示して終了する。
+
+## ADR-015 Markdown・Front Matter解析境界
+
+### 決定
+
+Markdig `0.41.3`をMarkdown本文・見出し・GFM表の解析候補、YamlDotNet `16.3.0`をFront Matterのノード解析候補とする。YamlDotNetは任意.NET型を生成せず、`YamlMappingNode`等のノードを安全に走査する。解析結果は本文、抽出値、警告、致命的エラーを分離し、入力は変更しない。
+
+### P0-005検証結果
+
+P0-004の全18fixtureで、期待文書種別と期待警告、見出し、表、Front Matter添付参照を検証できた。壊れたYAMLは文書単位の致命的エラーとして隔離し、Front Matterなしでも本文を保持した。同一入力の再実行結果と入力ハッシュは一致した。
+
+### 見直し条件
+
+実データ互換性、Markdown方言、巨大セル正式上限、ライブラリ脆弱性・保守状況の後続PoC結果が採用条件を満たさない場合。
 
 ## ADR-013 大容量添付アップロード
 

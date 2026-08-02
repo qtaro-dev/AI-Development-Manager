@@ -1,7 +1,7 @@
 # AI Development Manager 統合基本設計書
 
-版: 0.9-p0-004-markdown-corpus
-状態: P0-004完了
+版: 1.0-p0-005-markdown-parser
+状態: P0-005完了
 基準日: 2026-08-02
 
 ## 1. 目的と対象
@@ -205,6 +205,8 @@ MVP標準:
 ### 5.4 検証コーパス
 
 P0-004の入力契約は`../poc/fixtures/manifest.yaml`とする。fixtureは実データを含まない合成Markdownで、正常系と異常系を分離し、各入力へ期待文書種別、警告、抽出値、SHA-256、文字コードを紐付ける。解析PoCは入力を書き換えず、manifestのハッシュ一致を開始条件とする。Front Matterなし、壊れたYAML、未知キー、旧schema、表列の不足・追加・巨大セル、UTF-8 BOM、Shift_JIS、欠落添付、登録ルート外の相対パスを最低限の異常系として扱う。
+
+P0-005で確定した解析契約は`07_MARKDOWN_PARSING_CONTRACT.md`を正とする。本文、見出し、表、添付参照、Front Matter抽出を段階的に行い、警告と致命的エラーを文書単位で分離する。入力は変更せず、巨大セルの正式上限は後続PoCで確定する。
 
 ## 6. Ticket、TestCase、TestResult
 

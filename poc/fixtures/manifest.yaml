@@ -101,7 +101,7 @@ fixtures:
     path: edge/table-missing-column.md
     encoding: utf-8
     expected_document_type: test_case
-    expected_warnings: ['table_column_missing:steps']
+    expected_warnings: ['table_column_missing:category', 'table_column_missing:steps']
     expected_values:
       table_columns: [item_id, content, expected]
     sha256: 875f14332ff2d5416520b01fc6dee7cfeac030f89d868dfaf1956a8a8bd082a9

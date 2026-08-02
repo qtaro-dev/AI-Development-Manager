@@ -1,7 +1,7 @@
 # Phase 0 技術PoC計画
 
-版: 0.8-p0-004-markdown-corpus
-状態: P0-004完了
+版: 0.9-p0-005-markdown-parser
+状態: P0-005完了
 
 > この文書はPoCの高水準計画である。実施番号、依存関係、受け入れ条件は`../tickets/phase0/00_PHASE_0_TICKET_INDEX.md`とP0-001～P0-023の個別チケットを正とする。以下の旧P0-01～P0-12番号はテーマ整理用であり、実施チケット番号ではない。
 
@@ -24,6 +24,10 @@ P0-003の完了判定は、後続PoCが同じテンプレートで再現可能�
 ### P0-004 Markdown検証コーパス
 
 `poc/fixtures/markdown`へ正常系7種と異常系11種の合成fixtureを配置し、`manifest.yaml`へ期待結果とSHA-256を記録した。P0-005以降はmanifestの全fixture存在、ハッシュ一致、期待警告の機械検証を先に実行する。実データ、1万文書性能データ、製品コードは含めない。
+
+### P0-005 Markdown・Front Matter解析PoC
+
+`poc/markdown-parser`でMarkdigとYamlDotNet候補を検証した。P0-004全18fixtureを、文字コード、Front Matter、本文、見出し、表、添付参照、警告、致命的エラーへ分離して解析でき、入力変更なしと決定性を確認した。正式な製品依存関係と巨大セル上限は後続判断とする。
 
 ### P0-01 評価環境とサンプルコーパス
 
