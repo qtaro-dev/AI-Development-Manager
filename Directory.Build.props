@@ -21,7 +21,7 @@
     <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
     <DebugType>portable</DebugType>
     <DebugSymbols>true</DebugSymbols>
-    <BaseOutputPath>$(MSBuildThisFileDirectory)artifacts/bin/</BaseOutputPath>
-    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)artifacts/obj/</BaseIntermediateOutputPath>
+    <BaseOutputPath>$(MSBuildThisFileDirectory)artifacts/bin/$(MSBuildProjectName)/</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)artifacts/obj/$(MSBuildProjectName)/</BaseIntermediateOutputPath>
   </PropertyGroup>
 </Project>

@@ -18,6 +18,10 @@ Markdig/YamlDotNet、React、HTTPS、認証、添付、バックアップ、SQLi
 
 Penguin Hub、Penguin OS、意味検索、AIチャット、自動実装、汎用プラグインは対象外とする。
 
+## 1.2 P1-002製品モジュール骨格
+
+製品ソリューション`AIDevelopmentManager.sln`は、`Adm.Core`、`Adm.Application`、`Adm.Server.Host`、`Adm.Infrastructure.Windows`、`Adm.Wpf`を`src/`へ配置する。`Adm.Web`と`tests/`は後続チケットの配置予約とし、P1-002ではUI・テストコードを作成しない。Core/ApplicationはWindows非依存、Windows Adapter/WPFはWindows固有境界とする。PoCソリューション・プロジェクトは製品ソリューションへ追加しない。
+
 ## 2. 設計原則
 
 1. Markdownと添付ファイルを業務データの正本とする。

@@ -130,3 +130,7 @@ UI変更は、基準画像が指定されていればそれを最優先し、実
 P1-001で、製品コードへ適用する中央設定を追加した。`Directory.Build.props`をVersion、Build番号、Target Framework、Nullable、ImplicitUsings、分析器、警告、決定的ビルド、共通出力先の単一生成元とする。NuGetは`Directory.Packages.props`で中央管理し、VersionOverrideと浮動版を禁止する。Node.jsはルート`.node-version`で22.18.0を基準とし、製品Web依存は各製品チケットで固定したlockfileを正本とする。
 
 P1-001の実測値は.NET SDK 10.0.302、Node.js 22.18.0、npm 10.9.3である。製品ソリューションとプロジェクトはP1-002の対象であり、P1-001では作成・ビルドしない。PoC配下の設定・コード・lockfileは製品基盤へコピーしない。
+
+## 11. P1-002製品ソリューション境界
+
+P1-002でルート`AIDevelopmentManager.sln`と`src/`の5つの.NETプロジェクトを作成した。`Adm.Core`と`Adm.Application`は`net10.0`、Windows AdapterとWPFは`net10.0-windows`、Server HostはASP.NET Core Web SDKの空骨格とする。`Adm.Web`と`tests/`は後続チケットの予約配置である。PoCは物理配置・ProjectReference・Solution登録のいずれでも製品側へ混入させない。

@@ -13,11 +13,12 @@
 | NuGet | `Directory.Packages.props`による中央管理。VersionOverride禁止、浮動版禁止 |
 | npm | `package-lock.json`を正本とし、`npm ci`を使用。製品Web基盤はP1-013で導入 |
 | 警告 | Nullable、ImplicitUsings、分析器、Code Styleを有効化。警告はエラー扱い |
-| 出力 | `artifacts/bin`、`artifacts/obj`。いずれもGit追跡対象外 |
+| 出力 | `artifacts/bin/<project>`、`artifacts/obj/<project>`。プロジェクトごとに分離し、いずれもGit追跡対象外 |
 
 ## 運用規則
 
 - 製品プロジェクトはルートの中央設定を上書きしない。
+- 出力・中間ファイルはプロジェクト単位のフォルダーへ出力し、複数プロジェクトのassetsや成果物を共有しない。
 - Build番号をチケット番号やAssemblyVersionの代用にしない。
 - NuGetの依存バージョンを各`.csproj`へ記述しない。新規パッケージ導入チケットで中央ファイルへ固定値を追加する。
 - Web依存は`latest`や範囲指定を使わず、lockfileをコミットする。PoCの`package.json`やlockfileは製品基盤へコピーしない。
