@@ -138,3 +138,7 @@ P1-002でルート`AIDevelopmentManager.sln`と`src/`の5つの.NETプロジェ�
 ## 12. P1-003参照境界検査
 
 P1-003では、ProjectReference、ビルド済みAssembly、禁止Namespace、PoC参照を`tests/Adm.Architecture.Tests`のPowerShell検査で確認する。Core/ApplicationからWindows固有境界への逆参照と全製品からのPoC参照を禁止し、意図的違反fixtureで検査能力を確認する。xUnit/TestServerはP1-004へ分離する。
+
+## 13. P1-004 .NETテスト基盤
+
+P1-004のxUnit単体・TestServer統合・Windows限定テストは、`tests/Adm.Testing`と4つのテストプロジェクトへ分離する。NuGetのバージョンは`Directory.Packages.props`で固定し、テスト用一時領域はテストごとに固有化する。P1-003のArchitecture検査とP1-005のCI組み込みは別責務として扱う。

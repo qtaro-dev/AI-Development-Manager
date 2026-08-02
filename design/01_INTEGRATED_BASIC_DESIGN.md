@@ -26,6 +26,10 @@ Penguin Hub、Penguin OS、意味検索、AIチャット、自動実装、汎用
 
 参照方向は、`Adm.Application`から`Adm.Core`への依存だけを現行のProjectReferenceとして許可する。`Adm.Core`と`Adm.Application`からWindows Adapter、Server Host、WPFへの逆参照を禁止し、全製品プロジェクトから`poc/`への参照を禁止する。P1-003の自動検査はProjectReference、Debug/ReleaseのAssembly参照、禁止Namespace、意図的違反fixtureを確認する。xUnit/TestServerはP1-004の対象とし、今回の検査へ混在させない。
 
+## 1.4 P1-004 .NETテスト基盤
+
+製品テストは`Adm.Testing`の共通補助境界、Core/Application単体テスト、Server統合テスト、Windows限定テストへ分離する。xUnitのテスト実行と中央NuGet管理を使用し、TestServerは実ポートを占有しない`WebApplication.UseTestServer()`で起動する。テストの一時ディレクトリはテストごとに固有化し、P1-003のArchitecture検査とCI組み込みは別責務として維持する。
+
 ## 2. 設計原則
 
 1. Markdownと添付ファイルを業務データの正本とする。
