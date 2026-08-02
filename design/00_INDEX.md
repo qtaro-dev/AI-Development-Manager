@@ -1,7 +1,7 @@
 # AI Development Manager 設計資料索引
 
-版: 2.7-p0-021-ui-wireframes
-状態: P0-021完了（仮基準、ユーザー承認待ち）、React採用候補
+版: 2.8-p0-022-dtm-compat-blocked
+状態: P0-022 BLOCKED、P0-021仮基準承認済み、React採用候補
 基準日: 2026-08-02
 
 ## 目的
@@ -46,6 +46,7 @@
 - `22_LARGE_ATTACHMENT_CONTRACT.md`: P0-019 大容量添付アップロード・閲覧契約と結果
 - `23_BACKUP_DEDUP_CONTRACT.md`: P0-020 バックアップ重複抑制・復元契約と結果
 - `24_UI_WIREFRAMES_CONTRACT.md`: P0-021 UIワイヤーフレーム・基準契約
+- `25_DEVTICKETMANAGER_COMPAT_CONTRACT.md`: P0-022 DevTicketManager互換・移行境界契約
 - `ui/screen-inventory.md`: P0-021 画面一覧・責務
 - `ui/design-tokens.md`: P0-021 デザイントークン
 - `ui/ui-regression-checklist.md`: P0-021 UI回帰基準
