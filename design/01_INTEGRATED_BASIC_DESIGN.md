@@ -504,3 +504,7 @@ P0-003で評価PC、クライアント条件、1万文書・添付・同時利�
 ## 18. MVP完了条件
 
 認証済みの複数利用者がLAN内のWPFと通常ブラウザから同じプロジェクトへ接続し、既存Markdownを閲覧し、テストケースを実施し、添付付き結果を競合なくMarkdownへ保存し、検索とAI向けコンテキスト出力を行い、バックアップから復元できること。
+
+## 19. P1-019 Web配信
+
+ASP.NET Core Serverは、`Adm.Web`のproduction buildをServer成果物の`wwwroot`へ取り込み、通常ブラウザと後続WebView2が同じWeb UIを利用できる構成とする。`index.html`は更新確認を優先してキャッシュせず、Viteのhash付きassetは長期キャッシュする。`/api`、`/health`、`/openapi`はSPA fallbackから分離し、Web bundleが欠落したServerは起動時に配布物不足として拒否する。認証、HTTPS、LAN公開、業務APIは後続チケットの責務とする。

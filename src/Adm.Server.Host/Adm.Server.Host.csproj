@@ -13,4 +13,23 @@
     <ProjectReference Include="..\Adm.Infrastructure.Windows\Adm.Infrastructure.Windows.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <WebProjectDirectory>$(MSBuildThisFileDirectory)..\Adm.Web</WebProjectDirectory>
+    <WebAssetSourceDirectory>$(WebProjectDirectory)\dist</WebAssetSourceDirectory>
+  </PropertyGroup>
+
+  <Target Name="BuildWebAssets" BeforeTargets="Build;Publish" Condition="'$(DesignTimeBuild)' != 'true'">
+    <PropertyGroup>
+      <ResolvedWebAssetOutputDirectory>$(TargetDir)wwwroot</ResolvedWebAssetOutputDirectory>
+    </PropertyGroup>
+    <Exec Command="npm.cmd ci --ignore-scripts" WorkingDirectory="$(WebProjectDirectory)" />
+    <Exec Command="npm.cmd run build" WorkingDirectory="$(WebProjectDirectory)" />
+    <ItemGroup>
+      <WebAssetFiles Include="$(WebAssetSourceDirectory)\**\*" />
+    </ItemGroup>
+    <RemoveDir Directories="$(ResolvedWebAssetOutputDirectory)" />
+    <MakeDir Directories="$(ResolvedWebAssetOutputDirectory)" />
+    <Copy SourceFiles="@(WebAssetFiles)" DestinationFiles="@(WebAssetFiles->'$(ResolvedWebAssetOutputDirectory)\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+
 </Project>

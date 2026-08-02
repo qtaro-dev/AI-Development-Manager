@@ -8,6 +8,7 @@ using Adm.Server.Host.Configuration;
 using Adm.Server.Host.Errors;
 using Adm.Server.Host.Health;
 using Adm.Server.Host.Logging;
+using Adm.Server.Host.Web;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +22,8 @@ public static class ServerHostFactory
         string[]? args = null,
         int? port = null,
         string startupMode = "console",
-        Action<IHostBuilder>? configureHost = null)
+        Action<IHostBuilder>? configureHost = null,
+        string? webAssetsRoot = null)
     {
         if (port is < 0 or > 65535)
         {
@@ -49,16 +51,12 @@ public static class ServerHostFactory
         });
 
         var app = builder.Build();
+        var resolvedWebAssetsRoot = webAssetsRoot ?? WebAssetHosting.GetDefaultWebRoot();
+        WebAssetHosting.UseWebAssets(app, resolvedWebAssetsRoot);
         app.UseAdmErrorHandling();
         app.UseAdmRequestTracing();
         app.MapOpenApi("/openapi/{documentName}.json");
         app.MapAdmApiV1();
-        app.MapGet("/", () => Results.Ok(new
-        {
-            service = "AI Development Manager Server",
-            status = "running"
-        })).ExcludeFromDescription();
-
         var buildVersion = typeof(ServerHostFactory).Assembly
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
             ?? "unknown";
@@ -73,6 +71,7 @@ public static class ServerHostFactory
         app.Lifetime.ApplicationStopping.Register(() => lifecycleLogger.ServerStopping(
             startupMode,
             WindowsServiceHostAdapter.DefaultStopTimeout));
+        WebAssetHosting.MapSpaFallback(app, resolvedWebAssetsRoot);
 
         return app;
     }

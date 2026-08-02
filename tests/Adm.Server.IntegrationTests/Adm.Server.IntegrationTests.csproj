@@ -17,4 +17,12 @@
     <ProjectReference Include="..\Adm.Testing\Adm.Testing.csproj" />
     <ProjectReference Include="..\..\src\Adm.Server.Host\Adm.Server.Host.csproj" />
   </ItemGroup>
+
+  <Target Name="CopyServerWebAssetsForIntegrationTests" AfterTargets="Build">
+    <ItemGroup>
+      <ServerWebAssetFiles Include="$(MSBuildThisFileDirectory)..\..\artifacts\bin\Adm.Server.Host\$(Configuration)\net10.0\wwwroot\**\*" />
+    </ItemGroup>
+    <MakeDir Directories="$(TargetDir)wwwroot" />
+    <Copy SourceFiles="@(ServerWebAssetFiles)" DestinationFiles="@(ServerWebAssetFiles->'$(TargetDir)wwwroot\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
 </Project>

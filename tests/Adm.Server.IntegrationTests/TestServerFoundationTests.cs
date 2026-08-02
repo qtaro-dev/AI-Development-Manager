@@ -10,6 +10,7 @@ using Adm.Server.Host.Configuration;
 using Adm.Server.Host.Errors;
 using Adm.Server.Host.Health;
 using Adm.Server.Host.Logging;
+using Adm.Testing;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
@@ -55,7 +56,7 @@ public sealed class TestServerFoundationTests
         var content = await response.Content.ReadAsStringAsync();
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Contains("AI Development Manager Server", content, StringComparison.Ordinal);
+        Assert.Contains("AI Development Manager", content, StringComparison.Ordinal);
         Assert.Equal("client-trace-123", response.Headers.GetValues(TraceId.HeaderName).Single());
 
         await app.StopAsync();
@@ -200,12 +201,57 @@ public sealed class TestServerFoundationTests
         using var problemDocument = JsonDocument.Parse(await unknownApiResponse.Content.ReadAsStringAsync());
 
         Assert.Equal(HttpStatusCode.OK, rootResponse.StatusCode);
+        Assert.Equal("text/html", rootResponse.Content.Headers.ContentType?.MediaType);
         Assert.Equal(HttpStatusCode.NotFound, unknownApiResponse.StatusCode);
         Assert.Equal("application/problem+json", unknownApiResponse.Content.Headers.ContentType?.MediaType);
         Assert.Equal("not_found", problemDocument.RootElement.GetProperty("code").GetString());
         Assert.Equal(
             unknownApiResponse.Headers.GetValues(TraceId.HeaderName).Single(),
             problemDocument.RootElement.GetProperty("traceId").GetString());
+
+        await app.StopAsync();
+    }
+
+    [Fact]
+    public void MissingWebBundleFailsWithAnActionableStartupError()
+    {
+        using var scope = new TestScope();
+
+        var exception = Assert.Throws<InvalidOperationException>(delegate
+        {
+            _ = ServerHostFactory.Create(port: 0, webAssetsRoot: scope.RootPath);
+        });
+
+        Assert.Contains("Web UI", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("配布成果物", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task SpaRouteFallsBackWhileReservedRoutesRemainProblemDetails()
+    {
+        await using var app = ServerHostFactory.Create(port: 0);
+        await app.StartAsync();
+        var uri = new Uri(app.Urls.Single());
+        using var client = new HttpClient { BaseAddress = uri };
+
+        var indexHtml = await client.GetStringAsync("/");
+        var assetName = System.Text.RegularExpressions.Regex.Match(
+            indexHtml,
+            "assets/([^\\\"]+\\.js)").Groups[1].Value;
+        Assert.NotEmpty(assetName);
+
+        using var routeResponse = await client.GetAsync("/projects/demo");
+        using var assetResponse = await client.GetAsync($"/assets/{assetName}");
+        using var unknownHealthResponse = await client.GetAsync("/health/unknown");
+
+        Assert.Equal(HttpStatusCode.OK, routeResponse.StatusCode);
+        Assert.Equal("text/html", routeResponse.Content.Headers.ContentType?.MediaType);
+        Assert.Contains("no-cache", routeResponse.Headers.CacheControl?.ToString());
+        Assert.Contains("no-store", routeResponse.Headers.CacheControl?.ToString());
+        Assert.Equal(HttpStatusCode.OK, assetResponse.StatusCode);
+        Assert.Equal("public, max-age=31536000, immutable", assetResponse.Headers.CacheControl?.ToString());
+        Assert.Equal(HttpStatusCode.NotFound, unknownHealthResponse.StatusCode);
+        Assert.Equal("application/problem+json", unknownHealthResponse.Content.Headers.ContentType?.MediaType);
 
         await app.StopAsync();
     }

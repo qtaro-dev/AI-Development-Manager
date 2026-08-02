@@ -35,7 +35,7 @@
 | 16 | [P1-016](P1-016_THEME_DESIGN_TOKENS.md) | C | Theme・デザイントークン基盤 | P1-013 | P0-021のライト／ダーク基準を実装する | Token正本が一つで両Themeの回帰確認が可能 | 完了 |
 | 17 | [P1-017](P1-017_RESPONSIVE_APP_SHELL.md) | C | レスポンシブ・アプリシェル | P1-015, P1-016 | 共通ナビ、上部バー、本文領域を作る | 1440/820/320pxで主要領域と操作を維持 | 完了 |
 | 18 | [P1-018](P1-018_COMMON_UI_STATES.md) | C | 共通状態・フィードバック部品 | P1-014, P1-017 | 保存・接続・競合等の状態表示基盤を作る | 色だけに頼らず文言・操作・ARIAを持つ | 完了 |
-| 19 | [P1-019](P1-019_SERVER_WEB_ASSET_HOSTING.md) | C | Serverによる共通Web UI配信 | P1-006, P1-009, P1-013, P1-017 | 同一Web成果物をServerから配信する | ブラウザ表示、SPAフォールバック、API分離が成功 | 未着手 |
+| 19 | [P1-019](P1-019_SERVER_WEB_ASSET_HOSTING.md) | C | Serverによる共通Web UI配信 | P1-006, P1-009, P1-013, P1-017 | 同一Web成果物をServerから配信する | ブラウザ表示、SPAフォールバック、API分離が成功 | 完了 |
 | 20 | [P1-020](P1-020_WPF_WEBVIEW2_SHELL.md) | D | WPF WebView2シェル | P1-002, P1-019 | 共通Web UIを表示する最小WPF Clientを作る | Runtime確認、接続状態、起動終了を実機確認 | 未着手 |
 | 21 | [P1-021](P1-021_WPF_BRIDGE_ALLOWLIST.md) | D | WPFブリッジ許可境界 | P1-020 | Windows固有操作だけの橋渡し契約を作る | 許可外メッセージ拒否、業務データAPIなし | 未着手 |
 | 22 | [P1-022](P1-022_PLAYWRIGHT_E2E_FOUNDATION.md) | D | PlaywrightブラウザE2E基盤 | P1-005, P1-014, P1-018, P1-019 | 共通UIのブラウザ回帰を自動化する | Edge/Chromium系スモークと証拠保存が成功 | 未着手 |
