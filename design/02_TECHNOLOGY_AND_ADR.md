@@ -107,6 +107,10 @@ Blazor WebAssembly。C#統一の利点はあるが、テーブル部品、初期
 
 React PoCが合格基準を満たさない場合、または保守要員の技術制約が確定した場合。
 
+### P1-013実装結果
+
+`src/Adm.Web`へReact `19.2.8`、TypeScript `6.0.3`、Vite `8.2.0`の製品基盤を追加した。依存は`package-lock.json`へ固定し、React PoCのコード・依存・モック画面は参照していない。TypeScript strict、ESLint、Prettier、公開環境値の型付き境界、API client差込境界、bundle内の秘密・ローカル絶対パス検査を整備した。Edge／Chrome／WebView2、IME、DPI、正式UIは後続チケットで確認する。
+
 ## ADR-004 Markdown・添付・`.adm-meta`を正本とする
 
 ### 決定

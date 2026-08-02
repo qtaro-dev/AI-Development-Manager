@@ -102,7 +102,7 @@ function New-DependencyEvidence {
 
 Invoke-RecordedCommand dotnet @('--version') (Join-Path $evidencePath 'dotnet-version.log')
 Invoke-RecordedCommand node @('--version') (Join-Path $evidencePath 'node-version.log')
-Invoke-RecordedCommand npm @('--version') (Join-Path $evidencePath 'npm-version.log')
+Invoke-RecordedCommand npm.cmd @('--version') (Join-Path $evidencePath 'npm-version.log')
 Assert-NoForbiddenTrackedFiles
 Invoke-RecordedCommand dotnet @('restore', 'AIDevelopmentManager.sln') (Join-Path $evidencePath 'dotnet-restore.log')
 Invoke-RecordedCommand dotnet @('build', 'AIDevelopmentManager.sln', '--configuration', 'Debug', '--no-restore') (Join-Path $evidencePath 'dotnet-build-debug.log')
@@ -130,10 +130,14 @@ if ($highFindings.Count -gt 0) {
 
 $webPackage = Join-Path $repositoryRoot 'src/Adm.Web/package.json'
 if (Test-Path -LiteralPath $webPackage) {
-    Invoke-RecordedCommand npm @('--prefix', 'src/Adm.Web', 'ci') (Join-Path $evidencePath 'npm-ci.log')
-    Invoke-RecordedCommand npm @('--prefix', 'src/Adm.Web', 'audit', '--audit-level=high', '--json') (Join-Path $evidencePath 'npm-audit.json')
-    Invoke-RecordedCommand npm @('--prefix', 'src/Adm.Web', 'run', 'build') (Join-Path $evidencePath 'npm-build.log')
-    Invoke-RecordedCommand npm @('--prefix', 'src/Adm.Web', 'run', 'test', '--if-present') (Join-Path $evidencePath 'npm-test.log')
+    Invoke-RecordedCommand npm.cmd @('--prefix', 'src/Adm.Web', 'ci') (Join-Path $evidencePath 'npm-ci.log')
+    Invoke-RecordedCommand npm.cmd @('--prefix', 'src/Adm.Web', 'audit', '--audit-level=high', '--json') (Join-Path $evidencePath 'npm-audit.json')
+    Invoke-RecordedCommand npm.cmd @('--prefix', 'src/Adm.Web', 'run', 'typecheck') (Join-Path $evidencePath 'npm-typecheck.log')
+    Invoke-RecordedCommand npm.cmd @('--prefix', 'src/Adm.Web', 'run', 'lint') (Join-Path $evidencePath 'npm-lint.log')
+    Invoke-RecordedCommand npm.cmd @('--prefix', 'src/Adm.Web', 'run', 'format:check') (Join-Path $evidencePath 'npm-format-check.log')
+    Invoke-RecordedCommand npm.cmd @('--prefix', 'src/Adm.Web', 'run', 'build') (Join-Path $evidencePath 'npm-build.log')
+    Invoke-RecordedCommand npm.cmd @('--prefix', 'src/Adm.Web', 'run', 'verify:bundle') (Join-Path $evidencePath 'npm-bundle-validation.log')
+    Invoke-RecordedCommand npm.cmd @('--prefix', 'src/Adm.Web', 'run', 'test', '--if-present') (Join-Path $evidencePath 'npm-test.log')
 } else {
     'src/Adm.Web/package.json is not present; Web product foundation is scheduled for P1-013.' | Out-File (Join-Path $evidencePath 'web-not-present.txt') -Encoding utf8
 }
