@@ -1,7 +1,7 @@
 # Phase 0 技術PoC計画
 
-版: 0.9-p0-005-markdown-parser
-状態: P0-005完了
+版: 1.0-p0-006-document-classifier
+状態: P0-006完了
 
 > この文書はPoCの高水準計画である。実施番号、依存関係、受け入れ条件は`../tickets/phase0/00_PHASE_0_TICKET_INDEX.md`とP0-001～P0-023の個別チケットを正とする。以下の旧P0-01～P0-12番号はテーマ整理用であり、実施チケット番号ではない。
 
@@ -28,6 +28,10 @@ P0-003の完了判定は、後続PoCが同じテンプレートで再現可能�
 ### P0-005 Markdown・Front Matter解析PoC
 
 `poc/markdown-parser`でMarkdigとYamlDotNet候補を検証した。P0-004全18fixtureを、文字コード、Front Matter、本文、見出し、表、添付参照、警告、致命的エラーへ分離して解析でき、入力変更なしと決定性を確認した。正式な製品依存関係と巨大セル上限は後続判断とする。
+
+### P0-006 文書種別自動判別PoC
+
+`poc/document-classifier`で、Front Matter、ファイル名、フォルダー、見出し、表構造の順序付きルールを検証した。P0-004全18fixtureは期待種別を満たし、Front Matter付き17件は信頼度1.00、Front Matterなしは`unknown`となった。ファイル名・フォルダー・表構造の合成ケース、未知ケース、手動上書き、入力不変、2回実行の決定性も確認した。ルール閾値と分類種別の正式採用は後続設計ゲートで判断する。
 
 ### P0-01 評価環境とサンプルコーパス
 

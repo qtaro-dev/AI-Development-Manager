@@ -1,0 +1,63 @@
+version: 1
+minimum_confidence: 0.60
+rules:
+  - code: filename.ticket
+    signal: filename
+    pattern: '(?i)(^|[-_])(ticket|issue|bug)([-_]|$)'
+    document_type: ticket
+    confidence: 0.82
+  - code: filename.test_case
+    signal: filename
+    pattern: '(?i)test[-_ ]?case|testcase'
+    document_type: test_case
+    confidence: 0.82
+  - code: filename.test_result
+    signal: filename
+    pattern: '(?i)test[-_ ]?result|testresult|result'
+    document_type: test_result
+    confidence: 0.82
+  - code: filename.adr
+    signal: filename
+    pattern: '(?i)(^|[-_])adr([-_]|$)'
+    document_type: adr
+    confidence: 0.82
+  - code: filename.design
+    signal: filename
+    pattern: '(?i)design|architecture'
+    document_type: design
+    confidence: 0.82
+  - code: folder.ticket
+    signal: folder
+    pattern: '(?i)(^|[\\/])tickets?([\\/]|$)'
+    document_type: ticket
+    confidence: 0.72
+  - code: folder.test_case
+    signal: folder
+    pattern: '(?i)(^|[\\/])test[-_ ]?cases?([\\/]|$)'
+    document_type: test_case
+    confidence: 0.72
+  - code: folder.design
+    signal: folder
+    pattern: '(?i)(^|[\\/])design([\\/]|$)'
+    document_type: design
+    confidence: 0.72
+  - code: heading.adr
+    signal: heading
+    pattern: '(?i)\bADR\b|decision|決定'
+    document_type: adr
+    confidence: 0.68
+  - code: heading.test_case
+    signal: heading
+    pattern: '(?i)test\s*case|テストケース|テスト表'
+    document_type: test_case
+    confidence: 0.68
+  - code: heading.design
+    signal: heading
+    pattern: '(?i)design|設計|構成'
+    document_type: design
+    confidence: 0.68
+  - code: table.test_case
+    signal: table
+    pattern: '(?i)(^|\s)(id|item_id|test_id)(\s|$)'
+    document_type: test_case
+    confidence: 0.66
