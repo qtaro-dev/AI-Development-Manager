@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Adm.Server.Host.Api;
 using Adm.Server.Host.Configuration;
+using Adm.Server.Host.Errors;
 using Adm.Server.Host.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -40,6 +41,7 @@ public static class ServerHostFactory
         });
 
         var app = builder.Build();
+        app.UseAdmErrorHandling();
         app.UseAdmRequestTracing();
         app.MapOpenApi("/openapi/{documentName}.json");
         app.MapAdmApiV1();

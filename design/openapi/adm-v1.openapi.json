@@ -22,6 +22,26 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdmProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdmProblemDetails"
+                }
+              }
+            }
           }
         }
       }
@@ -29,6 +49,58 @@
   },
   "components": {
     "schemas": {
+      "AdmProblemDetails": {
+        "required": [
+          "type",
+          "title",
+          "status",
+          "detail",
+          "instance",
+          "code",
+          "messageKey",
+          "inputRetained",
+          "retryable",
+          "nextAction",
+          "traceId"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "format": "int32"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "instance": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "messageKey": {
+            "type": "string"
+          },
+          "inputRetained": {
+            "type": "boolean"
+          },
+          "retryable": {
+            "type": "boolean"
+          },
+          "nextAction": {
+            "type": "string"
+          },
+          "traceId": {
+            "type": "string"
+          }
+        }
+      },
       "ApiStatus": {
         "enum": [
           "ready"

@@ -32,4 +32,4 @@ pwsh -NoProfile -File .\scripts\api\Validate-OpenApiContract.ps1
 
 ## 4. 対象外
 
-認証・認可、Problem Details、プロジェクト・文書・添付等の業務API、破壊的変更の自動移行は後続チケットへ分離する。P1-008の追跡IDと秘密情報非記録は共通Hostミドルウェアとして維持する。
+認証・認可、プロジェクト・文書・添付等の業務API、破壊的変更の自動移行は後続チケットへ分離する。P1-008の追跡IDと秘密情報非記録、P1-010のProblem Details変換は共通Hostミドルウェアとして維持する。

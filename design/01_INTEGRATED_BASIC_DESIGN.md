@@ -328,6 +328,7 @@ P0-005で確定した解析契約は`07_MARKDOWN_PARSING_CONTRACT.md`を正と�
 - P1-009では`/api/v1/version`だけを基盤確認用として公開し、実行時OpenAPIは`/openapi/v1.json`で取得する。静的正本は`design/openapi/adm-v1.openapi.json`とし、CIで必須操作の削除を検査する。
 - JSONはcamelCase、UTCのISO 8601時刻、enum文字列、null省略を共通規則とする。将来のULIDは文字列として予約する。
 - P1-009では認証、Problem Details、業務APIを公開しない。APIルートとWeb UIルートは分離する。
+- P1-010ではAPIエラーを`application/problem+json`で返し、安定した内部コード、利用者向け文言キー、入力保持・再試行可否、次の操作、`X-Request-Id`由来の追跡IDを拡張項目として持たせる。例外本文、Stack Trace、秘密値は返さない。
 - 一覧APIはページング、並べ替え、絞り込みを持つ。
 - 更新APIは`If-Match`を必須とする。
 - 競合はHTTP 409とし、保存対象、クライアント版、Server最新版、差分取得先を返す。

@@ -2,8 +2,10 @@ using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
 using System.Text.Json;
+using Adm.Application.Errors;
 using Adm.Server.Host;
 using Adm.Server.Host.Configuration;
+using Adm.Server.Host.Errors;
 using Adm.Server.Host.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -112,12 +114,58 @@ public sealed class TestServerFoundationTests
 
         using var rootResponse = await client.GetAsync("/");
         using var unknownApiResponse = await client.GetAsync("/api/v1/unknown");
+        using var problemDocument = JsonDocument.Parse(await unknownApiResponse.Content.ReadAsStringAsync());
 
         Assert.Equal(HttpStatusCode.OK, rootResponse.StatusCode);
         Assert.Equal(HttpStatusCode.NotFound, unknownApiResponse.StatusCode);
+        Assert.Equal("application/problem+json", unknownApiResponse.Content.Headers.ContentType?.MediaType);
+        Assert.Equal("not_found", problemDocument.RootElement.GetProperty("code").GetString());
+        Assert.Equal(
+            unknownApiResponse.Headers.GetValues(TraceId.HeaderName).Single(),
+            problemDocument.RootElement.GetProperty("traceId").GetString());
 
         await app.StopAsync();
     }
+
+    [Fact]
+    public async Task ExceptionsBecomeSafeProblemDetailsWithTraceCorrelation()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Logging.ClearProviders();
+        var app = builder.Build();
+        app.UseAdmErrorHandling();
+        app.UseAdmRequestTracing();
+        app.MapGet("/test/validation", () => ThrowValidation());
+        app.MapGet("/test/unexpected", () => ThrowUnexpected());
+
+        await app.StartAsync();
+        using var client = app.GetTestClient();
+        using var validationResponse = await client.GetAsync("/test/validation");
+        using var validationDocument = JsonDocument.Parse(await validationResponse.Content.ReadAsStringAsync());
+        using var unexpectedResponse = await client.GetAsync("/test/unexpected");
+        using var unexpectedDocument = JsonDocument.Parse(await unexpectedResponse.Content.ReadAsStringAsync());
+
+        Assert.Equal(HttpStatusCode.BadRequest, validationResponse.StatusCode);
+        Assert.Equal("application/problem+json", validationResponse.Content.Headers.ContentType?.MediaType);
+        Assert.Equal("validation_failed", validationDocument.RootElement.GetProperty("code").GetString());
+        Assert.True(validationDocument.RootElement.GetProperty("inputRetained").GetBoolean());
+        Assert.False(validationDocument.RootElement.GetProperty("retryable").GetBoolean());
+        Assert.Equal(
+            validationResponse.Headers.GetValues(TraceId.HeaderName).Single(),
+            validationDocument.RootElement.GetProperty("traceId").GetString());
+
+        Assert.Equal(HttpStatusCode.InternalServerError, unexpectedResponse.StatusCode);
+        Assert.Equal("internal_error", unexpectedDocument.RootElement.GetProperty("code").GetString());
+        Assert.DoesNotContain("secret-from-exception", await unexpectedResponse.Content.ReadAsStringAsync(), StringComparison.Ordinal);
+        Assert.DoesNotContain("InvalidOperationException", await unexpectedResponse.Content.ReadAsStringAsync(), StringComparison.Ordinal);
+
+        await app.StopAsync();
+    }
+
+    private static void ThrowValidation() => throw new AdmValidationException();
+
+    private static void ThrowUnexpected() => throw new InvalidOperationException("secret-from-exception");
 
     [Fact]
     public async Task StartingTwoHostsOnTheSamePortFailsExplicitly()

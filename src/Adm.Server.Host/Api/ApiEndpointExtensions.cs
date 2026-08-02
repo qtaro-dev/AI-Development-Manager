@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Adm.Server.Host.Errors;
 
 namespace Adm.Server.Host.Api;
 
@@ -18,7 +19,9 @@ public static class ApiEndpointExtensions
             .WithName("GetApiVersion")
             .WithTags("System")
             .WithSummary("Returns the API version and protocol readiness.")
-            .Produces<ApiVersionResponse>(StatusCodes.Status200OK);
+            .Produces<ApiVersionResponse>(StatusCodes.Status200OK)
+            .Produces<AdmProblemDetails>(StatusCodes.Status404NotFound, "application/problem+json")
+            .Produces<AdmProblemDetails>(StatusCodes.Status500InternalServerError, "application/problem+json");
 
         return api;
     }
