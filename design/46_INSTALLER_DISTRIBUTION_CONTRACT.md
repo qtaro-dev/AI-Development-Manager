@@ -86,6 +86,12 @@ artifacts/packages/<version>/<build>/
 
 P1-025の生成手順とService運用契約は`design/47_SERVER_INSTALLER_SERVICE_CONTRACT.md`に記録した。WPF Client、WebView2 Runtime、Firewall、HTTPS証明書、LAN公開は対象外であり、P1-026以降へ着手していない。
 
+## 7b. P1-026実装結果
+
+`installer/wpf-client`へWiX v4のper-user MSIを追加し、WPF publish成果物をLocalAppData配下へ配置する構成を実装した。WebView2 Evergreen RuntimeをHKLM／HKCUのregistryから検査し、未導入時は日本語の導入案内を表示する。Runtimeの無断インストール、Server、Service、Firewall、証明書、業務データの変更は行わない。
+
+WPF配布・保持契約は`design/48_WPF_CLIENT_INSTALLER_CONTRACT.md`に記録した。P1-027の統合・実機確認には着手していない。
+
 ## 8. 参照
 
 - [Create a Windows Service installer - .NET](https://learn.microsoft.com/en-us/dotnet/core/extensions/windows-service-with-installer)

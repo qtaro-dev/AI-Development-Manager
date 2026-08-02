@@ -1,0 +1,33 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package
+      Name="AI Development Manager Client"
+      Manufacturer="qtaro-dev"
+      Version="$(var.ProductVersion)"
+      UpgradeCode="4BCF0E1B-8FA9-43E7-9D30-5E9C0ADAA2C8"
+      Scope="perUser">
+    <SummaryInformation Description="AI Development Manager WPF Client" />
+    <MajorUpgrade DowngradeErrorMessage="新しいバージョンが既にインストールされています。" />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Property Id="WEBVIEW2RUNTIMEVERSION">
+      <RegistrySearch Id="SearchWebView2RuntimeMachine" Root="HKLM" Key="SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}" Name="pv" Type="raw" />
+      <RegistrySearch Id="SearchWebView2RuntimeUser" Root="HKCU" Key="Software\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}" Name="pv" Type="raw" />
+    </Property>
+    <Launch Condition="WEBVIEW2RUNTIMEVERSION OR Installed" Message="Microsoft Edge WebView2 Runtimeをインストールしてから、WPF Clientを導入してください。" />
+
+    <Feature Id="MainFeature" Title="AI Development Manager Client" Level="1">
+      <ComponentGroupRef Id="ClientFiles" />
+      <ComponentGroupRef Id="ClientDirectoryCleanup" />
+    </Feature>
+  </Package>
+
+  <Fragment>
+    <StandardDirectory Id="LocalAppDataFolder">
+      <Directory Id="CLIENTROOT" Name="AI Development Manager">
+        <Directory Id="CLIENTFOLDER" Name="Client" />
+        <Directory Id="CLIENTUSERDATA" Name="UserData" />
+      </Directory>
+    </StandardDirectory>
+  </Fragment>
+
+</Wix>

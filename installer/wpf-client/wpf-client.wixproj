@@ -1,0 +1,17 @@
+<Project Sdk="WixToolset.Sdk/4.0.6">
+  <PropertyGroup>
+    <OutputType>Package</OutputType>
+    <Platform>x64</Platform>
+    <DebugType>none</DebugType>
+    <OutputName>AI-Development-Manager-Client-$(ProductVersion)-$(BuildNumber)-x64</OutputName>
+    <!-- ICE91 is an intentional per-user MSI warning; ICE38/ICE64 remain enabled. -->
+    <SuppressIces>ICE91</SuppressIces>
+    <ClientPublishDir Condition="'$(ClientPublishDir)' == ''">$(MSBuildThisFileDirectory)..\..\artifacts\package-input\wpf-client</ClientPublishDir>
+    <GeneratedClientFiles Condition="'$(GeneratedClientFiles)' == ''">$(MSBuildThisFileDirectory)..\..\artifacts\installer-generated\ClientFiles.wxs</GeneratedClientFiles>
+    <DefineConstants>ProductVersion=$(ProductVersion);BuildNumber=$(BuildNumber);ClientPublishDir=$(ClientPublishDir)</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(GeneratedClientFiles)" Condition="Exists('$(GeneratedClientFiles)')" />
+  </ItemGroup>
+</Project>
