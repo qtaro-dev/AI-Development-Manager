@@ -472,6 +472,12 @@ Phase 0で主要画面のワイヤーフレームを作成し、ユーザー承�
 
 P0-003で評価PC、クライアント条件、1万文書・添付・同時利用者の基準モデル、p95の計算方法、結果保存場所を確定した。既存の暫定目標である初回一覧p95 3秒以内、索引済み検索p95 500ms以内は、後続PoCの比較基準として扱う。基準環境の.NET SDKが製品計画の.NET 10と異なる場合は、結果へ差異を記録し、同一結果として比較しない。
 
+## 1.5 CI品質ゲート（P1-005）
+
+品質ゲートの共通入口は`scripts/ci/Invoke-QualityGates.ps1`とし、ローカルとGitHub Actionsで同じ主要コマンドを実行する。固定された.NET SDKとNode.jsを確認した後、restore、Debug／Release build、Debug／Release test、P1-003 Architecture検査、NuGet脆弱性監査を順に実施する。`src/Adm.Web/package.json`が存在する場合はnpm clean install、audit、build、testも対象とし、未作成の間は未導入を証拠へ記録する。
+
+各実行は`artifacts/ci-evidence`へバージョン、コマンドログ、TRXテスト結果、脆弱性監査、ライセンス一覧、CycloneDX SBOM、追跡ファイル検査結果を保存する。Build、Test、Architecture、High／Critical脆弱性、禁止生成物・秘密情報の検査に失敗した場合も、GitHub Actionsのalways条件で同ディレクトリをアーティファクト保存する。後続プロジェクトは`src`／`tests`配下の自動列挙によりゲート対象へ追加される。
+
 ## 18. MVP完了条件
 
 認証済みの複数利用者がLAN内のWPFと通常ブラウザから同じプロジェクトへ接続し、既存Markdownを閲覧し、テストケースを実施し、添付付き結果を競合なくMarkdownへ保存し、検索とAI向けコンテキスト出力を行い、バックアップから復元できること。

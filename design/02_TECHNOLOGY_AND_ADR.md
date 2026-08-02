@@ -37,6 +37,10 @@
 
 ライブラリの正確なバージョンはPhase 0開始時にサポート状況と脆弱性を確認し、ロックファイルで固定する。メジャーバージョンを自動追従しない。
 
+### P1-005 CI品質ゲート
+
+GitHub ActionsのWindows runner上で、リポジトリ直下の`global.json`と`.node-version`を使用して品質ゲートを実行する。ワークフロー固有の処理を増やさず、ローカルでも再現できる`scripts/ci/Invoke-QualityGates.ps1`を正本とする。restore、Debug／Release build・test、P1-003 Architecture検査、NuGetおよび導入後のnpm監査を必須工程とし、High／Critical脆弱性、失敗したテスト、参照境界違反、禁止された追跡ファイルを合否判定へ反映する。ビルド単位でログ、TRX、依存・ライセンス一覧、CycloneDX SBOMを保存し、失敗時もGitHub Actionsアーティファクトを保持する。
+
 ## ADR-001 独立Serverプロセス
 
 ### 決定

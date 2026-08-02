@@ -1,0 +1,41 @@
+name: Quality Gates
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+
+      - name: Run quality gates
+        shell: pwsh
+        run: ./scripts/ci/Invoke-QualityGates.ps1
+
+      - name: Upload CI evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-gate-evidence-${{ github.run_id }}
+          path: artifacts/ci-evidence
+          if-no-files-found: warn
+          retention-days: 14

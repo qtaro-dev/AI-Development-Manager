@@ -142,3 +142,9 @@ P1-003では、ProjectReference、ビルド済みAssembly、禁止Namespace、Po
 ## 13. P1-004 .NETテスト基盤
 
 P1-004のxUnit単体・TestServer統合・Windows限定テストは、`tests/Adm.Testing`と4つのテストプロジェクトへ分離する。NuGetのバージョンは`Directory.Packages.props`で固定し、テスト用一時領域はテストごとに固有化する。P1-003のArchitecture検査とP1-005のCI組み込みは別責務として扱う。
+
+## 14. P1-005 CI品質ゲート
+
+P1-005の品質ゲート入口は`scripts/ci/Invoke-QualityGates.ps1`とし、ローカルとGitHub Actionsで同じ主要コマンドを実行する。固定SDK・Node確認、restore、Debug／Release build・test、P1-003 Architecture検査、NuGet脆弱性監査、ライセンス一覧、CycloneDX SBOM、禁止生成物・秘密情報検査を必須とする。Web製品基盤が存在する場合はnpm clean install、audit、build、testも対象とする。
+
+Build、Test、Architecture、High／Critical脆弱性、禁止追跡ファイルのいずれかが失敗した場合はゲートを失敗させる。ログ、TRX、監査結果、ライセンス、SBOMは`artifacts/ci-evidence`へ保存し、GitHub Actionsでは失敗時もアーティファクトを保持する。`artifacts/`配下の生成物はコミットしない。
