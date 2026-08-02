@@ -1,7 +1,7 @@
 # AI Development Manager 設計資料索引
 
-版: 1.3-p0-007-adm-meta
-状態: P0-007完了
+版: 1.4-p0-008-atomic-save
+状態: P0-008完了
 基準日: 2026-08-02
 
 ## 目的
@@ -31,6 +31,7 @@
 - `07_MARKDOWN_PARSING_CONTRACT.md`: P0-005 Markdown解析契約とPoC結果
 - `08_DOCUMENT_CLASSIFICATION_CONTRACT.md`: P0-006 文書種別自動判別契約とPoC結果
 - `09_ADM_META_ID_CONTRACT.md`: P0-007 `.adm-meta`、ULID、連番契約とPoC結果
+- `10_ATOMIC_SAVE_CONTRACT.md`: P0-008 NTFS原子的保存契約とPoC結果
 - `../tickets/phase0/00_PHASE_0_TICKET_INDEX.md`: Phase 0詳細チケット一覧と依存関係
 
 ## 人向け概要
