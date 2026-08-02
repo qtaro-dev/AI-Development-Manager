@@ -1,7 +1,9 @@
 # AI Development Manager 採用技術案・技術ADR
 
-版: 0.8-p0-005-markdown-parser
+版: 0.9-p0-023-phase0-gate
 基準日: 2026-08-02
+
+状態: P0-023 Phase 0設計確定ゲート完了、条件付き採用と保留事項は`29_PHASE0_DESIGN_GATE_DECISION.md`を参照
 
 ## 1. 採用技術の確定案
 

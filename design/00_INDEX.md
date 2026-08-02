@@ -1,7 +1,7 @@
 # AI Development Manager 設計資料索引
 
-版: 3.0-p0-024-scan-pipeline
-状態: P0-024測定完了、正式採用はP0-023
+版: 3.1-p0-023-phase0-gate
+状態: P0-023 Phase 0設計確定ゲート完了、Phase 1開始はユーザー承認待ち
 基準日: 2026-08-02
 
 ## 目的
@@ -50,6 +50,7 @@
 - `26_SCAN_PIPELINE_PERFORMANCE_CONTRACT.md`: P0-024走査工程分解・増分差分性能契約
 - `27_FTS_SEARCH_OPTIMIZATION_CONTRACT.md`: P0-025 FTS索引・検索最適化契約
 - `28_SQLITE_DEPENDENCY_SECURITY_CONTRACT.md`: P0-026 SQLite依存更新・安全性契約
+- `29_PHASE0_DESIGN_GATE_DECISION.md`: P0-023 Phase 0最終採否判定、残課題、Phase 1引継ぎ
 - `ui/screen-inventory.md`: P0-021 画面一覧・責務
 - `ui/design-tokens.md`: P0-021 デザイントークン
 - `ui/ui-regression-checklist.md`: P0-021 UI回帰基準
