@@ -38,7 +38,7 @@
 | 19 | [P1-019](P1-019_SERVER_WEB_ASSET_HOSTING.md) | C | Serverによる共通Web UI配信 | P1-006, P1-009, P1-013, P1-017 | 同一Web成果物をServerから配信する | ブラウザ表示、SPAフォールバック、API分離が成功 | 完了 |
 | 20 | [P1-020](P1-020_WPF_WEBVIEW2_SHELL.md) | D | WPF WebView2シェル | P1-002, P1-019 | 共通Web UIを表示する最小WPF Clientを作る | Runtime確認、接続状態、起動終了を実機確認 | 完了 |
 | 21 | [P1-021](P1-021_WPF_BRIDGE_ALLOWLIST.md) | D | WPFブリッジ許可境界 | P1-020 | Windows固有操作だけの橋渡し契約を作る | 許可外メッセージ拒否、業務データAPIなし | 完了 |
-| 22 | [P1-022](P1-022_PLAYWRIGHT_E2E_FOUNDATION.md) | D | PlaywrightブラウザE2E基盤 | P1-005, P1-014, P1-018, P1-019 | 共通UIのブラウザ回帰を自動化する | Edge/Chromium系スモークと証拠保存が成功 | 未着手 |
+| 22 | [P1-022](P1-022_PLAYWRIGHT_E2E_FOUNDATION.md) | D | PlaywrightブラウザE2E基盤 | P1-005, P1-014, P1-018, P1-019 | 共通UIのブラウザ回帰を自動化する | Edge/Chromium系スモークと証拠保存が成功 | 完了 |
 | 23 | [P1-023](P1-023_UI_RUNTIME_COMPATIBILITY.md) | D | Edge・Chrome・WebView2実機互換確認 | P1-018, P1-020, P1-021, P1-022 | React条件付き採用のIME・DPI・実Runtime条件を確認する | 100～200% DPI、IME、主要操作に重大欠陥なし | 未着手 |
 | 24 | [P1-024](P1-024_INSTALLER_TECHNOLOGY_ADR.md) | E | 配布・インストーラー方式ADR | P1-012, P1-020 | Server/WPF別パッケージの実装方式を固定する | 権限、更新、削除、署名経路をADR化 | 未着手 |
 | 25 | [P1-025](P1-025_SERVER_INSTALLER_SERVICE_REGISTRATION.md) | E | Serverインストーラー・Service登録 | P1-005, P1-008, P1-011, P1-012, P1-024 | 管理者向けServerパッケージを作る | install/update/uninstallとService起動を実機確認 | 未着手 |

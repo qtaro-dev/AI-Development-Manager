@@ -26,6 +26,22 @@ function Invoke-RecordedCommand {
     }
 }
 
+function Invoke-RecordedCommandInDirectory {
+    param(
+        [Parameter(Mandatory)] [string]$FilePath,
+        [Parameter(Mandatory)] [string[]]$Arguments,
+        [Parameter(Mandatory)] [string]$WorkingDirectory,
+        [Parameter(Mandatory)] [string]$OutputFile
+    )
+
+    Push-Location $WorkingDirectory
+    try {
+        Invoke-RecordedCommand $FilePath $Arguments $OutputFile
+    } finally {
+        Pop-Location
+    }
+}
+
 function Assert-NoForbiddenTrackedFiles {
     $tracked = @(git -c "safe.directory=$repositoryRoot" ls-files)
     $tracked | Out-File (Join-Path $evidencePath 'tracked-files.txt') -Encoding utf8
@@ -142,6 +158,16 @@ if (Test-Path -LiteralPath $webPackage) {
     Invoke-RecordedCommand npm.cmd @('--prefix', 'src/Adm.Web', 'run', 'test', '--if-present') (Join-Path $evidencePath 'npm-test.log')
 } else {
     'src/Adm.Web/package.json is not present; Web product foundation is scheduled for P1-013.' | Out-File (Join-Path $evidencePath 'web-not-present.txt') -Encoding utf8
+}
+
+$e2ePackage = Join-Path $repositoryRoot 'tests/Adm.Web.E2E/package.json'
+if (Test-Path -LiteralPath $e2ePackage) {
+    $e2eDirectory = Join-Path $repositoryRoot 'tests/Adm.Web.E2E'
+    Invoke-RecordedCommandInDirectory npm.cmd @('ci') $e2eDirectory (Join-Path $evidencePath 'playwright-npm-ci.log')
+    Invoke-RecordedCommandInDirectory npm.cmd @('run', 'install:browsers') $e2eDirectory (Join-Path $evidencePath 'playwright-install.log')
+    Invoke-RecordedCommandInDirectory npm.cmd @('test') $e2eDirectory (Join-Path $evidencePath 'playwright-test.log')
+} else {
+    'tests/Adm.Web.E2E/package.json is not present; Web E2E is scheduled for P1-022.' | Out-File (Join-Path $evidencePath 'playwright-not-present.txt') -Encoding utf8
 }
 
 New-DependencyEvidence
