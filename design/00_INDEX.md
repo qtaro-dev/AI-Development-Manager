@@ -1,7 +1,7 @@
 # AI Development Manager 設計資料索引
 
-版: 0.9-p0-003-evaluation-baseline
-状態: P0-003完了
+版: 1.0-p0-004-markdown-corpus
+状態: P0-004完了
 基準日: 2026-08-02
 
 ## 目的
@@ -27,6 +27,7 @@
 - `05_OPEN_DECISIONS.md`: 追加判断事項と推奨初期値
 - `06_REPOSITORY_RULES.md`: リポジトリ構成、Build番号、品質ゲート、除外規則
 - `../poc/common/`: P0-003共通評価環境、ワークロード、結果テンプレート
+- `../poc/fixtures/`: P0-004 Markdown検証コーパスとmanifest
 - `../tickets/phase0/00_PHASE_0_TICKET_INDEX.md`: Phase 0詳細チケット一覧と依存関係
 
 ## 人向け概要

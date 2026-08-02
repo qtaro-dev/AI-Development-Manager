@@ -1,7 +1,7 @@
 # AI Development Manager 統合基本設計書
 
-版: 0.8-p0-003-evaluation-baseline
-状態: P0-003完了
+版: 0.9-p0-004-markdown-corpus
+状態: P0-004完了
 基準日: 2026-08-02
 
 ## 1. 目的と対象
@@ -202,6 +202,10 @@ MVP標準:
 
 `architecture`、`roadmap`、`changelog`、`release_note`は将来予約種別とする。
 
+### 5.4 検証コーパス
+
+P0-004の入力契約は`../poc/fixtures/manifest.yaml`とする。fixtureは実データを含まない合成Markdownで、正常系と異常系を分離し、各入力へ期待文書種別、警告、抽出値、SHA-256、文字コードを紐付ける。解析PoCは入力を書き換えず、manifestのハッシュ一致を開始条件とする。Front Matterなし、壊れたYAML、未知キー、旧schema、表列の不足・追加・巨大セル、UTF-8 BOM、Shift_JIS、欠落添付、登録ルート外の相対パスを最低限の異常系として扱う。
+
 ## 6. Ticket、TestCase、TestResult
 
 ### 6.1 Ticket
@@ -379,6 +383,7 @@ Phase 0で主要画面のワイヤーフレームを作成し、ユーザー承�
 
 - ドメイン・解析・パス検証の単体テスト
 - Markdownと`.adm-meta`のゴールデンファイルテスト
+- `poc/fixtures/manifest.yaml`に対するfixture存在・SHA-256・期待警告の検証
 - NTFSを使用した保存・競合・回復統合テスト
 - API契約テスト
 - 権限マトリクステスト

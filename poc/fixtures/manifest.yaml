@@ -1,0 +1,155 @@
+version: 1
+corpus_id: p0-004-markdown-corpus
+synthetic: true
+source_data: none
+generated_at: 2026-08-02
+hash_algorithm: SHA-256
+fixture_root: markdown
+fixtures:
+  - id: normal-ticket-basic
+    path: normal/ticket-basic.md
+    encoding: utf-8
+    expected_document_type: ticket
+    expected_warnings: []
+    expected_values:
+      ticket_id: P0-004
+      status: ready
+      schema_version: 1
+    sha256: 83eb78db7d876b41c3fa40eacbdf6bd628d2f4bb024e555b0fcb8f6d4a1d683b
+  - id: normal-test-case-table
+    path: normal/test-case-table.md
+    encoding: utf-8
+    expected_document_type: test_case
+    expected_warnings: []
+    expected_values:
+      test_case_id: TC-P004-001
+      table_columns: [item_id, category, content, steps, expected]
+    sha256: d78a4e417db0d318477661db5843d85d01ed08247dd282d9c27c94805f68ab7c
+  - id: normal-test-result
+    path: normal/test-result.md
+    encoding: utf-8
+    expected_document_type: test_result
+    expected_warnings: []
+    expected_values:
+      execution_id: EX-P004-001
+      status: passed
+    sha256: 997fe9b250b2f479aa89b7d3784da7d1d5cdcf8543723321f69fd3445ebf7bf5
+  - id: normal-design-note
+    path: normal/design-note.md
+    encoding: utf-8
+    expected_document_type: design
+    expected_warnings: []
+    expected_values:
+      status: draft
+    sha256: 0bad6c00797a2c599e1a21cd1efd55a546058b073931b5d56f81a7999dda968c
+  - id: normal-knowledge
+    path: normal/knowledge.md
+    encoding: utf-8
+    expected_document_type: knowledge
+    expected_warnings: []
+    expected_values:
+      status: published
+    sha256: 5c7419dd387eb574d1933c9b2f78c4e3cbd59019bc02c9082147c7fa6a7602b8
+  - id: normal-activity-log
+    path: normal/activity-log.md
+    encoding: utf-8
+    expected_document_type: activity_log
+    expected_warnings: []
+    expected_values:
+      status: recorded
+    sha256: 00523edc7bca4efa8d797a288b6fa98ff9cbf07fcd40fae6e086acc3bff306f8
+  - id: normal-adr
+    path: normal/adr.md
+    encoding: utf-8
+    expected_document_type: adr
+    expected_warnings: []
+    expected_values:
+      adr_id: ADR-P004-001
+      status: accepted
+    sha256: 08f60bf5917ad84bb94d426bc01f571e990b9e1dce6faa90ce732a5f1671534a
+  - id: edge-no-front-matter
+    path: edge/no-front-matter.md
+    encoding: utf-8
+    expected_document_type: unknown
+    expected_warnings: [front_matter_missing]
+    expected_values: {}
+    sha256: 598248928ee10c23be5650b5a78dae914509e88dd0685b7c6714931cdfad45c0
+  - id: edge-broken-yaml
+    path: edge/broken-yaml.md
+    encoding: utf-8
+    expected_document_type: unknown
+    expected_warnings: [front_matter_invalid_yaml]
+    expected_values: {}
+    sha256: 87353fc787453d0ed65502de413a5483aa3b252af959e44f15e79a7763272dd7
+  - id: edge-unknown-front-matter-key
+    path: edge/unknown-front-matter-key.md
+    encoding: utf-8
+    expected_document_type: note
+    expected_warnings: [front_matter_unknown_key]
+    expected_values:
+      schema_version: 1
+    sha256: c2f759103e9cad1875086bb902ef8cdae13f3463597608717130ceec5828077f
+  - id: edge-old-schema
+    path: edge/old-schema.md
+    encoding: utf-8
+    expected_document_type: ticket
+    expected_warnings: [schema_version_old]
+    expected_values:
+      schema_version: 0
+    sha256: 9dea210dbc9af9dfc927254bf0eed3952ea7fe53c2b7f54b29587eeb9511bff5
+  - id: edge-table-missing-column
+    path: edge/table-missing-column.md
+    encoding: utf-8
+    expected_document_type: test_case
+    expected_warnings: ['table_column_missing:steps']
+    expected_values:
+      table_columns: [item_id, content, expected]
+    sha256: 875f14332ff2d5416520b01fc6dee7cfeac030f89d868dfaf1956a8a8bd082a9
+  - id: edge-table-extra-column
+    path: edge/table-extra-column.md
+    encoding: utf-8
+    expected_document_type: test_case
+    expected_warnings: ['table_column_unknown:owner', 'table_column_unknown:extra_note']
+    expected_values:
+      table_columns: [item_id, category, content, steps, expected, owner, extra_note]
+    sha256: 2c2e2ad7c2fa66de11675031181d9cd0a9ec2e3e7d89cbc3033c47c62d8346bd
+  - id: edge-table-large-cell
+    path: edge/table-large-cell.md
+    encoding: utf-8
+    expected_document_type: test_case
+    expected_warnings: [table_cell_large]
+    expected_values:
+      test_case_id: TC-P004-LARGE
+    sha256: e32fede42cea32538d915a5c319050b136804de419d822b860e9546cb3d002b8
+  - id: edge-missing-attachment
+    path: edge/missing-attachment.md
+    encoding: utf-8
+    expected_document_type: ticket
+    expected_warnings: [attachment_missing]
+    expected_values:
+      attachment: attachments/not-present.png
+    sha256: 85cf0d08652b643cfcca5c798f20cf565253e6df34dc5abda8d780fa381a67ea
+  - id: edge-dangerous-relative-path
+    path: edge/dangerous-relative-path.md
+    encoding: utf-8
+    expected_document_type: note
+    expected_warnings: [relative_path_outside_root]
+    expected_values:
+      link: ../../outside-synthetic-file.txt
+    sha256: 02997a3fb5ac03ef616a1339661384967776045998f91ae413bff1f2b917dd0e
+  - id: edge-encoding-utf8-bom
+    path: edge/encoding-utf8-bom.md
+    encoding: utf-8-bom
+    expected_document_type: note
+    expected_warnings: []
+    expected_values:
+      schema_version: 1
+    sha256: 4479fe80e112b397604b8fc2cd58fc253f9cfc7afe86002c090c1293c9a5ae7b
+  - id: edge-encoding-shift-jis
+    path: edge/encoding-shift-jis.md
+    encoding: shift_jis
+    expected_document_type: note
+    expected_warnings: [encoding_non_utf8]
+    expected_values:
+      schema_version: 1
+    sha256: dc1c3029e34c92a3607c3c52fdd8d2b1520029998fd867a51a6fe489724c9218

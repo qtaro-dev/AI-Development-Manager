@@ -1,7 +1,7 @@
 # Phase 0 技術PoC計画
 
-版: 0.7-p0-003-evaluation-baseline
-状態: P0-003完了
+版: 0.8-p0-004-markdown-corpus
+状態: P0-004完了
 
 > この文書はPoCの高水準計画である。実施番号、依存関係、受け入れ条件は`../tickets/phase0/00_PHASE_0_TICKET_INDEX.md`とP0-001～P0-023の個別チケットを正とする。以下の旧P0-01～P0-12番号はテーマ整理用であり、実施チケット番号ではない。
 
@@ -20,6 +20,10 @@
 成果物は`../poc/common/environment.md`、`../poc/common/workload-profile.md`、`../poc/common/result-template.md`とする。基準PC、Windows 11 64-bit、96 DPI、Edge／Chrome／WebView2、10,000文書、添付分布、5人＋AI 2接続、ウォームアップ、3回以上の測定、最近順位法によるp95、単位、合否、ログ保存先を固定する。
 
 P0-003の完了判定は、後続PoCが同じテンプレートで再現可能に結果を記録できることとし、製品性能の合格判定は各後続PoCで行う。
+
+### P0-004 Markdown検証コーパス
+
+`poc/fixtures/markdown`へ正常系7種と異常系11種の合成fixtureを配置し、`manifest.yaml`へ期待結果とSHA-256を記録した。P0-005以降はmanifestの全fixture存在、ハッシュ一致、期待警告の機械検証を先に実行する。実データ、1万文書性能データ、製品コードは含めない。
 
 ### P0-01 評価環境とサンプルコーパス
 
