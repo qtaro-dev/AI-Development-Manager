@@ -284,6 +284,10 @@ Phase 0で内容ハッシュによる重複検知、参照管理、NTFS機能の
 
 P0-025でunicode61 external-content、パス・ファイル名・見出し限定trigram、全本文trigramを比較した。全構成で更新・改名・削除・再構築と整合性検査に合格したが、unicode61の標準日本語検索p95は1,063.640ms、全本文trigramは2,827.656msで暫定基準を満たさなかった。またunicode61は一部日本語中ヒット語の正解集合を満たさなかった。現時点ではunicode61を基礎候補、限定trigramをフォールバック候補として保持し、正式採用はP0-023およびP0-026の結果後に判断する。
 
+## ADR-018 SQLite依存の明示固定候補
+
+P0-026で、現行`Microsoft.Data.Sqlite 10.0.10`の推移依存`SQLitePCLRaw.lib.e_sqlite3 2.1.11`がNU1903 Highとなることを確認した。`Microsoft.Data.Sqlite.Core 10.0.10`と`SQLitePCLRaw.bundle_e_sqlite3 3.0.3`を明示参照するCandidateは、NU1903なし、SQLite 3.50.4、FTS5・unicode61・trigram回帰合格、win-x64 native DLLロード合格だった。Candidateを第一採用候補として保留し、依存安全性・配布・正式採用はP0-023で確定する。
+
 ## ADR-016 走査パイプラインの工程分解と増分差分
 
 ### 決定

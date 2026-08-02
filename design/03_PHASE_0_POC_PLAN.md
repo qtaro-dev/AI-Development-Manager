@@ -295,3 +295,7 @@ P0-11完了とユーザー承認。P0-12はサンプル提供時期により並�
 ### P0-025 FTS索引・検索最適化PoC（実施結果）
 
 `poc/fts-search-optimization`で10,000件、999,740,243 bytesの合成コーパスを比較した。SDK 10.0.302、Runtime 10.0.10を記録した。unicode61 external-contentはDB 1,120,768,000 bytes、標準日本語p95 1,063.640ms、限定trigramはDB 1,121,992,704 bytes、全本文trigramはDB 1,557,057,536 bytes・標準日本語p95 2,827.656msだった。更新・改名・削除・再構築・integrity-checkは合格したが、性能と一部日本語正解集合が未達のため正式採用は保留し、P0-023でP0-026の結果と合わせて判断する。
+
+### P0-026 SQLite依存更新・安全性PoC（実施結果）
+
+`poc/sqlite-dependency-security`でBaselineとCandidateを比較した。SDK 10.0.302、Runtime 10.0.10を使用し、BaselineはSQLite 3.49.1、`SQLitePCLRaw.lib.e_sqlite3 2.1.11`、NU1903 Highを再現した。Candidateは`Microsoft.Data.Sqlite.Core 10.0.10`と`SQLitePCLRaw.bundle_e_sqlite3 3.0.3`でSQLite 3.50.4、NU1903なし、FTS5・unicode61・trigram、win-x64 native DLLロード、Framework-dependent／win-x64 publishに合格した。Candidateを正式採用候補として保持し、P0-023で判断する。

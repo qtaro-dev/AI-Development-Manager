@@ -1,7 +1,7 @@
 # AI Development Manager Phase 0 詳細チケット一覧
 
-版: 1.26
-状態: P0-025測定完了、正式採用はP0-023
+版: 1.27
+状態: P0-026測定完了、正式採用候補はP0-023判断
 対象: Phase 0のみ
 
 ## 1. 方針
@@ -41,6 +41,7 @@
 | 23 | [P0-023](P0-023_PHASE0_DESIGN_GATE.md) | Phase 0結果統合・設計確定ゲート | P0-001～P0-022 | 未着手 |
 | 23 | [P0-024](P0-024_SCAN_PIPELINE_PERFORMANCE_POC.md) | 走査パイプライン性能PoC | P0-003, P0-007, P0-011, P0-013, P0-015 | 測定完了（正式採用はP0-023） |
 | 24 | [P0-025](P0-025_FTS_SEARCH_OPTIMIZATION_POC.md) | FTS索引・検索最適化PoC | P0-005, P0-013, P0-014, P0-015 | 測定完了（正式採用保留） |
+| 25 | [P0-026](P0-026_SQLITE_DEPENDENCY_SECURITY_POC.md) | SQLite依存更新・安全性PoC | P0-003, P0-014, P0-015 | 測定完了（候補構成を正式採用候補として保留） |
 
 ## 3. 依存関係
 

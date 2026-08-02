@@ -1,7 +1,7 @@
 # SQLite FTS5日本語検索契約
 
 版: 0.2-p0-025
-状態: P0-025測定完了・正式採用保留
+状態: P0-026依存安全性測定完了・正式採用はP0-023
 基準日: 2026-08-02
 
 ## 候補比較
@@ -27,6 +27,10 @@
 - `SQLitePCLRaw.lib.e_sqlite3 2.1.11`のNU1903脆弱性対応。
 - 1万文書での容量・検索・再構築性能（P0-015）。
 - 製品コードへの正式採用（P0-023）。
+
+## P0-026依存安全性結果
+
+Baselineの`Microsoft.Data.Sqlite 10.0.10`は推移依存`SQLitePCLRaw.lib.e_sqlite3 2.1.11`とNU1903 Highを再現し、実SQLiteは3.49.1だった。Candidateの`Microsoft.Data.Sqlite.Core 10.0.10`と`SQLitePCLRaw.bundle_e_sqlite3 3.0.3`はNU1903なし、実SQLite 3.50.4、FTS5・unicode61・trigram合格、win-x64 publishのx64 native DLL確認に合格した。候補構成を正式採用候補として保持し、P0-023で判断する。
 
 ## P0-025性能・容量結果
 

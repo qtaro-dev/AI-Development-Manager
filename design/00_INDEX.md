@@ -46,9 +46,10 @@
 - `22_LARGE_ATTACHMENT_CONTRACT.md`: P0-019 大容量添付アップロード・閲覧契約と結果
 - `23_BACKUP_DEDUP_CONTRACT.md`: P0-020 バックアップ重複抑制・復元契約と結果
 - `24_UI_WIREFRAMES_CONTRACT.md`: P0-021 UIワイヤーフレーム・基準契約
-- `27_FTS_SEARCH_OPTIMIZATION_CONTRACT.md`: P0-025 FTS索引・検索最適化契約
 - `25_DEVTICKETMANAGER_COMPAT_CONTRACT.md`: P0-022 DevTicketManager互換・移行境界契約
 - `26_SCAN_PIPELINE_PERFORMANCE_CONTRACT.md`: P0-024走査工程分解・増分差分性能契約
+- `27_FTS_SEARCH_OPTIMIZATION_CONTRACT.md`: P0-025 FTS索引・検索最適化契約
+- `28_SQLITE_DEPENDENCY_SECURITY_CONTRACT.md`: P0-026 SQLite依存更新・安全性契約
 - `ui/screen-inventory.md`: P0-021 画面一覧・責務
 - `ui/design-tokens.md`: P0-021 デザイントークン
 - `ui/ui-regression-checklist.md`: P0-021 UI回帰基準
