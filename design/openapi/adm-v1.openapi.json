@@ -1,0 +1,73 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Adm.Server.Host | v1",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/v1/version": {
+      "get": {
+        "tags": [
+          "System"
+        ],
+        "summary": "Returns the API version and protocol readiness.",
+        "operationId": "GetApiVersion",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiVersionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ApiStatus": {
+        "enum": [
+          "ready"
+        ]
+      },
+      "ApiVersionResponse": {
+        "required": [
+          "apiVersion",
+          "contractVersion",
+          "serverTimeUtc",
+          "status",
+          "resourceId"
+        ],
+        "type": "object",
+        "properties": {
+          "apiVersion": {
+            "type": "string"
+          },
+          "contractVersion": {
+            "type": "string"
+          },
+          "serverTimeUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ApiStatus"
+          },
+          "resourceId": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "System"
+    }
+  ]
+}

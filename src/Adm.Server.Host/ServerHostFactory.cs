@@ -1,5 +1,8 @@
 using System.Net;
 using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Adm.Server.Host.Api;
 using Adm.Server.Host.Configuration;
 using Adm.Server.Host.Logging;
 using Microsoft.AspNetCore.Builder;
@@ -20,6 +23,13 @@ public static class ServerHostFactory
 
         var builder = WebApplication.CreateBuilder(args ?? Array.Empty<string>());
         builder.Services.AddServerConfiguration(builder.Configuration);
+        builder.Services.AddOpenApi("v1", options => options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
+        builder.Services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+        });
         builder.Logging.ClearProviders();
         builder.Logging.SetMinimumLevel(LogLevel.Information);
         builder.Logging.AddProvider(new AdmJsonLoggerProvider());
@@ -31,11 +41,13 @@ public static class ServerHostFactory
 
         var app = builder.Build();
         app.UseAdmRequestTracing();
+        app.MapOpenApi("/openapi/{documentName}.json");
+        app.MapAdmApiV1();
         app.MapGet("/", () => Results.Ok(new
         {
             service = "AI Development Manager Server",
             status = "running"
-        }));
+        })).ExcludeFromDescription();
 
         var buildVersion = typeof(ServerHostFactory).Assembly
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion

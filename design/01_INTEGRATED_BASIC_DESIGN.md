@@ -325,6 +325,9 @@ P0-005で確定した解析契約は`07_MARKDOWN_PARSING_CONTRACT.md`を正と�
 
 - ベースパスは`/api/v1`とする。
 - OpenAPIを契約正本とする。
+- P1-009では`/api/v1/version`だけを基盤確認用として公開し、実行時OpenAPIは`/openapi/v1.json`で取得する。静的正本は`design/openapi/adm-v1.openapi.json`とし、CIで必須操作の削除を検査する。
+- JSONはcamelCase、UTCのISO 8601時刻、enum文字列、null省略を共通規則とする。将来のULIDは文字列として予約する。
+- P1-009では認証、Problem Details、業務APIを公開しない。APIルートとWeb UIルートは分離する。
 - 一覧APIはページング、並べ替え、絞り込みを持つ。
 - 更新APIは`If-Match`を必須とする。
 - 競合はHTTP 409とし、保存対象、クライアント版、Server最新版、差分取得先を返す。

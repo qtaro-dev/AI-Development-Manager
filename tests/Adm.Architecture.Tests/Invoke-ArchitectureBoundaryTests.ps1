@@ -39,6 +39,10 @@ function Get-ProjectReferences {
     }
 
     foreach ($itemGroup in $itemGroups) {
+        if ($itemGroup.PSObject.Properties.Name -notcontains 'ProjectReference') {
+            continue
+        }
+
         foreach ($reference in @($itemGroup.ProjectReference)) {
         if ($null -eq $reference) {
             continue

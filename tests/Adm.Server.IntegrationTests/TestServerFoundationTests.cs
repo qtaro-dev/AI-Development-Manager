@@ -57,6 +57,69 @@ public sealed class TestServerFoundationTests
     }
 
     [Fact]
+    public async Task ApiV1VersionUsesThePublishedJsonContract()
+    {
+        await using var app = ServerHostFactory.Create(port: 0);
+        await app.StartAsync();
+        var uri = new Uri(app.Urls.Single());
+        using var client = new HttpClient { BaseAddress = uri };
+
+        using var response = await client.GetAsync("/api/v1/version");
+        using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        var json = document.RootElement;
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("v1", json.GetProperty("apiVersion").GetString());
+        Assert.Equal("1.0", json.GetProperty("contractVersion").GetString());
+        Assert.Equal("ready", json.GetProperty("status").GetString());
+        Assert.Equal(JsonValueKind.String, json.GetProperty("serverTimeUtc").ValueKind);
+        Assert.DoesNotContain("resourceId", json.EnumerateObject().Select(property => property.Name));
+        Assert.Equal(TimeSpan.Zero, DateTimeOffset.Parse(json.GetProperty("serverTimeUtc").GetString()!, CultureInfo.InvariantCulture).Offset);
+        Assert.Equal("/api/v1/version", response.RequestMessage?.RequestUri?.AbsolutePath);
+
+        await app.StopAsync();
+    }
+
+    [Fact]
+    public async Task OpenApiDocumentDescribesOnlyTheVersionFoundationEndpoint()
+    {
+        await using var app = ServerHostFactory.Create(port: 0);
+        await app.StartAsync();
+        var uri = new Uri(app.Urls.Single());
+        using var client = new HttpClient { BaseAddress = uri };
+
+        using var response = await client.GetAsync("/openapi/v1.json");
+        using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        var root = document.RootElement;
+        var paths = root.GetProperty("paths");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.StartsWith("3.", root.GetProperty("openapi").GetString(), StringComparison.Ordinal);
+        Assert.True(paths.TryGetProperty("/api/v1/version", out var versionPath));
+        Assert.True(versionPath.TryGetProperty("get", out _));
+        Assert.Single(paths.EnumerateObject());
+
+        await app.StopAsync();
+    }
+
+    [Fact]
+    public async Task ApiRouteIsSeparatedFromTheRootRoute()
+    {
+        await using var app = ServerHostFactory.Create(port: 0);
+        await app.StartAsync();
+        var uri = new Uri(app.Urls.Single());
+        using var client = new HttpClient { BaseAddress = uri };
+
+        using var rootResponse = await client.GetAsync("/");
+        using var unknownApiResponse = await client.GetAsync("/api/v1/unknown");
+
+        Assert.Equal(HttpStatusCode.OK, rootResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, unknownApiResponse.StatusCode);
+
+        await app.StopAsync();
+    }
+
+    [Fact]
     public async Task StartingTwoHostsOnTheSamePortFailsExplicitly()
     {
         using var listener = new TcpListener(IPAddress.Loopback, 0);

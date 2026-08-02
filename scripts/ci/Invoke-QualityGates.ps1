@@ -113,6 +113,7 @@ Invoke-RecordedCommand dotnet @('test', 'AIDevelopmentManager.sln', '--configura
 Invoke-RecordedCommand dotnet @('test', 'AIDevelopmentManager.sln', '--configuration', 'Release', '--no-build', '--no-restore', '--logger', 'trx', '--results-directory', (Join-Path $evidencePath 'test-results')) (Join-Path $evidencePath 'dotnet-test-release.log')
 Invoke-RecordedCommand pwsh @('-NoProfile', '-File', '.\tests\Adm.Architecture.Tests\Invoke-ArchitectureBoundaryTests.ps1', '-Configuration', 'Debug') (Join-Path $evidencePath 'architecture-debug.log')
 Invoke-RecordedCommand pwsh @('-NoProfile', '-File', '.\tests\Adm.Architecture.Tests\Invoke-ArchitectureBoundaryTests.ps1', '-Configuration', 'Release') (Join-Path $evidencePath 'architecture-release.log')
+Invoke-RecordedCommand pwsh @('-NoProfile', '-File', '.\scripts\api\Validate-OpenApiContract.ps1') (Join-Path $evidencePath 'openapi-contract.log')
 
 $auditFiles = @()
 foreach ($projectFile in @(Get-ChildItem -Path (Join-Path $repositoryRoot 'src'), (Join-Path $repositoryRoot 'tests') -Filter '*.csproj' -File -Recurse | Where-Object { $_.FullName -notmatch '[\\/]fixtures[\\/]' })) {
