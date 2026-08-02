@@ -33,3 +33,10 @@
 - role／label、Tab／Enter／Escape、loading／error、ARIA、API fetch境界をDOM単体テストで検査する。
 - fake timerを含む非同期テストは、実時間待ちに依存せず再現可能にする。
 - 本項目はDOM単体テストの基盤であり、実ブラウザ、Playwright、WebView2の確認を代替しない。
+
+## P1-015 文言検査
+
+- `npm run messages:check`で表示文言の辞書参照、未知キー、未使用キーを検査する。
+- JSXへ日本語の利用者向け文言を直接記述せず、`src/messages/catalog.ts`のキーを利用する。
+- 内部値やAPI名を表示せず、「何が起きたか」「次の操作」を一般語で表現する。
+- 英語UI、実行時の言語切替、業務画面固有の全メッセージは対象外とする。

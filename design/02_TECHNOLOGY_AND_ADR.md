@@ -270,6 +270,10 @@ Markdown、テスト結果、添付、状態の操作はすべてAPIを経由す
 
 `Adm.Infrastructure.Windows.Hosting.WindowsServiceHostAdapter`へWindows Service lifetime、Service名、30秒の停止タイムアウト、`console`／`manual`／`service`／`tray`の起動モード解決を隔離した。`Adm.Server.Host.Program`は同じ`ServerHostFactory`へAdapter設定だけを注入し、Health・API・業務ロジックの起動方式別複製を行わない。Service実登録、権限設定、Firewall、インストーラー、トレイUIは対象外とした。
 
+### P1-015実装結果
+
+`src/Adm.Web/src/messages/catalog.ts`を日本語表示文言の単一参照元とし、型付き`message` APIでキーと引数を検査する。共通状態、接続、保存、取消、再試行、競合、ARIA向け文言を登録し、内部値`blocked`は「ほかの問題で試せません。」へ分離した。`Validate-WebMessages.mjs`をCI品質ゲートへ追加し、未知キー、未使用キー、JSX内の日本語直書きを検出する。英語UI、実行時言語切替、業務画面固有文言は対象外とした。
+
 ### P1-014実装結果
 
 `src/Adm.Web`へVitest、jsdom、Testing Library、user-event、V8 coverageを固定依存で追加した。共通`renderWithProviders` fixtureは後続のRouter／Theme／辞書Providerを差し込める境界を持ち、現時点では透過wrapperとして動作する。Appの表示、role／label、Tab／Enter／Escape、loading／error、fake timer、fetch mock境界、ARIA検査を利用者視点のDOMテストで確認する。Playwright、WebView2、業務画面は対象外とした。

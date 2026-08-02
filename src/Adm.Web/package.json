@@ -10,6 +10,7 @@
     "format:check": "prettier --check .",
     "build": "tsc -b && vite build",
     "verify:bundle": "node ../../scripts/web/Validate-WebBundle.mjs",
+    "messages:check": "node ../../scripts/web/Validate-WebMessages.mjs",
     "test": "vitest run --coverage",
     "preview": "vite preview --host 127.0.0.1"
   },
