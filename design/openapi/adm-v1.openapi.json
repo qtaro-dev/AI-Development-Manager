@@ -5,6 +5,32 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/health/live": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "operationId": "GetLiveness",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "operationId": "GetReadiness",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/v1/version": {
       "get": {
         "tags": [
@@ -138,6 +164,9 @@
     }
   },
   "tags": [
+    {
+      "name": "Health"
+    },
     {
       "name": "System"
     }

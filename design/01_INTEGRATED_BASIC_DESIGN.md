@@ -329,6 +329,7 @@ P0-005で確定した解析契約は`07_MARKDOWN_PARSING_CONTRACT.md`を正と�
 - JSONはcamelCase、UTCのISO 8601時刻、enum文字列、null省略を共通規則とする。将来のULIDは文字列として予約する。
 - P1-009では認証、Problem Details、業務APIを公開しない。APIルートとWeb UIルートは分離する。
 - P1-010ではAPIエラーを`application/problem+json`で返し、安定した内部コード、利用者向け文言キー、入力保持・再試行可否、次の操作、`X-Request-Id`由来の追跡IDを拡張項目として持たせる。例外本文、Stack Trace、秘密値は返さない。
+- P1-011では`/health/live`と`/health/ready`を分離し、livenessはプロセス応答性、readinessは起動完了と登録Contributorの準備状態だけを返す。Build、起動モード、UTC時刻、公開可能な失敗コード以外の構成・パス・例外情報は返さない。
 - 一覧APIはページング、並べ替え、絞り込みを持つ。
 - 更新APIは`If-Match`を必須とする。
 - 競合はHTTP 409とし、保存対象、クライアント版、Server最新版、差分取得先を返す。

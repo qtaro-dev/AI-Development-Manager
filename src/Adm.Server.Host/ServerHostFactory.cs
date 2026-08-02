@@ -5,6 +5,7 @@ using System.Text.Json.Serialization;
 using Adm.Server.Host.Api;
 using Adm.Server.Host.Configuration;
 using Adm.Server.Host.Errors;
+using Adm.Server.Host.Health;
 using Adm.Server.Host.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -24,6 +25,7 @@ public static class ServerHostFactory
 
         var builder = WebApplication.CreateBuilder(args ?? Array.Empty<string>());
         builder.Services.AddServerConfiguration(builder.Configuration);
+        builder.Services.AddAdmHealth();
         builder.Services.AddOpenApi("v1", options => options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
         builder.Services.ConfigureHttpJsonOptions(options =>
         {
@@ -54,6 +56,7 @@ public static class ServerHostFactory
         var buildVersion = typeof(ServerHostFactory).Assembly
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
             ?? "unknown";
+        app.MapAdmHealthEndpoints(startupMode, buildVersion);
         var lifecycleLogger = app.Services
             .GetRequiredService<ILoggerFactory>()
             .CreateLogger("Adm.Server.Host.Lifecycle");

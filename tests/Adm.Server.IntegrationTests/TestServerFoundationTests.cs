@@ -3,9 +3,11 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text.Json;
 using Adm.Application.Errors;
+using Adm.Application.Health;
 using Adm.Server.Host;
 using Adm.Server.Host.Configuration;
 using Adm.Server.Host.Errors;
+using Adm.Server.Host.Health;
 using Adm.Server.Host.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -83,6 +85,60 @@ public sealed class TestServerFoundationTests
     }
 
     [Fact]
+    public async Task HealthEndpointsSeparateLivenessAndReadiness()
+    {
+        await using var app = ServerHostFactory.Create(port: 0, startupMode: "test");
+        await app.StartAsync();
+        var uri = new Uri(app.Urls.Single());
+        using var client = new HttpClient { BaseAddress = uri };
+
+        using var liveResponse = await client.GetAsync("/health/live");
+        using var liveDocument = JsonDocument.Parse(await liveResponse.Content.ReadAsStringAsync());
+        using var readyResponse = await client.GetAsync("/health/ready");
+        using var readyDocument = JsonDocument.Parse(await readyResponse.Content.ReadAsStringAsync());
+
+        Assert.Equal(HttpStatusCode.OK, liveResponse.StatusCode);
+        Assert.Equal("healthy", liveDocument.RootElement.GetProperty("status").GetString());
+        Assert.Equal("test", liveDocument.RootElement.GetProperty("startupMode").GetString());
+        Assert.Equal(HttpStatusCode.OK, readyResponse.StatusCode);
+        Assert.Equal("ready", readyDocument.RootElement.GetProperty("status").GetString());
+        Assert.Empty(readyDocument.RootElement.GetProperty("failedContributors").EnumerateArray());
+        Assert.DoesNotContain("Server__", await readyResponse.Content.ReadAsStringAsync(), StringComparison.Ordinal);
+
+        await app.StopAsync();
+    }
+
+    [Fact]
+    public async Task FailedHealthContributorFailsReadinessWithoutFailingLiveness()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Logging.ClearProviders();
+        builder.Services.AddAdmHealth();
+        builder.Services.AddSingleton<IHealthContributor>(new FailingHealthContributor());
+        var app = builder.Build();
+        app.UseAdmErrorHandling();
+        app.UseAdmRequestTracing();
+        app.MapAdmHealthEndpoints("test", "build-test");
+
+        await app.StartAsync();
+        using var client = app.GetTestClient();
+        using var liveResponse = await client.GetAsync("/health/live");
+        using var readyResponse = await client.GetAsync("/health/ready");
+        using var readyDocument = JsonDocument.Parse(await readyResponse.Content.ReadAsStringAsync());
+        var failure = readyDocument.RootElement.GetProperty("failedContributors").EnumerateArray().Single();
+
+        Assert.Equal(HttpStatusCode.OK, liveResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, readyResponse.StatusCode);
+        Assert.Equal("not_ready", readyDocument.RootElement.GetProperty("status").GetString());
+        Assert.Equal("test-dependency", failure.GetProperty("name").GetString());
+        Assert.Equal("dependency_unavailable", failure.GetProperty("code").GetString());
+        Assert.DoesNotContain("secret-from-health", await readyResponse.Content.ReadAsStringAsync(), StringComparison.Ordinal);
+
+        await app.StopAsync();
+    }
+
+    [Fact]
     public async Task OpenApiDocumentDescribesOnlyTheVersionFoundationEndpoint()
     {
         await using var app = ServerHostFactory.Create(port: 0);
@@ -99,7 +155,9 @@ public sealed class TestServerFoundationTests
         Assert.StartsWith("3.", root.GetProperty("openapi").GetString(), StringComparison.Ordinal);
         Assert.True(paths.TryGetProperty("/api/v1/version", out var versionPath));
         Assert.True(versionPath.TryGetProperty("get", out _));
-        Assert.Single(paths.EnumerateObject());
+        Assert.True(paths.TryGetProperty("/health/live", out _));
+        Assert.True(paths.TryGetProperty("/health/ready", out _));
+        Assert.Collection(paths.EnumerateObject(), _ => { }, _ => { }, _ => { });
 
         await app.StopAsync();
     }
@@ -166,6 +224,14 @@ public sealed class TestServerFoundationTests
     private static void ThrowValidation() => throw new AdmValidationException();
 
     private static void ThrowUnexpected() => throw new InvalidOperationException("secret-from-exception");
+
+    private sealed class FailingHealthContributor : IHealthContributor
+    {
+        public string Name => "test-dependency";
+
+        public ValueTask<HealthContributorResult> CheckAsync(CancellationToken cancellationToken) =>
+            throw new InvalidOperationException("secret-from-health");
+    }
 
     [Fact]
     public async Task StartingTwoHostsOnTheSamePortFailsExplicitly()

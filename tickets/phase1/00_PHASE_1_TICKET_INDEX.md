@@ -27,7 +27,7 @@
 | 8 | [P1-008](P1-008_STRUCTURED_LOGGING_TRACING.md) | B | 構造化ログ・追跡ID基盤 | P1-006, P1-007 | JSONログと要求追跡を共通化する | 全要求を追跡でき秘密情報がログへ出ない | 完了 |
 | 9 | [P1-009](P1-009_API_V1_OPENAPI.md) | B | API v1・OpenAPI基盤 | P1-006 | `/api/v1`とOpenAPIを契約正本にする | 契約生成・検証が自動化され業務APIは未実装 | 完了 |
 | 10 | [P1-010](P1-010_PROBLEM_DETAILS_ERROR_CONTRACT.md) | B | 共通エラー応答 | P1-008, P1-009 | Problem Detailsと利用者向け案内を統一する | 追跡ID・次の操作を含み内部例外を露出しない | 完了 |
-| 11 | [P1-011](P1-011_HEALTH_READINESS.md) | B | ヘルス・Ready状態基盤 | P1-006, P1-007 | 稼働確認と依存準備状態を分離する | live/readinessが明確で秘密情報を返さない | 未着手 |
+| 11 | [P1-011](P1-011_HEALTH_READINESS.md) | B | ヘルス・Ready状態基盤 | P1-006, P1-007 | 稼働確認と依存準備状態を分離する | live/readinessが明確で秘密情報を返さない | 完了 |
 | 12 | [P1-012](P1-012_WINDOWS_SERVICE_HOST_ADAPTER.md) | B | Windows Service Host Adapter | P1-006, P1-011 | 同一HostをService・console・manual・tray境界から利用する | Windows Service実登録と停止、Core非依存を確認 | 未着手 |
 | 13 | [P1-013](P1-013_REACT_TYPESCRIPT_VITE_FOUNDATION.md) | C | React・TypeScript・Vite製品基盤 | P1-001, P1-002 | PoCから分離した共通Web UIを作る | lockfile固定、Build成功、依存監査記録 | 未着手 |
 | 14 | [P1-014](P1-014_WEB_UNIT_TEST_FOUNDATION.md) | C | Web単体テスト基盤 | P1-013 | VitestとTesting Libraryを標準化する | DOM・操作・アクセシビリティのサンプルテスト成功 | 未着手 |
