@@ -80,6 +80,12 @@ artifacts/packages/<version>/<build>/
 - 両チケットは実機またはクリーンVMで、通常・silent・失敗・中断・ロールバックを確認する。
 - P1-026でper-user MSIのOS制約が完了条件を満たさない場合、実装を拡張せずP1-024 ADRの再審議事項として記録する。
 
+## 7a. P1-025実装結果
+
+`installer/server`へWiX v4 MSIプロジェクトを追加し、Server publish成果物をper-machineパッケージへまとめる構成を実装した。`AIDevelopmentManagerServer`をLocalService・自動開始で登録し、ServerのService操作をServer MSIへ限定した。Config／Logs／DataはProgramData配下へ分離し、アンインストール時に無条件削除しない。
+
+P1-025の生成手順とService運用契約は`design/47_SERVER_INSTALLER_SERVICE_CONTRACT.md`に記録した。WPF Client、WebView2 Runtime、Firewall、HTTPS証明書、LAN公開は対象外であり、P1-026以降へ着手していない。
+
 ## 8. 参照
 
 - [Create a Windows Service installer - .NET](https://learn.microsoft.com/en-us/dotnet/core/extensions/windows-service-with-installer)

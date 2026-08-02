@@ -1,0 +1,15 @@
+<Project Sdk="WixToolset.Sdk/4.0.6">
+  <PropertyGroup>
+    <OutputType>Package</OutputType>
+    <Platform>x64</Platform>
+    <DebugType>none</DebugType>
+    <OutputName>AI-Development-Manager-Server-$(ProductVersion)-$(BuildNumber)-x64</OutputName>
+    <ServerPublishDir Condition="'$(ServerPublishDir)' == ''">$(MSBuildThisFileDirectory)..\..\artifacts\package-input\server</ServerPublishDir>
+    <GeneratedServerFiles Condition="'$(GeneratedServerFiles)' == ''">$(MSBuildThisFileDirectory)..\..\artifacts\installer-generated\ServerFiles.wxs</GeneratedServerFiles>
+    <DefineConstants>ProductVersion=$(ProductVersion);BuildNumber=$(BuildNumber);ServerPublishDir=$(ServerPublishDir)</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(GeneratedServerFiles)" Condition="Exists('$(GeneratedServerFiles)')" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,73 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package
+      Name="AI Development Manager Server"
+      Manufacturer="qtaro-dev"
+      Version="$(var.ProductVersion)"
+      UpgradeCode="7C9C40F9-A40E-4E07-B4E9-8B5B41CE0D2A">
+    <SummaryInformation Description="AI Development Manager Server" />
+    <MajorUpgrade DowngradeErrorMessage="新しいバージョンが既にインストールされています。" />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Feature Id="MainFeature" Title="AI Development Manager Server" Level="1">
+      <ComponentGroupRef Id="ServerFiles" />
+      <ComponentRef Id="ServerService" />
+      <ComponentRef Id="ServerConfigFolder" />
+      <ComponentRef Id="ServerLogFolder" />
+      <ComponentRef Id="ServerDataFolder" />
+    </Feature>
+
+  </Package>
+
+  <Fragment>
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="AI Development Manager">
+        <Directory Id="SERVERFOLDER" Name="Server" />
+      </Directory>
+    </StandardDirectory>
+
+    <StandardDirectory Id="CommonAppDataFolder">
+      <Directory Id="COMMONAPPDATAFOLDER" Name="AI Development Manager">
+        <Directory Id="SERVERDATAROOT" Name="Server">
+          <Directory Id="SERVERCONFIGFOLDER" Name="Config" />
+          <Directory Id="SERVERLOGFOLDER" Name="Logs" />
+          <Directory Id="SERVERDATAFOLDER" Name="Data" />
+        </Directory>
+      </Directory>
+    </StandardDirectory>
+  </Fragment>
+
+  <Fragment>
+    <Component Id="ServerService" Directory="SERVERFOLDER" Guid="8D4B2B59-4C7F-48B6-96BE-17D9D713D7AA">
+      <File Id="ServerExecutable" Source="$(var.ServerPublishDir)\Adm.Server.Host.exe" KeyPath="yes" />
+      <ServiceInstall
+          Id="ServerServiceInstall"
+          Name="AIDevelopmentManagerServer"
+          DisplayName="AI Development Manager Server"
+          Description="AI Development ManagerのServerサービス"
+          Type="ownProcess"
+          Start="auto"
+          ErrorControl="normal"
+          Account="localService"
+          Arguments="--adm-startup-mode=service" />
+      <ServiceControl
+          Id="ServerServiceControl"
+          Name="AIDevelopmentManagerServer"
+          Start="install"
+          Stop="both"
+          Remove="uninstall"
+          Wait="yes" />
+    </Component>
+
+    <Component Id="ServerConfigFolder" Directory="SERVERCONFIGFOLDER" Guid="A3E1CB2A-0BA8-4DD5-AB92-8F18A19BA5D8">
+      <CreateFolder />
+    </Component>
+
+    <Component Id="ServerLogFolder" Directory="SERVERLOGFOLDER" Guid="8B7DC39B-54A4-4A0E-893E-A64E5AFB194B">
+      <CreateFolder />
+    </Component>
+
+    <Component Id="ServerDataFolder" Directory="SERVERDATAFOLDER" Guid="A436F789-8D89-4B3A-9A4B-2CB2B1C48B84">
+      <CreateFolder />
+    </Component>
+  </Fragment>
+</Wix>
