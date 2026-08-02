@@ -1,6 +1,7 @@
 import { readRuntimeConfig } from "./env";
 import { RouteOutlet } from "./routes/RouteOutlet";
 import { FeedbackCatalog } from "./components/feedback/FeedbackCatalog";
+import { BridgeCatalog } from "./platform-bridge/BridgeCatalog";
 import { message } from "./messages/catalog";
 import "./styles.css";
 
@@ -25,6 +26,7 @@ export function App() {
                 </dl>
             </section>
             <FeedbackCatalog />
+            <BridgeCatalog />
         </RouteOutlet>
     );
 }

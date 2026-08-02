@@ -70,6 +70,18 @@ const catalog = {
         "色・文言・操作を組み合わせた共通状態部品です。",
     "feedback.openDialog": "確認ダイアログを表示",
     "feedback.dialogBody": "内容を確認してから操作を選択できます。",
+    "bridge.eyebrow": "HOST BRIDGE",
+    "bridge.title": "WPF Bridge許可操作",
+    "bridge.description":
+        "WebView2から利用できるWindows操作を許可リストで管理します。",
+    "bridge.allowedLabel": "許可されたBridge操作",
+    "bridge.allowedGetHostInfo": "Host情報の取得（getHostInfo）",
+    "bridge.checkHost": "Host情報を確認",
+    "bridge.browserUnavailable":
+        "通常のブラウザではHost Bridgeを利用できません。",
+    "bridge.rejected": "許可されていないBridgeメッセージは拒否されます。",
+    "bridge.securityNote":
+        "任意コード実行、任意コマンド実行、自由なファイルアクセスは許可されていません。",
 } as const;
 
 export type MessageKey = keyof typeof catalog;

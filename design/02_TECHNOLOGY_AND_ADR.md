@@ -352,6 +352,10 @@ P0-026で、現行`Microsoft.Data.Sqlite 10.0.10`の推移依存`SQLitePCLRaw.li
 
 `Adm.Wpf`をWinExeへ変更し、`Microsoft.Web.WebView2` 1.0.3967.48を中央Package管理へ追加した。Server readiness確認後にP1-019の共通Web UIを表示し、Runtime不足・接続失敗・Navigation失敗を日本語で案内する。許可Server origin以外のNavigationと新規WindowはWebView2内で開かず、WPF終了時にServerを停止しない。業務BridgeはP1-021へ分離した。
 
+## P1-021実装結果
+
+`src/Adm.Wpf/Bridge/BridgeProtocol.cs`でversion 1のWebMessage Envelope、要求・応答・cancel、要求ID、固定エラー、Source origin検証、未知フィールド・未知操作・payload検査を実装した。許可操作は非業務サンプルの`getHostInfo`だけとし、WPFから安全なHost情報を返す。Web側は`platform-bridge/bridge.ts`でWebView2環境だけに要求を送信し、通常ブラウザでは利用不可として扱う。任意コード実行、任意コマンド実行、自由なファイルアクセス、Markdown・添付・状態・テスト結果操作は許可しない。詳細契約は`design/44_WPF_BRIDGE_CONTRACT.md`に記録した。
+
 ## 参考にした公式情報
 
 - .NET Support Policy: https://dotnet.microsoft.com/en-us/platform/support/policy

@@ -310,6 +310,30 @@ h1 {
     box-shadow: var(--adm-shadow-panel);
 }
 
+.bridge-catalog {
+    margin-top: var(--adm-space-8);
+}
+
+.bridge-catalog h2 {
+    margin: 0;
+    font-size: var(--adm-font-size-body);
+}
+
+.bridge-catalog button {
+    min-height: var(--adm-layout-nav-item);
+    padding: 0 var(--adm-space-4);
+    border: 0;
+    border-radius: var(--adm-radius-control);
+    color: var(--adm-color-surface);
+    background: var(--adm-color-primary);
+    cursor: pointer;
+}
+
+.bridge-security-note {
+    color: var(--adm-color-muted);
+    font-size: var(--adm-font-size-small);
+}
+
 .runtime-details {
     display: grid;
     gap: var(--adm-space-3);

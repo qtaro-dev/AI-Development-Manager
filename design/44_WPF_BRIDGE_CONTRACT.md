@@ -1,0 +1,21 @@
+# WPF Bridge契約（P1-021）
+
+## 目的
+
+WebView2上の製品Web UIとWPFホストの連携を、バージョン付きEnvelopeと明示的な許可リストで制限する。P1-021では業務機能を実装せず、接続確認用の`getHostInfo`だけを公開する。
+
+## Envelope
+
+要求は`version`、`messageType`、`operation`、`requestId`、`payload`を必須とする。現在の`version`は`1`、`messageType`は`request`または`cancel`、`operation`は`getHostInfo`のみ、payloadは空のJSON objectのみを受け付ける。未知フィールド、未知操作、長すぎる要求ID、不正なJSONは拒否する。
+
+応答は`messageType=response`、要求ID、操作、`status=ok|error|cancelled`を返す。エラーは固定のコード、利用者向けメッセージ、要求IDをtraceIdとして返し、例外本文や秘密情報を返さない。
+
+## セキュリティ境界
+
+WPFはWebView2のトップレベル文書からのWebMessageだけを扱い、メッセージのSourceを設定済みServer origin（scheme、host、port一致）と照合する。Navigation拒否と同じloopback境界を使用する。通常のブラウザではWebView2 Bridgeを利用できない。
+
+許可リストは`getHostInfo`だけであり、任意コード実行、任意コマンド実行、PowerShell、自由なパスの読書き、Markdown・添付・状態・テスト結果の業務操作は公開しない。cancelは契約上の応答形式を持つが、P1-021の即時処理に長時間処理は存在しない。
+
+## 将来拡張
+
+ファイル／フォルダ選択、Explorer起動、通知、Server制御などは、操作ごとに入力形式、権限、origin、監査、キャンセル、失敗時の復元案内を別途設計・レビューしてから追加する。

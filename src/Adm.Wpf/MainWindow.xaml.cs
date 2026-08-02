@@ -1,8 +1,10 @@
 using System.IO;
 using System.Net.Http;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Navigation;
 using Microsoft.Web.WebView2.Core;
+using Adm.Wpf.Bridge;
 using Adm.Wpf.Shell;
 
 namespace Adm.Wpf;
@@ -75,6 +77,7 @@ public partial class MainWindow : Window
         WebView.CoreWebView2.NavigationStarting += CoreWebView2_NavigationStarting;
         WebView.CoreWebView2.NavigationCompleted += CoreWebView2_NavigationCompleted;
         WebView.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
+        WebView.CoreWebView2.WebMessageReceived += CoreWebView2_WebMessageReceived;
         WebView.CoreWebView2.Settings.AreDevToolsEnabled = false;
         isInitialized = true;
     }
@@ -128,6 +131,27 @@ public partial class MainWindow : Window
     }
 
     private static void CoreWebView2_NewWindowRequested(object? sender, CoreWebView2NewWindowRequestedEventArgs e) => e.Handled = true;
+
+    private void CoreWebView2_WebMessageReceived(object? sender, CoreWebView2WebMessageReceivedEventArgs e)
+    {
+        string response;
+        try
+        {
+            var request = BridgeProtocol.ParseRequest(e.WebMessageAsJson, e.Source, connectionOptions.ServerUri);
+            response = request.MessageType == "cancel"
+                ? BridgeProtocol.Cancelled(request.RequestId)
+                : BridgeProtocol.Success(request);
+        }
+        catch (BridgeProtocolException exception)
+        {
+            response = BridgeProtocol.Error(exception.Code, exception.Message, exception.RequestId);
+        }
+        catch (JsonException)
+        {
+            response = BridgeProtocol.Error("invalid_json", "Bridgeメッセージの形式が正しくありません。", null);
+        }
+        WebView.CoreWebView2.PostWebMessageAsJson(response);
+    }
 
     private void Window_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
     {
