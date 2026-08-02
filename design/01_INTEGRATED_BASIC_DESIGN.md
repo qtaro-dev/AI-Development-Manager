@@ -22,6 +22,10 @@ Penguin Hub、Penguin OS、意味検索、AIチャット、自動実装、汎用
 
 製品ソリューション`AIDevelopmentManager.sln`は、`Adm.Core`、`Adm.Application`、`Adm.Server.Host`、`Adm.Infrastructure.Windows`、`Adm.Wpf`を`src/`へ配置する。`Adm.Web`と`tests/`は後続チケットの配置予約とし、P1-002ではUI・テストコードを作成しない。Core/ApplicationはWindows非依存、Windows Adapter/WPFはWindows固有境界とする。PoCソリューション・プロジェクトは製品ソリューションへ追加しない。
 
+## 1.3 P1-003参照方向・Windows依存境界
+
+参照方向は、`Adm.Application`から`Adm.Core`への依存だけを現行のProjectReferenceとして許可する。`Adm.Core`と`Adm.Application`からWindows Adapter、Server Host、WPFへの逆参照を禁止し、全製品プロジェクトから`poc/`への参照を禁止する。P1-003の自動検査はProjectReference、Debug/ReleaseのAssembly参照、禁止Namespace、意図的違反fixtureを確認する。xUnit/TestServerはP1-004の対象とし、今回の検査へ混在させない。
+
 ## 2. 設計原則
 
 1. Markdownと添付ファイルを業務データの正本とする。

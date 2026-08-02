@@ -134,3 +134,7 @@ P1-001の実測値は.NET SDK 10.0.302、Node.js 22.18.0、npm 10.9.3である�
 ## 11. P1-002製品ソリューション境界
 
 P1-002でルート`AIDevelopmentManager.sln`と`src/`の5つの.NETプロジェクトを作成した。`Adm.Core`と`Adm.Application`は`net10.0`、Windows AdapterとWPFは`net10.0-windows`、Server HostはASP.NET Core Web SDKの空骨格とする。`Adm.Web`と`tests/`は後続チケットの予約配置である。PoCは物理配置・ProjectReference・Solution登録のいずれでも製品側へ混入させない。
+
+## 12. P1-003参照境界検査
+
+P1-003では、ProjectReference、ビルド済みAssembly、禁止Namespace、PoC参照を`tests/Adm.Architecture.Tests`のPowerShell検査で確認する。Core/ApplicationからWindows固有境界への逆参照と全製品からのPoC参照を禁止し、意図的違反fixtureで検査能力を確認する。xUnit/TestServerはP1-004へ分離する。

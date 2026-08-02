@@ -1,0 +1,5 @@
+<Project>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Adm.Wpf\Adm.Wpf.csproj" />
+  </ItemGroup>
+</Project>

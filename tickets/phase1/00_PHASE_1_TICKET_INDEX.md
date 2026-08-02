@@ -19,7 +19,7 @@
 |---:|---|---|---|---|---|---|---|
 | 1 | [P1-001](P1-001_TOOLCHAIN_BUILD_BASELINE.md) | A | ツールチェーン・中央ビルド基準 | P0-023 | SDK、Node、版、警告、生成物の共通基準を固定する | 固定ツールで再現ビルドでき、中央設定が一意 | 完了（製品プロジェクトはP1-002へ分離） |
 | 2 | [P1-002](P1-002_PRODUCT_SOLUTION_MODULES.md) | A | 製品ソリューション・モジュール骨格 | P1-001 | 製品本体のVisual Studioソリューションと責務境界を作る | 全プロジェクトが空の状態でBuild成功し、PoCと分離 | 完了 |
-| 3 | [P1-003](P1-003_ARCHITECTURE_DEPENDENCY_TESTS.md) | A | 参照方向・Windows依存境界テスト | P1-002 | 禁止参照を自動検出する | Core/ApplicationからWindows/WPFへの参照違反をCIで検出 | 未着手 |
+| 3 | [P1-003](P1-003_ARCHITECTURE_DEPENDENCY_TESTS.md) | A | 参照方向・Windows依存境界テスト | P1-002 | 禁止参照を自動検出する | Core/ApplicationからWindows/WPFへの参照違反をCIで検出 | 完了 |
 | 4 | [P1-004](P1-004_DOTNET_TEST_FOUNDATION.md) | A | .NETテスト基盤 | P1-002 | xUnitとTestServerの共通テスト構成を作る | Unit/Integrationのサンプルが固定SDKで成功 | 未着手 |
 | 5 | [P1-005](P1-005_CI_QUALITY_BASELINE.md) | A | CI品質ゲート基盤 | P1-003, P1-004 | Build、Test、監査、成果物検査を自動化する | クリーンCIで全ゲートが成功し警告を記録 | 未着手 |
 | 6 | [P1-006](P1-006_SERVER_CONSOLE_HOST.md) | B | ASP.NET CoreコンソールHost | P1-002, P1-004 | 同一Host生成元となるlocalhost Serverを作る | 起動・停止・二重起動・localhost限定を確認 | 未着手 |
