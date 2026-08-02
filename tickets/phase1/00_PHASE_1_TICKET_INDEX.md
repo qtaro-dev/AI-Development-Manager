@@ -22,7 +22,7 @@
 | 3 | [P1-003](P1-003_ARCHITECTURE_DEPENDENCY_TESTS.md) | A | 参照方向・Windows依存境界テスト | P1-002 | 禁止参照を自動検出する | Core/ApplicationからWindows/WPFへの参照違反をCIで検出 | 完了 |
 | 4 | [P1-004](P1-004_DOTNET_TEST_FOUNDATION.md) | A | .NETテスト基盤 | P1-002 | xUnitとTestServerの共通テスト構成を作る | Unit/Integrationのサンプルが固定SDKで成功 | 完了 |
 | 5 | [P1-005](P1-005_CI_QUALITY_BASELINE.md) | A | CI品質ゲート基盤 | P1-003, P1-004 | Build、Test、監査、成果物検査を自動化する | クリーンCIで全ゲートが成功し警告を記録 | 完了 |
-| 6 | [P1-006](P1-006_SERVER_CONSOLE_HOST.md) | B | ASP.NET CoreコンソールHost | P1-002, P1-004 | 同一Host生成元となるlocalhost Serverを作る | 起動・停止・二重起動・localhost限定を確認 | 未着手 |
+| 6 | [P1-006](P1-006_SERVER_CONSOLE_HOST.md) | B | ASP.NET CoreコンソールHost | P1-002, P1-004 | 同一Host生成元となるlocalhost Serverを作る | 起動・停止・二重起動・localhost限定を確認 | 完了 |
 | 7 | [P1-007](P1-007_CONFIGURATION_OPTIONS.md) | B | 構成・Options検証基盤 | P1-006 | 設定の生成元、優先順位、検証、秘密境界を作る | 不正設定で安全に起動拒否し秘密を出力しない | 未着手 |
 | 8 | [P1-008](P1-008_STRUCTURED_LOGGING_TRACING.md) | B | 構造化ログ・追跡ID基盤 | P1-006, P1-007 | JSONログと要求追跡を共通化する | 全要求を追跡でき秘密情報がログへ出ない | 未着手 |
 | 9 | [P1-009](P1-009_API_V1_OPENAPI.md) | B | API v1・OpenAPI基盤 | P1-006 | `/api/v1`とOpenAPIを契約正本にする | 契約生成・検証が自動化され業務APIは未実装 | 未着手 |

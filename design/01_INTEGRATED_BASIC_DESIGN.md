@@ -30,6 +30,12 @@ Penguin Hub、Penguin OS、意味検索、AIチャット、自動実装、汎用
 
 製品テストは`Adm.Testing`の共通補助境界、Core/Application単体テスト、Server統合テスト、Windows限定テストへ分離する。xUnitのテスト実行と中央NuGet管理を使用し、TestServerは実ポートを占有しない`WebApplication.UseTestServer()`で起動する。テストの一時ディレクトリはテストごとに固有化し、P1-003のArchitecture検査とCI組み込みは別責務として維持する。
 
+## 1.5 P1-006 ServerコンソールHost
+
+`Adm.Server.Host`の`ServerHostFactory`を全起動方式で再利用するHost生成元とする。P1-006の開発用コンソールはKestrelのIPv4 loopback（`127.0.0.1`）だけを待ち受け、ポート0指定時はOSの空きポートを使用する。ルートにはHost基盤確認用の応答だけを置き、LAN待受、HTTPS、認証、業務API、Windows Service登録は後続チケットへ分離する。
+
+起動失敗はコンソール境界で利用者向けメッセージと終了コードへ変換し、同一ポートの二重起動は明示的に失敗させる。TestServerによる実ポートなしの検証と、実Kestrelによるlocalhost接続・正常停止・ポート競合のスモークを分離して確認する。
+
 ## 2. 設計原則
 
 1. Markdownと添付ファイルを業務データの正本とする。

@@ -250,6 +250,10 @@ Markdown、テスト結果、添付、状態の操作はすべてAPIを経由す
 - Windows Service相当モードでは`AddWindowsService`によるService設定境界を確認した。実Service登録・権限差・インストーラーは本PoC対象外とした。
 - 同一ポートで二重起動するとKestrelが`address already in use`を明示して終了する。
 
+### P1-006実装結果
+
+`Adm.Server.Host.ServerHostFactory`を共通Host生成元として実装し、コンソールエントリーポイントから再利用する。KestrelはIPv4 loopback（`127.0.0.1`）だけを待ち受け、ルートの基盤確認応答以外の業務APIは追加していない。実Kestrelのlocalhost接続、正常停止、同一ポート二重起動失敗を統合テストで確認した。LAN待受、HTTPS、認証、Windows Service登録は後続チケットへ分離した。
+
 ## ADR-015 Markdown・Front Matter解析境界
 
 ### 決定
