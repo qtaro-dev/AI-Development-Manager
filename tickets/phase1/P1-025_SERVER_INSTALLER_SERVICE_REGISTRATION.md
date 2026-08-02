@@ -86,7 +86,7 @@ Windows Serviceが正式運用方式であり、P0-002/P1-012でHost境界を確
 
 `installer/server/server.wixproj`と`Package.wxs`を追加し、固定SDKでServerをwin-x64 publishした成果物からper-machine MSIを生成する`Build-ServerInstaller.ps1`を実装した。MSIは`AIDevelopmentManagerServer`をLocalService・自動開始で登録し、`ServerHostFactory`と既存のlocalhost限定Hostを利用する。Config／Logs／DataはProgramData配下へ分離し、Service停止・登録解除後も内容を無条件削除しない。
 
-対象外のFirewall、HTTPS証明書、LAN公開、WPF Client、WebView2 Runtime、業務データ処理は追加していない。Service開始・停止、health、update、repair、uninstallのWindows実機確認はP1-027へ引き継ぐ。
+対象外のFirewall、HTTPS証明書、LAN公開、WPF Client、WebView2 Runtime、業務データ処理は追加していない。MSI buildと`wix msi validate`は成功したが、Windows Installerによる実機installはInstaller側の停止で完遂できなかった。Service開始・停止、health、update、repair、uninstallのWindows実機確認はP1-027へ引き継ぐ。
 
 ## 再現コマンド
 
