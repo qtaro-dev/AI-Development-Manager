@@ -1,7 +1,7 @@
 # AI Development Manager 設計資料索引
 
-版: 0.8-p0-002-hosting-boundary
-状態: P0-002完了
+版: 0.9-p0-003-evaluation-baseline
+状態: P0-003完了
 基準日: 2026-08-02
 
 ## 目的
@@ -26,6 +26,7 @@
 - `04_PHASE_PLAN.md`: MVPおよび将来フェーズ計画
 - `05_OPEN_DECISIONS.md`: 追加判断事項と推奨初期値
 - `06_REPOSITORY_RULES.md`: リポジトリ構成、Build番号、品質ゲート、除外規則
+- `../poc/common/`: P0-003共通評価環境、ワークロード、結果テンプレート
 - `../tickets/phase0/00_PHASE_0_TICKET_INDEX.md`: Phase 0詳細チケット一覧と依存関係
 
 ## 人向け概要

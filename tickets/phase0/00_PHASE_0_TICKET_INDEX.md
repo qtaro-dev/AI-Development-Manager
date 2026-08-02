@@ -1,7 +1,7 @@
 # AI Development Manager Phase 0 詳細チケット一覧
 
-版: 1.2
-状態: P0-002完了
+版: 1.3
+状態: P0-003完了
 対象: Phase 0のみ
 
 ## 1. 方針
@@ -18,7 +18,7 @@
 |---:|---|---|---|---|
 | 1 | [P0-001](P0-001_REPOSITORY_RULES.md) | リポジトリ規約・Build番号・品質ゲート確定 | なし | 完了 |
 | 2 | [P0-002](P0-002_HOSTING_PLATFORM_BOUNDARY_POC.md) | Server起動方式とWindows依存境界PoC | P0-001 | 完了 |
-| 3 | [P0-003](P0-003_EVALUATION_BASELINE.md) | PoC評価環境・測定基準確定 | P0-001 | 未着手 |
+| 3 | [P0-003](P0-003_EVALUATION_BASELINE.md) | PoC評価環境・測定基準確定 | P0-001 | 完了 |
 | 4 | [P0-004](P0-004_MARKDOWN_CORPUS.md) | Markdown検証コーパス作成 | P0-003 | 未着手 |
 | 5 | [P0-005](P0-005_MARKDOWN_PARSER_POC.md) | Markdown・Front Matter解析PoC | P0-004 | 未着手 |
 | 6 | [P0-006](P0-006_DOCUMENT_CLASSIFICATION_POC.md) | 文書種別自動判別PoC | P0-005 | 未着手 |
