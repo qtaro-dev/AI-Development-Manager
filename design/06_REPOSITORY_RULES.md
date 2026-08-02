@@ -58,6 +58,10 @@
 
 ## 5. バージョンとBuild番号
 
+### .NET PoCのSDK固定
+
+リポジトリ直下の`global.json`を.NETコードを伴うPoCのSDK生成元とする。現在は.NET 10 SDK `10.0.100`を`rollForward: disable`で固定する。PoC開始前に`dotnet --version`を実行し、固定値と一致することを確認する。一致しない環境では、SDKを導入するまでビルド・測定を開始しない。PoC結果には、`global.json`の内容、`dotnet --version`、対象Runtimeを記録する。
+
 Build番号の生成元は、リポジトリで管理する単一の`BuildNumber`値とする。将来の`.NET`実装では`Directory.Build.props`または同等の単一設定から各成果物へ渡し、プロジェクトごとに個別の番号を持たせない。
 
 | 項目 | 規則 |

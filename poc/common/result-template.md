@@ -22,6 +22,9 @@
 
 - コマンド:
 - ビルド構成:
+- `global.json` SDK:
+- `dotnet --version`実測値:
+- 対象Runtime:
 - ウォームアップ回数:
 - 測定回数:
 - 同時利用者:
