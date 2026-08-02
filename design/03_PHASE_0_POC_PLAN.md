@@ -1,7 +1,7 @@
 # Phase 0 技術PoC計画
 
-版: 2.1-p0-022-dtm-compat-blocked
-状態: P0-022 BLOCKED（実データ待ち）
+版: 2.2-p0-022-dtm-compat-complete
+状態: P0-022完了
 
 > この文書はPoCの高水準計画である。実施番号、依存関係、受け入れ条件は`../tickets/phase0/00_PHASE_0_TICKET_INDEX.md`とP0-001～P0-023の個別チケットを正とする。以下の旧P0-01～P0-12番号はテーマ整理用であり、実施チケット番号ではない。
 
@@ -286,4 +286,4 @@ P0-11完了とユーザー承認。P0-12はサンプル提供時期により並�
 
 ### P0-022 DevTicketManager互換PoC（実施結果）
 
-`poc/devticketmanager-compat`に読み取り専用の互換検証ハーネスを作成した。入力未指定時は自己検証のみを行い、実データ互換判定をBLOCKEDとして終了する。SDK 10.0.302、runtime 10.0.10を記録した。匿名化済み実データ受領後に`--input`で再実施する。
+`poc/devticketmanager-compat`で承認済み`input-anonymized`を読み取り専用で検証した。7 Markdownファイルの棚卸し、UTF-8判定、本文・見出し、日時、ソート、検索、確認状態の`.adm-meta`写像候補、添付候補、入力前後SHA-256一致を確認し、9項目すべて合格した。SDK 10.0.302、runtime 10.0.10を記録した。P0-022は完了とし、P0-023には着手していない。

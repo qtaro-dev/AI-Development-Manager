@@ -99,6 +99,15 @@
 dotnet .\poc\devticketmanager-compat\src\DevTicketManager.Compat.Poc\bin\Release\net10.0\DevTicketManager.Compat.Poc.dll --input D:\path\to\anonymized-devticketmanager-copy
 ```
 
+### 再検証結果（2026-08-02）
+
+- 入力: `D:\Dev\AI-Development-Manager-P0-022\input-anonymized`
+- 7 Markdownファイルを読み取り、個別読取エラー0件、添付候補9件を確認した。
+- 入力ツリーの前後SHA-256が一致し、入力を変更していない。
+- `input_is_read_only`、原本ハッシュ、一覧、非対応ファイル分離、ソート、検索、`.adm-meta`写像候補、添付関係の9項目すべてPASS。
+- SDK: .NET 10.0.302、Runtime: .NET 10.0.10。
+- 結果JSON: `%TEMP%\AI-Development-Manager\poc\P0-022\20260802-133847-161312a7\result.json`
+
 ### 判定
 
-ハーネス実装と自己検証は完了したが、受入条件に必要な実データ根拠がないため、P0-022はBLOCKEDとする。P0-023以降には着手していない。
+承認済み匿名化サンプルで互換性の受入条件を確認できたため、P0-022を正式完了とする。正式な`.adm-meta`スキーマ・移行操作・プロジェクト境界の最終判断はP0-023へ分離し、P0-023自体には着手していない。

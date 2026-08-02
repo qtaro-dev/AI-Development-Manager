@@ -1,7 +1,7 @@
 # AI Development Manager 設計資料索引
 
-版: 2.8-p0-022-dtm-compat-blocked
-状態: P0-022 BLOCKED、P0-021仮基準承認済み、React採用候補
+版: 2.9-p0-022-dtm-compat-complete
+状態: P0-022完了、P0-021仮基準承認済み、React採用候補
 基準日: 2026-08-02
 
 ## 目的
