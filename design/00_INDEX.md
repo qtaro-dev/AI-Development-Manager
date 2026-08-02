@@ -1,7 +1,7 @@
 # AI Development Manager 設計資料索引
 
-版: 1.7-p0-011-path-security
-状態: P0-011完了
+版: 1.8-p0-012-zip-safety
+状態: P0-012完了
 基準日: 2026-08-02
 
 ## 目的
@@ -35,6 +35,7 @@
 - `11_ETAG_CONCURRENCY_CONTRACT.md`: P0-009 ETag競合検知契約とPoC結果
 - `12_RECOVERY_JOURNAL_CONTRACT.md`: P0-010 保存回復ジャーナル契約とPoC結果
 - `13_PATH_SECURITY_CONTRACT.md`: P0-011 パス境界・リンク安全性契約とPoC結果
+- `14_ZIP_SAFETY_CONTRACT.md`: P0-012 ZIP安全閲覧契約とPoC結果
 - `../tickets/phase0/00_PHASE_0_TICKET_INDEX.md`: Phase 0詳細チケット一覧と依存関係
 
 ## 人向け概要

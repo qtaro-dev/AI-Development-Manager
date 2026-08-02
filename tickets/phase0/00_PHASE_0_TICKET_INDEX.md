@@ -1,7 +1,7 @@
 # AI Development Manager Phase 0 詳細チケット一覧
 
-版: 1.12
-状態: P0-011完了
+版: 1.13
+状態: P0-012完了
 対象: Phase 0のみ
 
 ## 1. 方針
@@ -27,7 +27,7 @@
 | 9 | [P0-009](P0-009_ETAG_CONCURRENCY_POC.md) | ETag競合検知PoC | P0-008 | 完了 |
 | 10 | [P0-010](P0-010_RECOVERY_JOURNAL_POC.md) | 保存回復ジャーナルPoC | P0-008 | 完了 |
 | 11 | [P0-011](P0-011_PATH_SECURITY_POC.md) | パス境界・リンク安全性PoC | P0-003 | 完了 |
-| 12 | [P0-012](P0-012_ZIP_SAFETY_POC.md) | ZIP安全閲覧PoC | P0-011 | 未着手 |
+| 12 | [P0-012](P0-012_ZIP_SAFETY_POC.md) | ZIP安全閲覧PoC | P0-011 | 完了 |
 | 13 | [P0-013](P0-013_FILE_SCAN_WATCH_POC.md) | ファイル走査・監視・再同期PoC | P0-005, P0-007, P0-011 | 未着手 |
 | 14 | [P0-014](P0-014_SQLITE_FTS_JA_POC.md) | SQLite FTS5日本語検索PoC | P0-005, P0-013 | 未着手 |
 | 15 | [P0-015](P0-015_PERFORMANCE_POC.md) | 1万文書・同時利用性能PoC | P0-009, P0-013, P0-014 | 未着手 |
