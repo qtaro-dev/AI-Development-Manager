@@ -1,7 +1,7 @@
 # AI Development Manager Phase 0 詳細チケット一覧
 
-版: 1.7
-状態: P0-006完了
+版: 1.8
+状態: P0-007完了
 対象: Phase 0のみ
 
 ## 1. 方針
@@ -22,7 +22,7 @@
 | 4 | [P0-004](P0-004_MARKDOWN_CORPUS.md) | Markdown検証コーパス作成 | P0-003 | 完了 |
 | 5 | [P0-005](P0-005_MARKDOWN_PARSER_POC.md) | Markdown・Front Matter解析PoC | P0-004 | 完了 |
 | 6 | [P0-006](P0-006_DOCUMENT_CLASSIFICATION_POC.md) | 文書種別自動判別PoC | P0-005 | 完了 |
-| 7 | [P0-007](P0-007_ADM_META_ID_POC.md) | `.adm-meta`・ULID・連番仕様PoC | P0-005 | 未着手 |
+| 7 | [P0-007](P0-007_ADM_META_ID_POC.md) | `.adm-meta`・ULID・連番仕様PoC | P0-005 | 完了 |
 | 8 | [P0-008](P0-008_ATOMIC_SAVE_POC.md) | NTFS原子的保存PoC | P0-003 | 未着手 |
 | 9 | [P0-009](P0-009_ETAG_CONCURRENCY_POC.md) | ETag競合検知PoC | P0-008 | 未着手 |
 | 10 | [P0-010](P0-010_RECOVERY_JOURNAL_POC.md) | 保存回復ジャーナルPoC | P0-008 | 未着手 |

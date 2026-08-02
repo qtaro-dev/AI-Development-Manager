@@ -1,7 +1,7 @@
 # AI Development Manager 統合基本設計書
 
-版: 1.1-p0-006-document-classifier
-状態: P0-006完了
+版: 1.2-p0-007-adm-meta
+状態: P0-007完了
 基準日: 2026-08-02
 
 ## 1. 目的と対象
@@ -29,6 +29,10 @@ Penguin Hub、Penguin OS、意味検索、AIチャット、自動実装、汎用
 ## 3.3 文書種別自動判別
 
 Front Matterの`document_type`を最優先し、存在しない場合は、ファイル名、フォルダー、見出し、表構造の順にルール判定する。判定結果には種別、信頼度、根拠コードを保持する。競合または判定不能は`unknown`とし、原本Markdownへ結果を書き戻さない。手動分類は自動判定結果とは別のオーバーレイとして扱う。
+
+## 3.4 `.adm-meta`サイドカー
+
+既存Markdownは変更せず、プロジェクトメタデータを`.adm-meta/project.json`、文書メタデータを`.adm-meta/documents/<ULID>.json`、利用者固有の確認状態と手動分類を`.adm-meta/users/<user>/documents/<ULID>.json`へ分離して保存する。ULIDは不変文書ID、連番は文書種別ごとの人向け番号とし、採番は排他ロックと同一ディレクトリ内の原子的置換で保護する。改名候補は内容SHA-256等で提示するが、曖昧な一致を自動確定しない。
 
 ## 3. 論理構成
 
