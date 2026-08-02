@@ -2,6 +2,7 @@ using System.Net;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Adm.Infrastructure.Windows.Hosting;
 using Adm.Server.Host.Api;
 using Adm.Server.Host.Configuration;
 using Adm.Server.Host.Errors;
@@ -16,7 +17,11 @@ namespace Adm.Server.Host;
 
 public static class ServerHostFactory
 {
-    public static WebApplication Create(string[]? args = null, int? port = null, string startupMode = "console")
+    public static WebApplication Create(
+        string[]? args = null,
+        int? port = null,
+        string startupMode = "console",
+        Action<IHostBuilder>? configureHost = null)
     {
         if (port is < 0 or > 65535)
         {
@@ -24,6 +29,7 @@ public static class ServerHostFactory
         }
 
         var builder = WebApplication.CreateBuilder(args ?? Array.Empty<string>());
+        configureHost?.Invoke(builder.Host);
         builder.Services.AddServerConfiguration(builder.Configuration);
         builder.Services.AddAdmHealth();
         builder.Services.AddOpenApi("v1", options => options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
@@ -64,6 +70,9 @@ public static class ServerHostFactory
             startupMode,
             app.Environment.EnvironmentName,
             buildVersion));
+        app.Lifetime.ApplicationStopping.Register(() => lifecycleLogger.ServerStopping(
+            startupMode,
+            WindowsServiceHostAdapter.DefaultStopTimeout));
 
         return app;
     }

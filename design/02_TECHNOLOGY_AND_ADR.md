@@ -262,6 +262,10 @@ Markdown、テスト結果、添付、状態の操作はすべてAPIを経由す
 
 `AdmJsonLoggerProvider`をMicrosoft.Extensions.LoggingのProviderとして追加し、1行1JSONの診断ログをConsoleへ出力する。`X-Request-Id`を検証して要求・応答・ログScopeを相関させ、未指定または不正時は新しいIDを生成する。秘密キー、Bearerトークン、機密QueryStringをマスキングし、例外型以外の内部詳細をログへ出さない。業務監査ログ、外部収集、ファイルローテーションは対象外とした。
 
+### P1-012実装結果
+
+`Adm.Infrastructure.Windows.Hosting.WindowsServiceHostAdapter`へWindows Service lifetime、Service名、30秒の停止タイムアウト、`console`／`manual`／`service`／`tray`の起動モード解決を隔離した。`Adm.Server.Host.Program`は同じ`ServerHostFactory`へAdapter設定だけを注入し、Health・API・業務ロジックの起動方式別複製を行わない。Service実登録、権限設定、Firewall、インストーラー、トレイUIは対象外とした。
+
 ## ADR-015 Markdown・Front Matter解析境界
 
 ### 決定

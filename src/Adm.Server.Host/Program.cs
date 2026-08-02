@@ -1,8 +1,13 @@
 using Adm.Server.Host;
+using Adm.Infrastructure.Windows.Hosting;
 
 try
 {
-    await using var app = ServerHostFactory.Create(args);
+    var launchConfiguration = WindowsServiceHostAdapter.Resolve(args);
+    await using var app = ServerHostFactory.Create(
+        args,
+        startupMode: launchConfiguration.StartupMode,
+        configureHost: hostBuilder => WindowsServiceHostAdapter.Configure(hostBuilder, launchConfiguration));
     await app.RunAsync();
 }
 catch (IOException exception) when (exception.Message.Contains("address", StringComparison.OrdinalIgnoreCase))

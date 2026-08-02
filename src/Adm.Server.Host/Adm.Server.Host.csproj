@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <ProjectReference Include="..\Adm.Application\Adm.Application.csproj" />
+    <ProjectReference Include="..\Adm.Infrastructure.Windows\Adm.Infrastructure.Windows.csproj" />
   </ItemGroup>
 
 </Project>

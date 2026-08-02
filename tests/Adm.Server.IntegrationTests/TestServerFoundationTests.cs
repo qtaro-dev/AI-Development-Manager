@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Text.Json;
 using Adm.Application.Errors;
 using Adm.Application.Health;
+using Adm.Infrastructure.Windows.Hosting;
 using Adm.Server.Host;
 using Adm.Server.Host.Configuration;
 using Adm.Server.Host.Errors;
@@ -104,6 +105,30 @@ public sealed class TestServerFoundationTests
         Assert.Equal("ready", readyDocument.RootElement.GetProperty("status").GetString());
         Assert.Empty(readyDocument.RootElement.GetProperty("failedContributors").EnumerateArray());
         Assert.DoesNotContain("Server__", await readyResponse.Content.ReadAsStringAsync(), StringComparison.Ordinal);
+
+        await app.StopAsync();
+    }
+
+    [Theory]
+    [InlineData("console")]
+    [InlineData("manual")]
+    [InlineData("tray")]
+    public async Task AllNonServiceLaunchModesUseTheSameHostAndHealthContract(string startupMode)
+    {
+        var launchConfiguration = WindowsServiceHostAdapter.Resolve([$"{WindowsServiceHostAdapter.StartupModeArgument}={startupMode}"]);
+        await using var app = ServerHostFactory.Create(
+            port: 0,
+            startupMode: launchConfiguration.StartupMode,
+            configureHost: hostBuilder => WindowsServiceHostAdapter.Configure(hostBuilder, launchConfiguration));
+
+        await app.StartAsync();
+        var uri = new Uri(app.Urls.Single());
+        using var client = new HttpClient { BaseAddress = uri };
+        using var response = await client.GetAsync("/health/ready");
+        using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(startupMode, document.RootElement.GetProperty("startupMode").GetString());
 
         await app.StopAsync();
     }

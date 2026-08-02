@@ -127,6 +127,8 @@ flowchart LR
 
 コンソール、Windows Service相当、手動、トレイの4用途は、`Adm.Server.Host`の同一Host生成処理を再利用する。起動用途の差はAdapter設定に限定し、業務ロジックの起動方式別分岐を設けない。正式Service登録、トレイUI、インストーラーは後続の製品実装で扱う。
 
+P1-012では`Adm.Infrastructure.Windows.Hosting.WindowsServiceHostAdapter`へService lifetime、起動モード解決、停止タイムアウトを隔離し、`ServerHostFactory`へ同じHost生成処理を注入する。`console`、`manual`、`service`、`tray`の差は起動モードとAdapter設定だけであり、業務ロジックを分岐させない。実Serviceの登録・権限設定・インストーラーは対象外とする。
+
 ### 3.2 共通Web UI
 
 責務:
