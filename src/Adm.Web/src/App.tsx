@@ -1,5 +1,6 @@
 import { readRuntimeConfig } from "./env";
 import { RouteOutlet } from "./routes/RouteOutlet";
+import { FeedbackCatalog } from "./components/feedback/FeedbackCatalog";
 import { message } from "./messages/catalog";
 import "./styles.css";
 
@@ -23,6 +24,7 @@ export function App() {
                     </div>
                 </dl>
             </section>
+            <FeedbackCatalog />
         </RouteOutlet>
     );
 }

@@ -53,6 +53,9 @@
     --adm-color-text-disabled: #a5aec2;
     --adm-color-primary-soft: #eef0ff;
     --adm-color-success-soft: #e8f7f0;
+    --adm-color-warning-soft: #fff5df;
+    --adm-color-danger-soft: #fff0f0;
+    --adm-color-backdrop: rgb(21 25 36 / 55%);
     --adm-shadow-panel: 0 20px 50px rgb(36 55 85 / 10%);
 }
 

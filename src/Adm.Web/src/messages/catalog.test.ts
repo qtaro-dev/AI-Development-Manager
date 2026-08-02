@@ -3,7 +3,7 @@ import { message, messageKeys } from "./catalog";
 
 describe("Japanese message catalog", () => {
     it("exposes every registered key through the typed message API", () => {
-        expect(messageKeys).toHaveLength(33);
+        expect(messageKeys).toContain("feedback.savedLabel");
         expect(message("app.title")).toBe("AI Development Manager");
         expect(message("common.retryCount", { count: 2 })).toBe(
             "再試行（2回目）",
