@@ -214,6 +214,12 @@ P1-007では、実行時の通常設定を`ServerOptions`、秘密値を保存�
 
 設定カタログはキー、秘密を含まない既定値、変更可否、再起動要否、秘密参照であることを一覧化する。`Secrets`へトークンや秘密鍵などの実値を直接指定する構成は拒否し、後続の保護ストア実装が参照名を解決する境界だけを提供する。
 
+## 1.6 P1-008 構造化ログ・追跡ID
+
+診断ログは`AdmJsonLoggerProvider`の1行1JSON形式でConsoleへ出力し、Consoleと将来のWindows Serviceで同じ項目契約を利用する。起動ログには起動モード、環境、Build情報、要求ログには`X-Request-Id`由来の`trace_id`、method、path、status、経過時間を含める。入力追跡IDは文字種と長さを検証し、不正または未指定なら安全なIDを生成する。
+
+Password、Cookie、Authorization、Token、Secret、PrivateKey、Bearerトークン、機密QueryStringはマスキングし、要求本文と例外本文・Stack Traceは診断ログへ記録しない。診断ログは業務変更の監査ログとは分離する。P1-008ではConsole出力までとし、ファイル保持、ローテーション、外部収集は後続で確定する。
+
 ### 4.3 SQLite索引キャッシュ
 
 SQLiteには次だけを保持する。

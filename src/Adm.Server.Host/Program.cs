@@ -10,9 +10,9 @@ catch (IOException exception) when (exception.Message.Contains("address", String
     Console.Error.WriteLine("Serverを起動できません。指定されたポートが使用中です。");
     return 2;
 }
-catch (Exception exception)
+catch (Exception)
 {
-    Console.Error.WriteLine($"Serverを起動できません。{exception.Message}");
+    Console.Error.WriteLine("Serverを起動できません。構成と起動条件を確認してください。");
     return 1;
 }
 

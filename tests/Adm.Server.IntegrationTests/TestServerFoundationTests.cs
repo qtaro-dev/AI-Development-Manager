@@ -1,11 +1,15 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
+using System.Text.Json;
 using Adm.Server.Host;
 using Adm.Server.Host.Configuration;
+using Adm.Server.Host.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Adm.Server.IntegrationTests;
@@ -41,11 +45,13 @@ public sealed class TestServerFoundationTests
         Assert.DoesNotContain("0.0.0.0", address, StringComparison.Ordinal);
 
         using var client = new HttpClient { BaseAddress = uri };
+        client.DefaultRequestHeaders.Add(TraceId.HeaderName, "client-trace-123");
         using var response = await client.GetAsync("/");
         var content = await response.Content.ReadAsStringAsync();
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Contains("AI Development Manager Server", content, StringComparison.Ordinal);
+        Assert.Equal("client-trace-123", response.Headers.GetValues(TraceId.HeaderName).Single());
 
         await app.StopAsync();
     }
@@ -121,5 +127,51 @@ public sealed class TestServerFoundationTests
         Assert.True(portEntry.RequiresRestart);
         Assert.True(secretEntry.IsSecretReference);
         Assert.DoesNotContain(ConfigurationCatalog.Entries, entry => entry.Key.Contains("ApiToken", StringComparison.Ordinal) && !entry.IsSecretReference);
+    }
+
+    [Fact]
+    public void TraceIdRejectsUntrustedInputAndGeneratesSafeValue()
+    {
+        Assert.Equal("client-trace-123", TraceId.GetOrCreate("client-trace-123"));
+
+        var generated = TraceId.GetOrCreate("contains spaces");
+
+        Assert.StartsWith("adm-", generated, StringComparison.Ordinal);
+        Assert.DoesNotContain(" ", generated, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void JsonLoggerProducesParseableOutputWithoutSensitiveValues()
+    {
+        const string secret = "secret-token-value";
+        using var writer = new StringWriter(CultureInfo.InvariantCulture);
+        using var provider = new AdmJsonLoggerProvider(writer);
+        var logger = provider.CreateLogger("Adm.Server.IntegrationTests");
+
+        using (logger.BeginScope(new Dictionary<string, object?> { ["trace_id"] = "adm-trace-001" }))
+        {
+            var state = new[]
+            {
+                new KeyValuePair<string, object?>("Authorization", $"Bearer {secret}"),
+                new KeyValuePair<string, object?>("Operation", "test")
+            };
+            logger.Log(
+                LogLevel.Information,
+                new EventId(1000),
+                state,
+                null,
+                (values, _) => $"received Bearer {secret}");
+        }
+
+        using var document = JsonDocument.Parse(writer.ToString());
+        var json = document.RootElement;
+        var properties = json.GetProperty("properties");
+
+        Assert.Equal("Information", json.GetProperty("level").GetString());
+        Assert.Equal("adm-trace-001", properties.GetProperty("trace_id").GetString());
+        Assert.Equal("[REDACTED]", properties.GetProperty("Authorization").GetString());
+        Assert.DoesNotContain(secret, writer.ToString(), StringComparison.Ordinal);
+        Assert.Equal("received Bearer [REDACTED]", json.GetProperty("message").GetString());
+        Assert.Equal("?token=[REDACTED]", LogRedaction.RedactText($"?token={secret}"));
     }
 }

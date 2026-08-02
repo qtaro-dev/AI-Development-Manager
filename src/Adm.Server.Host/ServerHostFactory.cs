@@ -1,14 +1,17 @@
 using System.Net;
+using System.Reflection;
 using Adm.Server.Host.Configuration;
+using Adm.Server.Host.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Adm.Server.Host;
 
 public static class ServerHostFactory
 {
-    public static WebApplication Create(string[]? args = null, int? port = null)
+    public static WebApplication Create(string[]? args = null, int? port = null, string startupMode = "console")
     {
         if (port is < 0 or > 65535)
         {
@@ -18,7 +21,8 @@ public static class ServerHostFactory
         var builder = WebApplication.CreateBuilder(args ?? Array.Empty<string>());
         builder.Services.AddServerConfiguration(builder.Configuration);
         builder.Logging.ClearProviders();
-        builder.Logging.AddConsole();
+        builder.Logging.SetMinimumLevel(LogLevel.Information);
+        builder.Logging.AddProvider(new AdmJsonLoggerProvider());
         builder.WebHost.ConfigureKestrel((context, options) =>
         {
             var configuredPort = context.Configuration.GetValue<int>($"{ServerOptions.SectionName}:{nameof(ServerOptions.Port)}");
@@ -26,11 +30,23 @@ public static class ServerHostFactory
         });
 
         var app = builder.Build();
+        app.UseAdmRequestTracing();
         app.MapGet("/", () => Results.Ok(new
         {
             service = "AI Development Manager Server",
             status = "running"
         }));
+
+        var buildVersion = typeof(ServerHostFactory).Assembly
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
+            ?? "unknown";
+        var lifecycleLogger = app.Services
+            .GetRequiredService<ILoggerFactory>()
+            .CreateLogger("Adm.Server.Host.Lifecycle");
+        app.Lifetime.ApplicationStarted.Register(() => lifecycleLogger.ServerStarted(
+            startupMode,
+            app.Environment.EnvironmentName,
+            buildVersion));
 
         return app;
     }

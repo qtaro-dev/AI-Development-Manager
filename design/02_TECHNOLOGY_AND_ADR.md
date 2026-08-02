@@ -258,6 +258,10 @@ Markdown、テスト結果、添付、状態の操作はすべてAPIを経由す
 
 `ServerOptions`と`SecretReferenceOptions`を`ServerConfiguration`で登録し、JSON、環境変数、コマンドラインの最終値を型付きOptionsへバインドする。`ValidateOnStart`でloopback限定、ポート範囲、秘密値の直接指定を検査し、不正時は起動を拒否する。設定カタログは既定値、変更可否、再起動要否、秘密参照区分を持ち、秘密値そのものを含めない。P1-008の構造化ログやP1-010のProblem Detailsは追加していない。
 
+### P1-008実装結果
+
+`AdmJsonLoggerProvider`をMicrosoft.Extensions.LoggingのProviderとして追加し、1行1JSONの診断ログをConsoleへ出力する。`X-Request-Id`を検証して要求・応答・ログScopeを相関させ、未指定または不正時は新しいIDを生成する。秘密キー、Bearerトークン、機密QueryStringをマスキングし、例外型以外の内部詳細をログへ出さない。業務監査ログ、外部収集、ファイルローテーションは対象外とした。
+
 ## ADR-015 Markdown・Front Matter解析境界
 
 ### 決定
