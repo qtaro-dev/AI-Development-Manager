@@ -254,6 +254,10 @@ Markdown、テスト結果、添付、状態の操作はすべてAPIを経由す
 
 `Adm.Server.Host.ServerHostFactory`を共通Host生成元として実装し、コンソールエントリーポイントから再利用する。KestrelはIPv4 loopback（`127.0.0.1`）だけを待ち受け、ルートの基盤確認応答以外の業務APIは追加していない。実Kestrelのlocalhost接続、正常停止、同一ポート二重起動失敗を統合テストで確認した。LAN待受、HTTPS、認証、Windows Service登録は後続チケットへ分離した。
 
+### P1-007実装結果
+
+`ServerOptions`と`SecretReferenceOptions`を`ServerConfiguration`で登録し、JSON、環境変数、コマンドラインの最終値を型付きOptionsへバインドする。`ValidateOnStart`でloopback限定、ポート範囲、秘密値の直接指定を検査し、不正時は起動を拒否する。設定カタログは既定値、変更可否、再起動要否、秘密参照区分を持ち、秘密値そのものを含めない。P1-008の構造化ログやP1-010のProblem Detailsは追加していない。
+
 ## ADR-015 Markdown・Front Matter解析境界
 
 ### 決定
