@@ -1,7 +1,7 @@
 # AI Development Manager 設計資料索引
 
 版: 0.7-repository-rules
-状態: P0-001完了・レビュー待ち
+状態: P0-001完了
 基準日: 2026-08-02
 
 ## 目的
