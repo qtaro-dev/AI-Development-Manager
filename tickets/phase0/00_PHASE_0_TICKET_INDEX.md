@@ -1,7 +1,7 @@
 # AI Development Manager Phase 0 詳細チケット一覧
 
-版: 1.15
-状態: P0-014完了
+版: 1.16
+状態: P0-015完了
 対象: Phase 0のみ
 
 ## 1. 方針
@@ -30,7 +30,7 @@
 | 12 | [P0-012](P0-012_ZIP_SAFETY_POC.md) | ZIP安全閲覧PoC | P0-011 | 完了 |
 | 13 | [P0-013](P0-013_FILE_SCAN_WATCH_POC.md) | ファイル走査・監視・再同期PoC | P0-005, P0-007, P0-011 | 完了 |
 | 14 | [P0-014](P0-014_SQLITE_FTS_JA_POC.md) | SQLite FTS5日本語検索PoC | P0-005, P0-013 | 完了 |
-| 15 | [P0-015](P0-015_PERFORMANCE_POC.md) | 1万文書・同時利用性能PoC | P0-009, P0-013, P0-014 | 未着手 |
+| 15 | [P0-015](P0-015_PERFORMANCE_POC.md) | 1万文書・同時利用性能PoC | P0-009, P0-013, P0-014 | 完了 |
 | 16 | [P0-016](P0-016_LAN_HTTPS_ONBOARDING_POC.md) | LAN HTTPS初期設定PoC | P0-002, P0-003 | 未着手 |
 | 17 | [P0-017](P0-017_AUTH_TOKEN_POC.md) | Cookie・APIトークン認証PoC | P0-016 | 未着手 |
 | 18 | [P0-018](P0-018_WEB_UI_TECH_POC.md) | 共通Web UI・React採否PoC | P0-017 | 未着手 |
