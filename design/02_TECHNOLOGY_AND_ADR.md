@@ -274,6 +274,10 @@ Markdown、テスト結果、添付、状態の操作はすべてAPIを経由す
 
 `src/Adm.Web/src/messages/catalog.ts`を日本語表示文言の単一参照元とし、型付き`message` APIでキーと引数を検査する。共通状態、接続、保存、取消、再試行、競合、ARIA向け文言を登録し、内部値`blocked`は「ほかの問題で試せません。」へ分離した。`Validate-WebMessages.mjs`をCI品質ゲートへ追加し、未知キー、未使用キー、JSX内の日本語直書きを検出する。英語UI、実行時言語切替、業務画面固有文言は対象外とした。
 
+### P1-016実装結果
+
+`src/Adm.Web/src/styles/tokens.css`へP0-021の寸法、余白、radius、focus、文字、Light／Dark意味色を集約した。`ThemeProvider`は`light`／`dark`／`system`を解決し、OS設定追従と利用者選択の`localStorage`境界を提供する。`Validate-WebTokens.mjs`をCI品質ゲートへ追加し、必須Token、Theme定義、直接色、Token外px値を検査する。最終基準画像調整、選択UI、個別業務画面、P1-017以降のアプリシェルは対象外とした。
+
 ### P1-014実装結果
 
 `src/Adm.Web`へVitest、jsdom、Testing Library、user-event、V8 coverageを固定依存で追加した。共通`renderWithProviders` fixtureは後続のRouter／Theme／辞書Providerを差し込める境界を持ち、現時点では透過wrapperとして動作する。Appの表示、role／label、Tab／Enter／Escape、loading／error、fake timer、fetch mock境界、ARIA検査を利用者視点のDOMテストで確認する。Playwright、WebView2、業務画面は対象外とした。

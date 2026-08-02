@@ -133,6 +133,7 @@ if (Test-Path -LiteralPath $webPackage) {
     Invoke-RecordedCommand npm.cmd @('--prefix', 'src/Adm.Web', 'ci') (Join-Path $evidencePath 'npm-ci.log')
     Invoke-RecordedCommand npm.cmd @('--prefix', 'src/Adm.Web', 'audit', '--audit-level=high', '--json') (Join-Path $evidencePath 'npm-audit.json')
     Invoke-RecordedCommand npm.cmd @('--prefix', 'src/Adm.Web', 'run', 'messages:check') (Join-Path $evidencePath 'npm-messages-check.log')
+    Invoke-RecordedCommand npm.cmd @('--prefix', 'src/Adm.Web', 'run', 'tokens:check') (Join-Path $evidencePath 'npm-tokens-check.log')
     Invoke-RecordedCommand npm.cmd @('--prefix', 'src/Adm.Web', 'run', 'typecheck') (Join-Path $evidencePath 'npm-typecheck.log')
     Invoke-RecordedCommand npm.cmd @('--prefix', 'src/Adm.Web', 'run', 'lint') (Join-Path $evidencePath 'npm-lint.log')
     Invoke-RecordedCommand npm.cmd @('--prefix', 'src/Adm.Web', 'run', 'format:check') (Join-Path $evidencePath 'npm-format-check.log')

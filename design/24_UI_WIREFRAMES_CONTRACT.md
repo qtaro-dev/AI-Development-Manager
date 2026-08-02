@@ -27,3 +27,7 @@
 - 全9画面に主目的、主操作、次の操作、WPF固有操作が定義されている。
 - キーボード操作、テーマ、DPI、狭幅、主要状態を回帰チェックリストへ登録している。
 - 基準画像受領後に、主要レイアウトと視覚バランスの差分を確認する。細部はPhase 1で調整する。
+
+## P1-016実装結果
+
+`src/Adm.Web/src/styles/tokens.css`を寸法、余白、radius、focus、文字、意味色の実装正本とした。`:root`をLight、`:root[data-theme="dark"]`をDarkとして同じ意味Tokenを共有し、`ThemeProvider`が`light`／`dark`／`system`を解決する。利用者選択の永続化は`localStorage`の`adm.theme`に限定し、秘密情報や業務データは保存しない。最終基準画像への全画面調整、個別業務画面、独自アイコンは対象外とした。

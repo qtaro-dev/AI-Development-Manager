@@ -1,8 +1,9 @@
 import type { PropsWithChildren, ReactElement } from "react";
 import { render, type RenderOptions } from "@testing-library/react";
+import { ThemeProvider } from "../theme/theme";
 
 function TestProviders({ children }: PropsWithChildren) {
-    return children;
+    return <ThemeProvider initialMode="light">{children}</ThemeProvider>;
 }
 
 export function renderWithProviders(

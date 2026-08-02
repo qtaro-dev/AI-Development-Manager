@@ -3,6 +3,8 @@
 版: 1.0-p0-021
 状態: 仮基準、ユーザー承認済み
 
+Phase 1では、この表の値を`src/Adm.Web/src/styles/tokens.css`へ実装正本として反映する。Light／Darkの意味Tokenは同じ名前を共有し、値だけをThemeごとに切り替える。
+
 ## 寸法
 
 | Token | 値 | 用途 |

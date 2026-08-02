@@ -32,7 +32,7 @@
 | 13 | [P1-013](P1-013_REACT_TYPESCRIPT_VITE_FOUNDATION.md) | C | React・TypeScript・Vite製品基盤 | P1-001, P1-002 | PoCから分離した共通Web UIを作る | lockfile固定、Build成功、依存監査記録 | 完了 |
 | 14 | [P1-014](P1-014_WEB_UNIT_TEST_FOUNDATION.md) | C | Web単体テスト基盤 | P1-013 | VitestとTesting Libraryを標準化する | DOM・操作・アクセシビリティのサンプルテスト成功 | 完了 |
 | 15 | [P1-015](P1-015_JAPANESE_MESSAGE_CATALOG.md) | C | 日本語文言辞書 | P1-013 | 全表示文言を辞書参照にする | 直書き検出と欠落キー検出が自動化 | 完了 |
-| 16 | [P1-016](P1-016_THEME_DESIGN_TOKENS.md) | C | Theme・デザイントークン基盤 | P1-013 | P0-021のライト／ダーク基準を実装する | Token正本が一つで両Themeの回帰確認が可能 | 未着手 |
+| 16 | [P1-016](P1-016_THEME_DESIGN_TOKENS.md) | C | Theme・デザイントークン基盤 | P1-013 | P0-021のライト／ダーク基準を実装する | Token正本が一つで両Themeの回帰確認が可能 | 完了 |
 | 17 | [P1-017](P1-017_RESPONSIVE_APP_SHELL.md) | C | レスポンシブ・アプリシェル | P1-015, P1-016 | 共通ナビ、上部バー、本文領域を作る | 1440/820/320pxで主要領域と操作を維持 | 未着手 |
 | 18 | [P1-018](P1-018_COMMON_UI_STATES.md) | C | 共通状態・フィードバック部品 | P1-014, P1-017 | 保存・接続・競合等の状態表示基盤を作る | 色だけに頼らず文言・操作・ARIAを持つ | 未着手 |
 | 19 | [P1-019](P1-019_SERVER_WEB_ASSET_HOSTING.md) | C | Serverによる共通Web UI配信 | P1-006, P1-009, P1-013, P1-017 | 同一Web成果物をServerから配信する | ブラウザ表示、SPAフォールバック、API分離が成功 | 未着手 |

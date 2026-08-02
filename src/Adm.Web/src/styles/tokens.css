@@ -1,0 +1,57 @@
+:root {
+    color-scheme: light;
+    --adm-font-family: "Segoe UI", "Yu Gothic UI", sans-serif;
+    --adm-font-size-body: 16px;
+    --adm-font-size-eyebrow: 12px;
+    --adm-font-size-display-min: 30px;
+    --adm-font-size-display-max: 48px;
+    --adm-line-height-body: 1.8;
+    --adm-line-height-display: 1.15;
+    --adm-space-1: 4px;
+    --adm-space-2: 8px;
+    --adm-space-3: 12px;
+    --adm-space-4: 16px;
+    --adm-space-5: 20px;
+    --adm-space-6: 24px;
+    --adm-space-8: 32px;
+    --adm-size-foundation-max: 720px;
+    --adm-size-foundation-padding-max: 64px;
+    --adm-size-min-viewport: 320px;
+    --adm-radius-control: 8px;
+    --adm-radius-panel: 11px;
+    --adm-focus-ring-width: 3px;
+    --adm-border-width: 1px;
+    --adm-color-bg: #f6f7fb;
+    --adm-color-surface: #ffffff;
+    --adm-color-text: #172136;
+    --adm-color-muted: #7b8496;
+    --adm-color-border: #e6e9f0;
+    --adm-color-primary: #5964d9;
+    --adm-color-primary-hover: #4c57c7;
+    --adm-color-primary-pressed: #4049ad;
+    --adm-color-success: #2d9d70;
+    --adm-color-warning: #b97918;
+    --adm-color-danger: #d6575d;
+    --adm-color-focus: #5964d9;
+    --adm-color-surface-disabled: #eef0f5;
+    --adm-color-text-disabled: #a5aec2;
+    --adm-shadow-panel: 0 20px 50px rgb(36 55 85 / 10%);
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --adm-color-bg: #151924;
+    --adm-color-surface: #202534;
+    --adm-color-text: #f2f4fb;
+    --adm-color-muted: #a5aec2;
+    --adm-color-border: #333b50;
+    --adm-color-primary: #8d96ff;
+    --adm-color-primary-hover: #a5adff;
+    --adm-color-primary-pressed: #747ee8;
+    --adm-color-success: #5bd39d;
+    --adm-color-warning: #f0bb5a;
+    --adm-color-danger: #ff8589;
+    --adm-color-focus: #a5adff;
+    --adm-color-surface-disabled: #2b3040;
+    --adm-color-text-disabled: #737d94;
+}
