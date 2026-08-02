@@ -38,3 +38,7 @@
 | 接続エラー | 赤い案内と追跡ID | 再試行、設定確認 |
 | 容量警告 | 琥珀色の警告 | 整理候補確認、設定へ |
 | 復元検証中 | 進捗と取消 | 完了待ち、取消 |
+
+## P1-017実装結果
+
+`src/Adm.Web/src/app-shell/AppShell.tsx`を共通シェルの正本とし、`RouteOutlet`からページタイトルと本文を差し込む構成にした。標準幅はToken化した248px sidebar、71px topbar、43px gutter、最大本文幅1640pxを使用する。900px以下では64px icon rail、57px topbar、狭幅gutter、本文1列へ切り替え、320pxでも主要本文とReserved action領域を保持する。業務画面、認証、WPF固有機能は追加していない。

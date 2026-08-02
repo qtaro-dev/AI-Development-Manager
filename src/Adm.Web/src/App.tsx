@@ -1,4 +1,5 @@
 import { readRuntimeConfig } from "./env";
+import { RouteOutlet } from "./routes/RouteOutlet";
 import { message } from "./messages/catalog";
 import "./styles.css";
 
@@ -6,7 +7,7 @@ const runtimeConfig = readRuntimeConfig();
 
 export function App() {
     return (
-        <main className="app-shell">
+        <RouteOutlet pageTitle={message("shell.navTickets")}>
             <section className="foundation-card" aria-labelledby="app-title">
                 <p className="eyebrow">{message("app.eyebrow")}</p>
                 <h1 id="app-title">{message("app.title")}</h1>
@@ -22,6 +23,6 @@ export function App() {
                     </div>
                 </dl>
             </section>
-        </main>
+        </RouteOutlet>
     );
 }

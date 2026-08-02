@@ -3,7 +3,7 @@ import { message, messageKeys } from "./catalog";
 
 describe("Japanese message catalog", () => {
     it("exposes every registered key through the typed message API", () => {
-        expect(messageKeys).toHaveLength(18);
+        expect(messageKeys).toHaveLength(33);
         expect(message("app.title")).toBe("AI Development Manager");
         expect(message("common.retryCount", { count: 2 })).toBe(
             "再試行（2回目）",
@@ -24,5 +24,20 @@ describe("Japanese message catalog", () => {
         );
         expect(message("common.connectionDetails")).toBe("接続の詳細");
         expect(message("common.close")).toBe("閉じる");
+        expect(message("shell.workspace")).toBe("ワークスペース");
+        expect(message("shell.navTickets")).toBe("チケット");
+        expect(message("shell.navTestCases")).toBe("テストケース");
+        expect(message("shell.navSearch")).toBe("検索");
+        expect(message("shell.navKnowledge")).toBe("ナレッジ");
+        expect(message("shell.connection")).toBe("Server接続中");
+        expect(message("shell.https")).toBe("HTTPS");
+        expect(message("shell.settings")).toBe("設定");
+        expect(message("shell.roleAdministrator")).toBe("管理者");
+        expect(message("shell.skipToContent")).toBe("本文へ移動");
+        expect(message("shell.breadcrumbWorkspace")).toBe("Product Core");
+        expect(message("shell.breadcrumbSeparator")).toBe("/");
+        expect(message("shell.pageDescription")).toContain("共通Web UI");
+        expect(message("shell.primaryActions")).toBe("主操作");
+        expect(message("shell.navigation")).toBe("メインナビゲーション");
     });
 });

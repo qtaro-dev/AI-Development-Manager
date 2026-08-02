@@ -5,6 +5,12 @@
     --adm-font-size-eyebrow: 12px;
     --adm-font-size-display-min: 30px;
     --adm-font-size-display-max: 48px;
+    --adm-font-size-brand: 13px;
+    --adm-font-size-nav: 12px;
+    --adm-font-size-icon: 16px;
+    --adm-font-size-small: 11px;
+    --adm-font-size-meta: 10px;
+    --adm-font-size-micro: 9px;
     --adm-line-height-body: 1.8;
     --adm-line-height-display: 1.15;
     --adm-space-1: 4px;
@@ -17,6 +23,16 @@
     --adm-size-foundation-max: 720px;
     --adm-size-foundation-padding-max: 64px;
     --adm-size-min-viewport: 320px;
+    --adm-layout-sidebar: 248px;
+    --adm-layout-sidebar-rail: 64px;
+    --adm-layout-topbar: 71px;
+    --adm-layout-topbar-narrow: 57px;
+    --adm-layout-gutter: 43px;
+    --adm-layout-gutter-narrow: 18px;
+    --adm-layout-content-max: 1640px;
+    --adm-layout-nav-item: 38px;
+    --adm-size-avatar: 30px;
+    --adm-size-visually-hidden: 1px;
     --adm-radius-control: 8px;
     --adm-radius-panel: 11px;
     --adm-focus-ring-width: 3px;
@@ -35,6 +51,8 @@
     --adm-color-focus: #5964d9;
     --adm-color-surface-disabled: #eef0f5;
     --adm-color-text-disabled: #a5aec2;
+    --adm-color-primary-soft: #eef0ff;
+    --adm-color-success-soft: #e8f7f0;
     --adm-shadow-panel: 0 20px 50px rgb(36 55 85 / 10%);
 }
 

@@ -278,6 +278,10 @@ Markdown、テスト結果、添付、状態の操作はすべてAPIを経由す
 
 `src/Adm.Web/src/styles/tokens.css`へP0-021の寸法、余白、radius、focus、文字、Light／Dark意味色を集約した。`ThemeProvider`は`light`／`dark`／`system`を解決し、OS設定追従と利用者選択の`localStorage`境界を提供する。`Validate-WebTokens.mjs`をCI品質ゲートへ追加し、必須Token、Theme定義、直接色、Token外px値を検査する。最終基準画像調整、選択UI、個別業務画面、P1-017以降のアプリシェルは対象外とした。
 
+### P1-017実装結果
+
+`AppShell`と`RouteOutlet`を追加し、左ナビ、上部バー、本文見出し、主操作Reserved領域、接続状態Reserved領域を共通化した。P0-021の標準寸法をTokenから参照し、900px以下で64px icon railと本文1列、320px以上で本文とキーボード操作を維持する。skip link、`aria-current`、ナビゲーションARIA、長い日本語ページ名の省略境界を実装した。業務画面、認証、WPF固有ボタンは対象外とした。
+
 ### P1-014実装結果
 
 `src/Adm.Web`へVitest、jsdom、Testing Library、user-event、V8 coverageを固定依存で追加した。共通`renderWithProviders` fixtureは後続のRouter／Theme／辞書Providerを差し込める境界を持ち、現時点では透過wrapperとして動作する。Appの表示、role／label、Tab／Enter／Escape、loading／error、fake timer、fetch mock境界、ARIA検査を利用者視点のDOMテストで確認する。Playwright、WebView2、業務画面は対象外とした。

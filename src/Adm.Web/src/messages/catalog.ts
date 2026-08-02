@@ -18,6 +18,21 @@ const catalog = {
     "common.conflict": "変更が競合しています。",
     "common.blocked": "ほかの問題で試せません。",
     "common.retryCount": "再試行（{{count}}回目）",
+    "shell.workspace": "ワークスペース",
+    "shell.navTickets": "チケット",
+    "shell.navTestCases": "テストケース",
+    "shell.navSearch": "検索",
+    "shell.navKnowledge": "ナレッジ",
+    "shell.connection": "Server接続中",
+    "shell.https": "HTTPS",
+    "shell.settings": "設定",
+    "shell.roleAdministrator": "管理者",
+    "shell.skipToContent": "本文へ移動",
+    "shell.breadcrumbWorkspace": "Product Core",
+    "shell.breadcrumbSeparator": "/",
+    "shell.pageDescription": "共通Web UIの表示基盤を確認します。",
+    "shell.primaryActions": "主操作",
+    "shell.navigation": "メインナビゲーション",
 } as const;
 
 export type MessageKey = keyof typeof catalog;
