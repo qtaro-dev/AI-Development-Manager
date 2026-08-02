@@ -348,6 +348,10 @@ P0-026で、現行`Microsoft.Data.Sqlite 10.0.10`の推移依存`SQLitePCLRaw.li
 
 10,000件の合成コーパスで初回p95 2,083.535ms、変更なしp95 117.721ms、単一変更p95 128.989ms、ピーク約107.8MiBを記録した。取消、読取失敗、同一属性変更時の強制ハッシュを含む検査に合格した。実データ、UNC/NAS、実機UI非ブロック性は未確認であり、正式採用はP0-023で判断する。
 
+## P1-020実装結果
+
+`Adm.Wpf`をWinExeへ変更し、`Microsoft.Web.WebView2` 1.0.3967.48を中央Package管理へ追加した。Server readiness確認後にP1-019の共通Web UIを表示し、Runtime不足・接続失敗・Navigation失敗を日本語で案内する。許可Server origin以外のNavigationと新規WindowはWebView2内で開かず、WPF終了時にServerを停止しない。業務BridgeはP1-021へ分離した。
+
 ## 参考にした公式情報
 
 - .NET Support Policy: https://dotnet.microsoft.com/en-us/platform/support/policy

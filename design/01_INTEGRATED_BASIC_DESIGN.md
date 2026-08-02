@@ -508,3 +508,7 @@ P0-003で評価PC、クライアント条件、1万文書・添付・同時利�
 ## 19. P1-019 Web配信
 
 ASP.NET Core Serverは、`Adm.Web`のproduction buildをServer成果物の`wwwroot`へ取り込み、通常ブラウザと後続WebView2が同じWeb UIを利用できる構成とする。`index.html`は更新確認を優先してキャッシュせず、Viteのhash付きassetは長期キャッシュする。`/api`、`/health`、`/openapi`はSPA fallbackから分離し、Web bundleが欠落したServerは起動時に配布物不足として拒否する。認証、HTTPS、LAN公開、業務APIは後続チケットの責務とする。
+
+## 20. P1-020 WPF WebView2 Shell
+
+WPFは`--server-url`で指定したlocalhost Serverのreadinessを確認してから、P1-019と同じproduction Web UIをWebView2で表示する。Runtime不足、Server未起動、読込失敗は日本語の次操作付き案内とする。WebView2内のNavigationは設定Serverと同じoriginに限定し、WPF終了時にServerを停止しない。業務データ操作、Explorer操作、認証Cookieの実運用は後続チケットへ分離する。

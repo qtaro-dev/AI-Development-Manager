@@ -1,6 +1,7 @@
 namespace Adm.Infrastructure.Windows.Tests;
 
 using Adm.Infrastructure.Windows.Hosting;
+using Adm.Wpf.Shell;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -37,5 +38,26 @@ public sealed class WindowsBoundaryTests
         Assert.Same(builder, configured);
         using var host = configured.Build();
         Assert.NotNull(host.Services.GetService<IHostLifetime>());
+    }
+
+    [Theory]
+    [InlineData("http://127.0.0.1:5181/", "http://127.0.0.1:5181/projects/demo", true)]
+    [InlineData("http://localhost:5181/", "http://localhost:5181/health/ready", true)]
+    [InlineData("http://127.0.0.1:5181/", "http://localhost:5181/projects/demo", false)]
+    [InlineData("http://127.0.0.1:5181/", "https://127.0.0.1:5181/projects/demo", false)]
+    [InlineData("http://127.0.0.1:5181/", "http://127.0.0.1:5182/projects/demo", false)]
+    [InlineData("http://127.0.0.1:5181/", "https://example.com/", false)]
+    public void NavigationPolicyKeepsWebViewInsideTheConfiguredServerOrigin(string server, string candidate, bool expected)
+    {
+        Assert.Equal(expected, ShellNavigationPolicy.IsAllowed(new Uri(server), new Uri(candidate)));
+    }
+
+    [Fact]
+    public void ServerConnectionOptionsRejectsNonLocalServerUrls()
+    {
+        var exception = Assert.Throws<ArgumentException>(() =>
+            ServerConnectionOptions.FromArguments(["--server-url=https://example.com/"]));
+
+        Assert.Contains("localhost", exception.Message, StringComparison.Ordinal);
     }
 }
