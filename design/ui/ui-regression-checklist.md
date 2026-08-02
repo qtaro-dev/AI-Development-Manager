@@ -27,3 +27,9 @@
 - [ ] ユーザー提供の基準画像と主要レイアウト・余白・色・整列を比較する。
 - [ ] ユーザーが標準幅・狭幅・状態別代表画面を承認する。
 
+## P1-014 自動検査
+
+- `npm run test`でVitestをjsdom環境で実行し、coverageを`src/Adm.Web/coverage`へ保存する。
+- role／label、Tab／Enter／Escape、loading／error、ARIA、API fetch境界をDOM単体テストで検査する。
+- fake timerを含む非同期テストは、実時間待ちに依存せず再現可能にする。
+- 本項目はDOM単体テストの基盤であり、実ブラウザ、Playwright、WebView2の確認を代替しない。

@@ -30,7 +30,7 @@
 | 11 | [P1-011](P1-011_HEALTH_READINESS.md) | B | ヘルス・Ready状態基盤 | P1-006, P1-007 | 稼働確認と依存準備状態を分離する | live/readinessが明確で秘密情報を返さない | 完了 |
 | 12 | [P1-012](P1-012_WINDOWS_SERVICE_HOST_ADAPTER.md) | B | Windows Service Host Adapter | P1-006, P1-011 | 同一HostをService・console・manual・tray境界から利用する | Windows Service実登録と停止、Core非依存を確認 | 完了 |
 | 13 | [P1-013](P1-013_REACT_TYPESCRIPT_VITE_FOUNDATION.md) | C | React・TypeScript・Vite製品基盤 | P1-001, P1-002 | PoCから分離した共通Web UIを作る | lockfile固定、Build成功、依存監査記録 | 完了 |
-| 14 | [P1-014](P1-014_WEB_UNIT_TEST_FOUNDATION.md) | C | Web単体テスト基盤 | P1-013 | VitestとTesting Libraryを標準化する | DOM・操作・アクセシビリティのサンプルテスト成功 | 未着手 |
+| 14 | [P1-014](P1-014_WEB_UNIT_TEST_FOUNDATION.md) | C | Web単体テスト基盤 | P1-013 | VitestとTesting Libraryを標準化する | DOM・操作・アクセシビリティのサンプルテスト成功 | 完了 |
 | 15 | [P1-015](P1-015_JAPANESE_MESSAGE_CATALOG.md) | C | 日本語文言辞書 | P1-013 | 全表示文言を辞書参照にする | 直書き検出と欠落キー検出が自動化 | 未着手 |
 | 16 | [P1-016](P1-016_THEME_DESIGN_TOKENS.md) | C | Theme・デザイントークン基盤 | P1-013 | P0-021のライト／ダーク基準を実装する | Token正本が一つで両Themeの回帰確認が可能 | 未着手 |
 | 17 | [P1-017](P1-017_RESPONSIVE_APP_SHELL.md) | C | レスポンシブ・アプリシェル | P1-015, P1-016 | 共通ナビ、上部バー、本文領域を作る | 1440/820/320pxで主要領域と操作を維持 | 未着手 |

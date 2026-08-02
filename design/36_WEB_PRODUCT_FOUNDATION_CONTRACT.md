@@ -31,4 +31,4 @@ npm run build
 npm run verify:bundle
 ```
 
-`verify:bundle`はproduction bundleから秘密らしい代入、Bearer値、秘密環境キー、Windowsローカル絶対パスを検査する。後続のP1-014でWeb単体テスト基盤を追加する。
+`verify:bundle`はproduction bundleから秘密らしい代入、Bearer値、秘密環境キー、Windowsローカル絶対パスを検査する。P1-014でVitestとTesting LibraryによるDOM単体テスト基盤を追加し、`npm run test`でcoverage付き回帰検査を実行する。
