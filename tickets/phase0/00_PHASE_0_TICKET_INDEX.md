@@ -1,7 +1,7 @@
 # AI Development Manager Phase 0 詳細チケット一覧
 
-版: 1.10
-状態: P0-009完了
+版: 1.11
+状態: P0-010完了
 対象: Phase 0のみ
 
 ## 1. 方針
@@ -25,7 +25,7 @@
 | 7 | [P0-007](P0-007_ADM_META_ID_POC.md) | `.adm-meta`・ULID・連番仕様PoC | P0-005 | 完了 |
 | 8 | [P0-008](P0-008_ATOMIC_SAVE_POC.md) | NTFS原子的保存PoC | P0-003 | 完了 |
 | 9 | [P0-009](P0-009_ETAG_CONCURRENCY_POC.md) | ETag競合検知PoC | P0-008 | 完了 |
-| 10 | [P0-010](P0-010_RECOVERY_JOURNAL_POC.md) | 保存回復ジャーナルPoC | P0-008 | 未着手 |
+| 10 | [P0-010](P0-010_RECOVERY_JOURNAL_POC.md) | 保存回復ジャーナルPoC | P0-008 | 完了 |
 | 11 | [P0-011](P0-011_PATH_SECURITY_POC.md) | パス境界・リンク安全性PoC | P0-003 | 未着手 |
 | 12 | [P0-012](P0-012_ZIP_SAFETY_POC.md) | ZIP安全閲覧PoC | P0-011 | 未着手 |
 | 13 | [P0-013](P0-013_FILE_SCAN_WATCH_POC.md) | ファイル走査・監視・再同期PoC | P0-005, P0-007, P0-011 | 未着手 |
