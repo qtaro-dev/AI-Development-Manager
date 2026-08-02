@@ -41,6 +41,7 @@
 - `17_PERFORMANCE_CONTRACT.md`: P0-015 1万文書・同時利用性能ベースライン
 - `18_P0_015_PERFORMANCE_REVIEW.md`: P0-015性能レビューと追加PoC方針
 - `19_LAN_HTTPS_CONTRACT.md`: P0-016 LAN HTTPS初期設定契約とPoC結果
+- `20_AUTH_TOKEN_CONTRACT.md`: P0-017 Cookie・APIトークン認証契約とPoC結果
 - `18_P0_015_PERFORMANCE_REVIEW.md`: P0-015性能結果の分析、追加PoC、P0-023性能ゲート
 - `../tickets/phase0/00_PHASE_0_TICKET_INDEX.md`: Phase 0詳細チケット一覧と依存関係
 
