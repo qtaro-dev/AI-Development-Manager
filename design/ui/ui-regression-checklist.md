@@ -55,3 +55,11 @@
 - 進捗は`progressbar`と数値を持ち、取消・再試行をキーボードで実行できる。
 - Toast、Banner、Empty、Error、Dialogの`role`、`aria-live`、focus移動、Escapeを確認する。
 - 実保存、アップロード、競合API、自動マージはこの部品検査の対象外とする。
+
+## P1-023 実Runtime互換検査
+
+- Edge、Chromeで同一production Web buildを実行し、Server readiness、主要shell、Theme、Dialog、Tab／Enter／Escape、focus復帰、SPA deep linkを確認する。
+- 100%、125%、150%、200%はPlaywrightのdeviceScaleFactorで自動検査し、OS表示倍率を変更したWindows実機結果とは区別して記録する。
+- WebView2はRuntimeバージョン、WPF Shell起動、許可Server originへの接続、早期終了がないことを記録する。
+- JavaScript console error、page error、HTTP 4xx／5xxを重大欠陥として扱う。
+- 実IME入力・変換・確定、実OS表示倍率、WebView2内の詳細操作はP1-027の目視確認へ引き継ぐ。

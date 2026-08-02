@@ -34,3 +34,7 @@
 ## 判断
 
 今回のPoC条件ではReact + TypeScript + Viteを第一採用候補とする。UIはモックAPI境界に分離され、P0-015の検索方式保留やP0-017の認証契約へ密結合していないため、後続の正式APIへ置換できる。別ブラウザ（Edge／Chrome）とWebView2実ランタイム、100～200% DPI、実IMEは製品採用前の実機確認事項とし、React採用をこのPoCだけで最終確定しない。
+
+## P1-023実装結果
+
+Edge／Chromeの同一production Web buildをPlaywrightで検証し、100／125／150／200%相当のdeviceScaleFactorでshell、Theme、Dialog、keyboard、focus、deep link、console／HTTPエラーを確認する。WebView2は導入Runtimeの版記録とWPF Shell起動スモークを行う。実IME、OS表示倍率変更、WebView2内の詳細操作はP1-027の目視確認へ引き継ぐ。

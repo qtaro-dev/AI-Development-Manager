@@ -31,3 +31,7 @@
 ## P1-016実装結果
 
 `src/Adm.Web/src/styles/tokens.css`を寸法、余白、radius、focus、文字、意味色の実装正本とした。`:root`をLight、`:root[data-theme="dark"]`をDarkとして同じ意味Tokenを共有し、`ThemeProvider`が`light`／`dark`／`system`を解決する。利用者選択の永続化は`localStorage`の`adm.theme`に限定し、秘密情報や業務データは保存しない。最終基準画像への全画面調整、個別業務画面、独自アイコンは対象外とした。
+
+## P1-023実装結果
+
+Edge／Chromeで標準production Web buildを実行し、レスポンシブshell、Theme、Dialog、キーボード、focus復帰、deep linkの互換検査を追加した。DPI相当値は自動検査とWindows表示倍率の実機確認を区別し、WebView2はRuntime版とWPF Shell起動を別証拠として記録する。

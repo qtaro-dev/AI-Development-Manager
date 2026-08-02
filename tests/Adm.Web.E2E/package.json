@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "playwright test",
+    "test:compat": "playwright test --config=playwright.compat.config.ts",
     "test:headed": "playwright test --headed",
     "install:browsers": "playwright install chromium"
   },
