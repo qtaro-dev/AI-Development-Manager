@@ -1,0 +1,55 @@
+# .NET build output
+bin/
+obj/
+artifacts/
+[Bb]uild/
+[Rr]elease/
+[Dd]ebug/
+TestResults/
+coverage/
+
+# Node and Web build output
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+
+# IDE and OS files
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+Thumbs.db
+Desktop.ini
+
+# Runtime data, local state, and caches
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+logs/
+data/
+cache/
+tmp/
+temp/
+
+# Secrets and certificates
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+*.key
+*.pem
+*.crt
+*.cer
+secrets.json
+
+# Generated and local-only evidence
+*.dmp
+*.etl
+output/generated/
+output/tmp/

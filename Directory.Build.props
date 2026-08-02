@@ -1,0 +1,27 @@
+<Project>
+  <PropertyGroup>
+    <!-- P1-001: single source for product build identity. P1-002+ projects inherit this file. -->
+    <BuildNumber Condition="'$(BuildNumber)' == ''">1</BuildNumber>
+    <ProductVersion Condition="'$(ProductVersion)' == ''">0.1.0</ProductVersion>
+    <BuildLabel Condition="'$(BuildLabel)' == ''">dev</BuildLabel>
+
+    <AssemblyVersion Condition="'$(AssemblyVersion)' == ''">1.0.0.0</AssemblyVersion>
+    <FileVersion Condition="'$(FileVersion)' == ''">$(ProductVersion).$(BuildNumber)</FileVersion>
+    <InformationalVersion Condition="'$(InformationalVersion)' == ''">$(ProductVersion)-$(BuildLabel)+build$(BuildNumber)</InformationalVersion>
+
+    <TargetFramework Condition="'$(TargetFramework)' == ''">net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <BaseOutputPath>$(MSBuildThisFileDirectory)artifacts/bin/</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)artifacts/obj/</BaseIntermediateOutputPath>
+  </PropertyGroup>
+</Project>

@@ -7,6 +7,10 @@
 
 ## 1. 採用技術の確定案
 
+### P1-001ツールチェーン確定
+
+製品コードはルート`global.json`の.NET SDK 10.0.302を`rollForward: disable`で使用し、`Directory.Build.props`から`net10.0`、Nullable、ImplicitUsings、分析器、警告エラー化、Version、Build番号、共通出力先を継承する。NuGetは`Directory.Packages.props`で中央管理し、Node.jsは`.node-version`の22.18.0を基準に、製品Web依存のlockfileを各Webチケットで固定する。P1-001では製品プロジェクトを作成せず、PoCコードも参照しない。
+
 | 領域 | 採用案 | 状態 |
 |---|---|---|
 | Server | .NET 10 LTS / ASP.NET Core 10 / Kestrel | 確定 |
