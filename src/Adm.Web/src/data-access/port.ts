@@ -7,6 +7,22 @@ export type FoundationStatus = {
     readonly serverTimeUtc: string;
 };
 
+export type ExecutionProfileMode = "local" | "server";
+export type ExecutionProfile = {
+    readonly schemaVersion: 1;
+    readonly mode: ExecutionProfileMode;
+    readonly serverUri: string | null;
+};
+export type ExecutionProfileUpdate = {
+    readonly mode: ExecutionProfileMode;
+    readonly serverUri: string | null;
+};
+export type ExecutionProfileReadResult = {
+    readonly profile: ExecutionProfile;
+    readonly usedLocalFallback: boolean;
+    readonly warningCode: string | null;
+};
+
 export type DataAccessFailureCode =
     "adapter_unavailable" | "operation_failed" | "invalid_result";
 
@@ -23,4 +39,10 @@ export type DataAccessResult<T> =
 
 export interface DataAccessPort {
     getFoundationStatus(): Promise<DataAccessResult<FoundationStatus>>;
+    getExecutionProfile(): Promise<
+        DataAccessResult<ExecutionProfileReadResult>
+    >;
+    updateExecutionProfile(
+        update: ExecutionProfileUpdate,
+    ): Promise<DataAccessResult<ExecutionProfile>>;
 }

@@ -113,3 +113,6 @@ P1-028では`src/`、`tests/`、`installer/`、`poc/`を変更しない。P1-029
 ## P1-034実装反映
 
 P1-034でLocal modeのWPF Composition Rootを実装した。固定Local originのWeb UIは`getFoundationStatus`だけを明示登録されたLocal Application Channel経由で`Adm.Application`へ接続し、Server Host、Kestrel、HTTP、localhost待受を利用しない。Server modeとPlatform Bridgeの既存境界は変更せず、WPF終了時はLocal Composition RootへCancellationTokenを伝播する。
+## P1-036 実行プロファイル管理の反映
+
+P1-036では、Localを既定値とし、明示されたServer profileだけを保存・利用するApplication契約を追加した。保存先はユーザー領域の`Config/execution-profile.json`で、schema version、未知フィールド拒否、破損時のLocal fallback、HTTPS要件、原子的置換を適用する。設定画面は後続チケットの責務とし、WPFとWebはLocal Channelの型付き操作を通じて利用する。

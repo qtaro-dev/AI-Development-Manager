@@ -3,6 +3,9 @@ import type {
     DataAccessPort,
     DataAccessResult,
     FoundationStatus,
+    ExecutionProfile,
+    ExecutionProfileReadResult,
+    ExecutionProfileUpdate,
 } from "./port";
 
 function isApiVersionResponse(value: unknown): value is ApiVersionResponse {
@@ -62,6 +65,35 @@ export function createHttpDataAccess(
                     },
                 };
             }
+        },
+        async getExecutionProfile(): Promise<
+            DataAccessResult<ExecutionProfileReadResult>
+        > {
+            return {
+                kind: "failure",
+                error: {
+                    code: "adapter_unavailable",
+                    message:
+                        "実行プロファイルはローカルアプリから取得してください。",
+                    retryable: false,
+                    nextAction: "checkSettings",
+                },
+            };
+        },
+        async updateExecutionProfile(
+            update: ExecutionProfileUpdate,
+        ): Promise<DataAccessResult<ExecutionProfile>> {
+            void update;
+            return {
+                kind: "failure",
+                error: {
+                    code: "adapter_unavailable",
+                    message:
+                        "実行プロファイルはローカルアプリから更新してください。",
+                    retryable: false,
+                    nextAction: "checkSettings",
+                },
+            };
         },
     };
 }

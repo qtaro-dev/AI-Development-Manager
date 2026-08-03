@@ -5,7 +5,9 @@ using System.Windows;
 using System.Windows.Navigation;
 using Microsoft.Web.WebView2.Core;
 using Adm.Wpf.Bridge;
+using Adm.Application.ExecutionProfiles;
 using Adm.Wpf.Composition;
+using Adm.Wpf.Configuration;
 using Adm.Wpf.LocalChannel;
 using Adm.Wpf.Shell;
 
@@ -16,21 +18,35 @@ public partial class MainWindow : Window, IDisposable
     private static readonly TimeSpan ReadinessTimeout = TimeSpan.FromSeconds(8);
     private static readonly TimeSpan WebViewInitializationTimeout = TimeSpan.FromSeconds(10);
     private static readonly HttpClient httpClient = new() { Timeout = TimeSpan.FromSeconds(1) };
-    private readonly ServerConnectionOptions connectionOptions;
-    private readonly LocalCompositionRoot localCompositionRoot = new();
+    private ServerConnectionOptions connectionOptions;
+    private readonly LocalCompositionRoot localCompositionRoot;
+    private readonly ExecutionProfileService executionProfiles;
+    private readonly string[] commandLineArgs;
     private bool isInitialized;
     private bool isDisposed;
 
     public MainWindow()
     {
         InitializeComponent();
-        connectionOptions = ServerConnectionOptions.FromArguments(Environment.GetCommandLineArgs().Skip(1).ToArray());
-        ServerUrlText.Text = connectionOptions.IsLocal
-            ? "Local mode"
-            : $"Server: {connectionOptions.ServerUri!.AbsoluteUri}";
+        commandLineArgs = Environment.GetCommandLineArgs().Skip(1).ToArray();
+        var allowLoopbackHttp = commandLineArgs.Contains("--allow-loopback-http", StringComparer.OrdinalIgnoreCase);
+        executionProfiles = new ExecutionProfileService(new JsonExecutionProfileStore(), allowLoopbackHttp);
+        localCompositionRoot = new LocalCompositionRoot(executionProfiles);
+        connectionOptions = ServerConnectionOptions.FromArguments(commandLineArgs);
+        UpdateServerUrlText();
     }
 
-    private async void Window_Loaded(object sender, RoutedEventArgs e) => await ConnectAsync();
+    private async void Window_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (!ServerConnectionOptions.HasServerUrlArgument(commandLineArgs))
+        {
+            var saved = await executionProfiles.GetAsync();
+            connectionOptions = ServerConnectionOptions.FromProfile(saved.Profile);
+            UpdateServerUrlText();
+        }
+
+        await ConnectAsync();
+    }
 
     private async void RetryButton_Click(object sender, RoutedEventArgs e) => await ConnectAsync();
 
@@ -80,6 +96,10 @@ public partial class MainWindow : Window, IDisposable
             RetryButton.IsEnabled = true;
         }
     }
+
+    private void UpdateServerUrlText() => ServerUrlText.Text = connectionOptions.IsLocal
+        ? "Local mode"
+        : $"Server: {connectionOptions.ServerUri!.AbsoluteUri}";
 
     private async Task InitializeWebViewAsync()
     {

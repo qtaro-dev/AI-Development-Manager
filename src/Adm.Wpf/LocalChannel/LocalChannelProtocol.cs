@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Text.Json.Serialization;
 using Adm.Wpf.Shell;
 
 namespace Adm.Wpf.LocalChannel;
@@ -125,7 +126,10 @@ public static class LocalChannelProtocol
         }, WebJsonOptions);
     }
 
-    private static readonly JsonSerializerOptions WebJsonOptions = new(JsonSerializerDefaults.Web);
+    private static readonly JsonSerializerOptions WebJsonOptions = new(JsonSerializerDefaults.Web)
+    {
+        Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
+    };
 
     public static bool IsAllowedTopLevelSource(string? source) =>
         Uri.TryCreate(source, UriKind.Absolute, out var candidate) &&

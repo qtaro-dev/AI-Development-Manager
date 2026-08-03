@@ -4,6 +4,9 @@ import type {
     DataAccessPort,
     DataAccessResult,
     FoundationStatus,
+    ExecutionProfile,
+    ExecutionProfileReadResult,
+    ExecutionProfileUpdate,
 } from "../port";
 
 const FOUNDATION_STATUS_OPERATION = "getFoundationStatus";
@@ -20,16 +23,40 @@ function isFoundationStatus(value: unknown): value is FoundationStatus {
     );
 }
 
-function failure(
+function failure<T>(
     code: DataAccessFailure["code"],
     message: string,
     retryable: boolean,
     nextAction: DataAccessFailure["nextAction"],
-): DataAccessResult<FoundationStatus> {
+): DataAccessResult<T> {
     return {
         kind: "failure",
         error: { code, message, retryable, nextAction },
     };
+}
+
+function isExecutionProfile(value: unknown): value is ExecutionProfile {
+    if (typeof value !== "object" || value === null) return false;
+    const candidate = value as Record<string, unknown>;
+    return (
+        candidate.schemaVersion === 1 &&
+        (candidate.mode === "local" || candidate.mode === "server") &&
+        (typeof candidate.serverUri === "string" ||
+            candidate.serverUri === null)
+    );
+}
+
+function isExecutionProfileReadResult(
+    value: unknown,
+): value is ExecutionProfileReadResult {
+    if (typeof value !== "object" || value === null) return false;
+    const candidate = value as Record<string, unknown>;
+    return (
+        isExecutionProfile(candidate.profile) &&
+        typeof candidate.usedLocalFallback === "boolean" &&
+        (typeof candidate.warningCode === "string" ||
+            candidate.warningCode === null)
+    );
 }
 
 export function createLocalDataAccess(
@@ -58,6 +85,49 @@ export function createLocalDataAccess(
                 return failure(
                     "operation_failed",
                     "ローカル処理を完了できませんでした。",
+                    true,
+                    "retry",
+                );
+            }
+        },
+        async getExecutionProfile() {
+            try {
+                const result = await client.request("executionProfile.get", {});
+                return isExecutionProfileReadResult(result)
+                    ? { kind: "success", value: result }
+                    : failure<ExecutionProfileReadResult>(
+                          "invalid_result",
+                          "実行プロファイルを読み込めませんでした。",
+                          false,
+                          "close",
+                      );
+            } catch {
+                return failure<ExecutionProfileReadResult>(
+                    "operation_failed",
+                    "実行プロファイルを読み込めませんでした。",
+                    true,
+                    "retry",
+                );
+            }
+        },
+        async updateExecutionProfile(update: ExecutionProfileUpdate) {
+            try {
+                const result = await client.request(
+                    "executionProfile.update",
+                    update,
+                );
+                return isExecutionProfile(result)
+                    ? { kind: "success", value: result }
+                    : failure<ExecutionProfile>(
+                          "invalid_result",
+                          "実行プロファイルを保存できませんでした。",
+                          false,
+                          "close",
+                      );
+            } catch {
+                return failure<ExecutionProfile>(
+                    "operation_failed",
+                    "実行プロファイルを保存できませんでした。",
                     true,
                     "retry",
                 );

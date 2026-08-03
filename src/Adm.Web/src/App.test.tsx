@@ -6,6 +6,8 @@ import { renderWithProviders } from "./test/test-utils";
 
 const fakeDataAccess: DataAccessPort = {
     getFoundationStatus: vi.fn(),
+    getExecutionProfile: vi.fn(),
+    updateExecutionProfile: vi.fn(),
 };
 
 describe("App foundation", () => {

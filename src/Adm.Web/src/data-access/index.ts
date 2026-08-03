@@ -7,4 +7,8 @@ export type {
     DataAccessPort,
     DataAccessResult,
     FoundationStatus,
+    ExecutionProfile,
+    ExecutionProfileMode,
+    ExecutionProfileReadResult,
+    ExecutionProfileUpdate,
 } from "./port";

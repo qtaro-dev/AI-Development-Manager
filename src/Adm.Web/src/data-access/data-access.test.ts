@@ -69,6 +69,24 @@ describe("DataAccess Port", () => {
                     serverTimeUtc: "2026-08-04T00:00:00Z",
                 },
             })),
+            getExecutionProfile: vi.fn(async () => ({
+                kind: "failure" as const,
+                error: {
+                    code: "adapter_unavailable" as const,
+                    message: "unavailable",
+                    retryable: false,
+                    nextAction: "checkSettings" as const,
+                },
+            })),
+            updateExecutionProfile: vi.fn(async () => ({
+                kind: "failure" as const,
+                error: {
+                    code: "adapter_unavailable" as const,
+                    message: "unavailable",
+                    retryable: false,
+                    nextAction: "checkSettings" as const,
+                },
+            })),
         };
 
         const port = composeDataAccess({ mode: "local", adapter: fake });

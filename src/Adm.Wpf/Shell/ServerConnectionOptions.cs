@@ -1,3 +1,5 @@
+using Adm.Application.ExecutionProfiles;
+
 namespace Adm.Wpf.Shell;
 
 public enum WpfExecutionMode
@@ -32,6 +34,14 @@ public sealed record ServerConnectionOptions(WpfExecutionMode Mode, Uri? ServerU
 
         return new ServerConnectionOptions(WpfExecutionMode.Server, EnsureTrailingSlash(uri));
     }
+
+    public static bool HasServerUrlArgument(string[]? args) => args?.Any(argument =>
+        argument.StartsWith(ServerUrlArgument + "=", StringComparison.OrdinalIgnoreCase)) == true;
+
+    public static ServerConnectionOptions FromProfile(ExecutionProfile profile) =>
+        profile.Mode == ExecutionProfileMode.Server && Uri.TryCreate(profile.ServerUri, UriKind.Absolute, out var uri)
+            ? new(WpfExecutionMode.Server, EnsureTrailingSlash(uri))
+            : new(WpfExecutionMode.Local, null);
 
     private static Uri EnsureTrailingSlash(Uri uri) =>
         uri.AbsolutePath.EndsWith('/')
