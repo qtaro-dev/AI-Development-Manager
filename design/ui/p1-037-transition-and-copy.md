@@ -4,7 +4,8 @@
 
 | 状態 | 到達条件 | 利用者向け主文 | 主操作 | 補助操作 |
 |---|---|---|---|---|
-| 起動・Local準備 | 引数なし、またはLocal profile | このPCで利用を開始します | このPCで続ける | 接続先を設定、終了 |
+| 初回・Local準備 | 初回起動、または初回設定の未完了 | 初回設定: このPCで利用を開始します | このPCで続ける | 接続先を設定、終了 |
+| 通常・Local起動 | 初回設定済み、Local profile | ローカルUIを表示しています | 本体を利用 | 設定 |
 | Local表示 | Local準備成功 | ローカルUIを表示しています | 本体を利用 | 設定 |
 | Server接続中 | Server profileを選択 | サーバーへの接続を確認しています | 待機 | 取消、終了 |
 | Server接続成功 | readiness成功 | 共通画面を表示しています | 本体を利用 | 設定 |
@@ -16,8 +17,8 @@
 
 | Key | 表示文言 | 用途 |
 |---|---|---|
-| `startup.local.title` | このPCで利用を開始します | Local既定起動 |
-| `startup.local.description` | サーバーに接続しなくても、チケットやMarkdownを管理できます。 | Local説明 |
+| `startup.local.title` | 初回設定: このPCで利用を開始します | 初回Local設定 |
+| `startup.local.description` | この画面は初回のみ表示します。次回からはLocalホームへ直接進みます。 | 初回Local説明 |
 | `startup.local.continue` | このPCで続ける | Local主操作 |
 | `startup.server.settings` | 接続先を設定 | 設定導線 |
 | `startup.exit` | 終了 | 終了導線 |
@@ -30,6 +31,7 @@
 | `profile.server.title` | LAN Serverへ接続 | Profile選択 |
 | `profile.save` | 保存 | Profile更新 |
 | `profile.cancel` | 取消 | Profile破棄 |
+| `profile.serverUrl.disabled` | Local選択中は入力できません（Server選択時に表示） | Local選択時のURL欄 |
 | `webview.failed.title` | 画面を読み込めません | 埋込UI失敗 |
 | `webview.retry` | もう一度読み込む | 埋込UI再試行 |
 | `webview.settings` | 設定を確認 | 埋込UI設定導線 |
@@ -47,6 +49,8 @@
 ## レビュー用チェックリスト
 
 - [ ] Local開始にServer通信を要求していない
+- [ ] 初回設定画面は毎回表示せず、設定済みならLocalホームへ直接進む
+- [ ] Local選択時はServer URL入力が無効または非表示である
 - [ ] Server失敗からLocal、設定、再試行、終了へ到達できる
 - [ ] Server選択は明示操作である
 - [ ] Web UI読込失敗とServer接続失敗を別状態としている

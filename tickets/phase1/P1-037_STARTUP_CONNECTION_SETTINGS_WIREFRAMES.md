@@ -116,7 +116,7 @@ Localを標準とする起動、LAN Serverへの明示的切替、接続失敗�
 
 ## 状態
 
-実施済み。ユーザー承認待ち。P1-038は本チケットのユーザー承認まで着手禁止。
+実施済み。ユーザー承認済み。P1-038は本チケットのユーザー承認まで着手禁止。
 
 ## 実施結果
 
@@ -124,7 +124,9 @@ Localを標準とする起動、LAN Serverへの明示的切替、接続失敗�
 - `design/ui/p1-037-transition-and-copy.md`へ状態遷移、文言辞書キー、キーボード操作、レビュー項目を追加した。
 - `design/ui/screen-inventory.md`と`design/24_UI_WIREFRAMES_CONTRACT.md`へP1-037の設計正本を追記した。
 - 製品コード、tests、installer、P1-038以降は変更していない。
+- ユーザー指摘を反映し、初回設定画面は初回または未設定時だけ表示し、通常起動ではLocalホームへ直接進む構成とした。
+- Local選択時のServer URLを無効化し、LAN Server選択時だけ入力可能とする状態を設定ワイヤーフレームへ反映した。
 
 ## 承認ゲート
 
-Local既定、接続失敗時の4操作、設定画面、WPF fallback、狭幅・高DPI配置についてユーザー確認と承認が必要である。承認結果は`design/ui/wireframes/p1-037/README.md`へ記録する。
+Local既定、接続失敗時の4操作、設定画面、WPF fallback、狭幅・高DPI配置に加え、初回表示頻度とURL入力状態についてユーザー承認済み。承認結果は`design/ui/wireframes/p1-037/README.md`へ記録した。
