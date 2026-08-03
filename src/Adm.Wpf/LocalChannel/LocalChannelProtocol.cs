@@ -109,7 +109,7 @@ public static class LocalChannelProtocol
             kind = "response",
             requestId = response.RequestId,
             result = response.Result,
-        });
+        }, WebJsonOptions);
     }
 
     public static string SerializeError(LocalChannelError error)
@@ -122,8 +122,10 @@ public static class LocalChannelProtocol
             kind = "error",
             requestId,
             error = new { code = error.Code, messageKey = error.MessageKey },
-        });
+        }, WebJsonOptions);
     }
+
+    private static readonly JsonSerializerOptions WebJsonOptions = new(JsonSerializerDefaults.Web);
 
     public static bool IsAllowedTopLevelSource(string? source) =>
         Uri.TryCreate(source, UriKind.Absolute, out var candidate) &&

@@ -1,4 +1,5 @@
 export { LocalChannelClient, createWebView2LocalTransport } from "./client";
+export { createLocalDataAccess } from "./adapter";
 export type { LocalChannelTransport } from "./client";
 export {
     LOCAL_CHANNEL_VERSION,

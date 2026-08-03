@@ -109,3 +109,7 @@ Local modeの保存対象は、ユーザーが選択したプロジェクト、�
 ## Scope guard
 
 P1-028では`src/`、`tests/`、`installer/`、`poc/`を変更しない。P1-029以降のチケットを作成・実施せず、Server MSI、Service、HTTPS、認証、LAN公開の修正も行わない。
+
+## P1-034実装反映
+
+P1-034でLocal modeのWPF Composition Rootを実装した。固定Local originのWeb UIは`getFoundationStatus`だけを明示登録されたLocal Application Channel経由で`Adm.Application`へ接続し、Server Host、Kestrel、HTTP、localhost待受を利用しない。Server modeとPlatform Bridgeの既存境界は変更せず、WPF終了時はLocal Composition RootへCancellationTokenを伝播する。

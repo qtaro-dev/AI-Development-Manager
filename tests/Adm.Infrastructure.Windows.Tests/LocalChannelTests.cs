@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Adm.Wpf.Composition;
 using Adm.Wpf.LocalChannel;
 
 namespace Adm.Infrastructure.Windows.Tests;
@@ -117,6 +118,35 @@ public sealed class LocalChannelTests
             LocalSource);
 
         Assert.Contains("\"operation_not_allowed\"", response);
+    }
+
+    [Fact]
+    public async Task LocalCompositionRootReturnsFoundationStatusWithoutServer()
+    {
+        using var composition = new LocalCompositionRoot();
+
+        var response = await composition.DispatchAsync(
+            "{\"version\":1,\"kind\":\"request\",\"requestId\":\"request-local-001\",\"operation\":\"getFoundationStatus\",\"payload\":{}}",
+            LocalSource);
+        using var document = JsonDocument.Parse(response);
+
+        Assert.Equal("response", document.RootElement.GetProperty("kind").GetString());
+        Assert.Equal("ready", document.RootElement.GetProperty("result").GetProperty("state").GetString());
+        Assert.Equal("local", document.RootElement.GetProperty("result").GetProperty("apiVersion").GetString());
+        Assert.Equal("local", document.RootElement.GetProperty("result").GetProperty("executionMode").GetString());
+    }
+
+    [Fact]
+    public async Task LocalCompositionRootRejectsRequestsAfterShutdown()
+    {
+        var composition = new LocalCompositionRoot();
+        composition.Dispose();
+
+        var response = await composition.DispatchAsync(
+            "{\"version\":1,\"kind\":\"request\",\"requestId\":\"request-local-002\",\"operation\":\"getFoundationStatus\",\"payload\":{}}",
+            LocalSource);
+
+        Assert.Contains("\"code\":\"channel_unavailable\"", response);
     }
 
     private static string ReadFixture(string name) => File.ReadAllText(Path.Combine(FixtureRoot, name));

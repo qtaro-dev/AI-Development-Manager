@@ -2,6 +2,7 @@ import { RouteOutlet } from "./routes/RouteOutlet";
 import { FeedbackCatalog } from "./components/feedback/FeedbackCatalog";
 import { BridgeCatalog } from "./platform-bridge/BridgeCatalog";
 import { message } from "./messages/catalog";
+import { useEffect } from "react";
 import type { DataAccessPort } from "./data-access";
 import "./styles.css";
 
@@ -12,9 +13,9 @@ export function App({
     dataAccess: DataAccessPort;
     apiBoundary: string;
 }) {
-    // The Port is injected at the composition boundary; business operations are
-    // intentionally added by later tickets without changing this shell.
-    void dataAccess;
+    useEffect(() => {
+        void dataAccess.getFoundationStatus();
+    }, [dataAccess]);
 
     return (
         <RouteOutlet pageTitle={message("shell.navTickets")}>

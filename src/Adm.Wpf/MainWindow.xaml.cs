@@ -5,19 +5,21 @@ using System.Windows;
 using System.Windows.Navigation;
 using Microsoft.Web.WebView2.Core;
 using Adm.Wpf.Bridge;
+using Adm.Wpf.Composition;
 using Adm.Wpf.LocalChannel;
 using Adm.Wpf.Shell;
 
 namespace Adm.Wpf;
 
-public partial class MainWindow : Window
+public partial class MainWindow : Window, IDisposable
 {
     private static readonly TimeSpan ReadinessTimeout = TimeSpan.FromSeconds(8);
     private static readonly TimeSpan WebViewInitializationTimeout = TimeSpan.FromSeconds(10);
     private static readonly HttpClient httpClient = new() { Timeout = TimeSpan.FromSeconds(1) };
     private readonly ServerConnectionOptions connectionOptions;
-    private readonly LocalChannelDispatcher localChannel = new(LocalChannelOperationRegistry.Empty);
+    private readonly LocalCompositionRoot localCompositionRoot = new();
     private bool isInitialized;
+    private bool isDisposed;
 
     public MainWindow()
     {
@@ -189,7 +191,7 @@ public partial class MainWindow : Window
     {
         if (connectionOptions.IsLocal)
         {
-            var localResponse = await localChannel.DispatchAsync(e.WebMessageAsJson, e.Source);
+            var localResponse = await localCompositionRoot.DispatchAsync(e.WebMessageAsJson, e.Source);
             WebView.CoreWebView2.PostWebMessageAsJson(localResponse);
             return;
         }
@@ -218,7 +220,20 @@ public partial class MainWindow : Window
 
     private void Window_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
     {
+        Dispose();
+    }
+
+    public void Dispose()
+    {
+        if (isDisposed)
+        {
+            return;
+        }
+
+        isDisposed = true;
+        localCompositionRoot.Dispose();
         WebView.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     private void SetMessage(string title, string description)

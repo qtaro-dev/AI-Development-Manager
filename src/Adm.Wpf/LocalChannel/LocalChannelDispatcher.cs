@@ -32,6 +32,10 @@ public sealed class LocalChannelDispatcher(LocalChannelOperationRegistry registr
             var result = await handler(request, cancellationToken);
             return LocalChannelProtocol.SerializeResponse(new LocalChannelResponse(request.RequestId, result));
         }
+        catch (OperationCanceledException)
+        {
+            return LocalChannelProtocol.SerializeError(new LocalChannelError(request?.RequestId, "channel_unavailable", "errors.localChannel.channelUnavailable"));
+        }
         catch (LocalChannelProtocolException exception)
         {
             return LocalChannelProtocol.SerializeError(new LocalChannelError(exception.RequestId, exception.Code, exception.MessageKey));
