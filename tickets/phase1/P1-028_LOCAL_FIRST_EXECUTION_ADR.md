@@ -194,6 +194,6 @@ RequestとResponseを対応付け、操作名、入力、結果、利用者向�
 
 ## 状態
 
-実装完了（レビュー待ち）。ADR正本は`design/50_ADR_019_LOCAL_FIRST_EXECUTION_MODEL.md`。指定された設計資料へLocal-firstの責務境界、起動シーケンス、既存判断の分類、Phase 1最小Channelを反映した。`output/pdf/AI_Development_Manager_Local_First_Design_Review_v1.0.pdf`を設計意図の参照資料として確認し、必須初回ウィザードなしのローカルホーム、ローカル利用者ULID、`.adm-meta`所有リース、Self-contained Clientを後続入力として反映した。`src/`、`tests/`、`installer/`、`poc/`、P1-029以降は変更していない。
+承認済み。ADR正本は`design/50_ADR_019_LOCAL_FIRST_EXECUTION_MODEL.md`。指定された設計資料へLocal-firstの責務境界、起動シーケンス、既存判断の分類、Phase 1最小Channelを反映した。`output/pdf/AI_Development_Manager_Local_First_Design_Review_v1.0.pdf`を設計意図の参照資料として確認し、必須初回ウィザードなしのローカルホーム、ローカル利用者ULID、`.adm-meta`所有リース、Self-contained Clientを後続入力として反映した。`src/`、`tests/`、`installer/`、`poc/`、P1-029以降は変更していない。
 
-本チケットはADR・設計資料の実装を完了し、ユーザーレビュー待ちである。P1-029の作成・実施は、P1-028の承認後にユーザー指示を待つ。
+Build、Test、Architecture検査合格を含む実装結果について、2026-08-03にユーザー承認を受けた。P1-029は別チケットとして作成し、一件ずつ進める。
