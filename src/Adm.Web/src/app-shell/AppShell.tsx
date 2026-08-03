@@ -23,9 +23,11 @@ const navItems: NavItem[] = [
 export function AppShell({
     children,
     pageTitle,
+    onSettings,
 }: {
     children: ReactNode;
     pageTitle: string;
+    onSettings?: () => void;
 }) {
     return (
         <div className="app-shell">
@@ -88,6 +90,12 @@ export function AppShell({
                         className="nav-item"
                         href="#settings"
                         aria-label={message("shell.settings")}
+                        onClick={(event) => {
+                            if (onSettings) {
+                                event.preventDefault();
+                                onSettings();
+                            }
+                        }}
                     >
                         <span className="nav-icon" aria-hidden="true">
                             ⚙

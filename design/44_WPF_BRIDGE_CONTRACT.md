@@ -27,3 +27,7 @@ ADR-019のLocal Application Channelは業務操作のRequest、Response、Error�
 ## P1-033 Local Channel v1との実装分離
 
 Local Application Channelは`Adm.Wpf.LocalChannel`と`src/Adm.Web/src/data-access/local/`に閉じた別契約であり、Platform Bridgeの型・Event Handler・operation registryを共有しない。Local Channelの製品registryはP1-033では空で、テスト専用operationだけが別テストregistryへ登録される。従って`getHostInfo`はLocal Channelから実行できない。
+
+## P1-038 終了・fallback境界
+
+P1-038の終了、再試行、設定確認、Local継続はWPFのネイティブfallbackおよびWeb UIの表示導線で提供する。Platform Bridgeへ終了操作や任意のホスト操作は追加せず、`getHostInfo`のみの許可リストを維持する。

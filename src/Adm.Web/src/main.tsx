@@ -28,7 +28,9 @@ createRoot(document.getElementById("root")!).render(
         <ThemeProvider>
             <App
                 dataAccess={dataAccess}
-                apiBoundary={runtimeConfig.apiBaseUrl}
+                apiBoundary={
+                    isEmbeddedLocalMode ? "local" : runtimeConfig.apiBaseUrl
+                }
             />
         </ThemeProvider>
     </StrictMode>,

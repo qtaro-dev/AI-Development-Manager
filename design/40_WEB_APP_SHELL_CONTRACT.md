@@ -39,3 +39,9 @@ npm run build
 ```
 
 実機確認は`npm run dev`で1440px、820px、320pxを確認する。P1-017では実ブラウザ／WebView2差異と最終基準画像の調整は確定しない。
+
+## P1-038 ローカルファースト起動UI
+
+組み込みLocal modeでは、`localStorage`の`adm.startup.localAcknowledged`が未設定の初回だけ起動案内を表示する。設定済みの場合はLocalホームへ直接遷移し、Server接続を待たない。
+
+実行プロファイル設定では、Local選択時のServer URL入力を無効化し、LAN Server選択時だけHTTPS URLを入力・保存できる。接続失敗時もLocal継続、設定、再試行、終了の操作を表示する。Web UIはP1-036のDataAccess Portだけを利用し、HTTP APIやWPF Bridgeを直接参照しない。

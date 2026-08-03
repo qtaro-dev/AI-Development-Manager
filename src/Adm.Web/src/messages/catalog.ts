@@ -26,6 +26,40 @@ const catalog = {
     "shell.connection": "Server接続中",
     "shell.https": "HTTPS",
     "shell.settings": "設定",
+    "startup.eyebrow": "LOCAL FIRST",
+    "startup.title": "初回設定: このPCで利用を開始します",
+    "startup.description":
+        "この画面は初回のみ表示します。次回からはLocalホームへ直接進みます。",
+    "startup.localTitle": "Localモード",
+    "startup.localDescription":
+        "サーバーに接続せず、このアプリに組み込まれた画面を開きます。",
+    "startup.continueLocal": "このPCで続ける",
+    "startup.openSettings": "接続先を設定",
+    "startup.exit": "終了",
+    "startup.connectionFailedTitle": "サーバーに接続できません",
+    "startup.connectionFailedDescription":
+        "このPCだけで続けるか、接続先を確認してから再試行できます。",
+    "startup.retry": "もう一度試す",
+    "startup.profileTitle": "利用方法",
+    "startup.profileDescription":
+        "LocalまたはLAN Serverを選択します。Server URLはServer選択時だけ入力できます。",
+    "startup.profileLocal": "このPCで利用",
+    "startup.profileLocalDescription":
+        "サーバーなしでローカルのデータを管理します。",
+    "startup.profileServer": "LAN Serverへ接続",
+    "startup.profileServerDescription":
+        "HTTPSの接続先を指定して共有機能を利用します。",
+    "startup.serverUrl": "Server URL",
+    "startup.serverUrlDisabled":
+        "Local選択中は入力できません（Server選択時に表示）",
+    "startup.serverUrlPlaceholder": "https://server.example/",
+    "startup.httpsOnly": "HTTPSのみ保存できます。",
+    "startup.save": "保存",
+    "startup.cancel": "取消",
+    "startup.saving": "保存しています。",
+    "startup.localReady": "ローカルUIを表示しています。",
+    "startup.profileSaveFailed": "設定を保存できませんでした。",
+    "startup.invalidServerUrl": "HTTPSのServer URLを入力してください。",
     "shell.roleAdministrator": "管理者",
     "shell.skipToContent": "本文へ移動",
     "shell.breadcrumbWorkspace": "Product Core",

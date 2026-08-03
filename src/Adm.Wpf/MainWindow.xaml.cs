@@ -18,10 +18,15 @@ public partial class MainWindow : Window, IDisposable
     private static readonly TimeSpan ReadinessTimeout = TimeSpan.FromSeconds(8);
     private static readonly TimeSpan WebViewInitializationTimeout = TimeSpan.FromSeconds(10);
     private static readonly HttpClient httpClient = new() { Timeout = TimeSpan.FromSeconds(1) };
+    private static readonly JsonSerializerOptions ProfileJsonOptions = new(JsonSerializerDefaults.Web)
+    {
+        Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
+    };
     private ServerConnectionOptions connectionOptions;
     private readonly LocalCompositionRoot localCompositionRoot;
     private readonly ExecutionProfileService executionProfiles;
     private readonly string[] commandLineArgs;
+    private bool openLocalSettings;
     private bool isInitialized;
     private bool isDisposed;
 
@@ -53,17 +58,19 @@ public partial class MainWindow : Window, IDisposable
     private async Task ConnectAsync()
     {
         RetryButton.IsEnabled = false;
+        FallbackActions.Visibility = Visibility.Collapsed;
         MessagePanel.Visibility = Visibility.Visible;
         WebView.Visibility = Visibility.Collapsed;
 
         if (connectionOptions.IsLocal)
         {
-            SetMessage("ローカルUIを準備しています。", "Serverへ接続せず、このアプリに組み込まれた画面を表示しています。");
+            SetMessage("ローカルUIを準備しています。", "サーバーに接続せず、このアプリに組み込まれた画面を表示しています。");
         }
 
         if (!connectionOptions.IsLocal && !await WaitForServerAsync())
         {
-            SetMessage("Serverに接続できません。", "Serverを起動してから、再試行してください。必要なServer URLは上部に表示しています。");
+            SetMessage("サーバーに接続できません。", "このPCだけで続けるか、接続先を確認してから再試行できます。");
+            ShowFallbackActions(true);
             RetryButton.IsEnabled = true;
             return;
         }
@@ -72,7 +79,7 @@ public partial class MainWindow : Window, IDisposable
         {
             await InitializeWebViewAsync();
             WebView.Source = connectionOptions.IsLocal
-                ? LocalWebViewPolicy.StartUri
+                ? GetLocalStartUri()
                 : connectionOptions.ServerUri;
             WebView.Visibility = Visibility.Visible;
             MessagePanel.Visibility = Visibility.Collapsed;
@@ -83,16 +90,19 @@ public partial class MainWindow : Window, IDisposable
         catch (WebAssetUnavailableException)
         {
             SetMessage("Web UIの配布物がありません。", "アプリを修復または再インストールしてから、再試行してください。終了する場合は、この画面を閉じてください。");
+            ShowFallbackActions(false);
             RetryButton.IsEnabled = true;
         }
         catch (Exception exception) when (IsRuntimeMissing(exception))
         {
             SetMessage("WebView2 Runtimeが必要です。", "Microsoft Edge WebView2 Runtimeをインストールしてから、再試行してください。");
+            ShowFallbackActions(false);
             RetryButton.IsEnabled = true;
         }
         catch (Exception)
         {
             SetMessage("Web UIを表示できません。", "WebView2の初期化に失敗しました。再試行してください。");
+            ShowFallbackActions(false);
             RetryButton.IsEnabled = true;
         }
     }
@@ -100,6 +110,35 @@ public partial class MainWindow : Window, IDisposable
     private void UpdateServerUrlText() => ServerUrlText.Text = connectionOptions.IsLocal
         ? "Local mode"
         : $"Server: {connectionOptions.ServerUri!.AbsoluteUri}";
+
+    private Uri GetLocalStartUri() => openLocalSettings
+        ? new Uri(LocalWebViewPolicy.StartUri + "?settings=1")
+        : LocalWebViewPolicy.StartUri;
+
+    private void ShowFallbackActions(bool showLocalOptions)
+    {
+        FallbackActions.Visibility = Visibility.Visible;
+        ContinueLocalButton.Visibility = showLocalOptions ? Visibility.Visible : Visibility.Collapsed;
+        OpenSettingsButton.Visibility = showLocalOptions ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private async void ContinueLocalButton_Click(object sender, RoutedEventArgs e)
+    {
+        openLocalSettings = false;
+        connectionOptions = new ServerConnectionOptions(WpfExecutionMode.Local, null);
+        UpdateServerUrlText();
+        await ConnectAsync();
+    }
+
+    private async void OpenSettingsButton_Click(object sender, RoutedEventArgs e)
+    {
+        openLocalSettings = true;
+        connectionOptions = new ServerConnectionOptions(WpfExecutionMode.Local, null);
+        UpdateServerUrlText();
+        await ConnectAsync();
+    }
+
+    private void ExitButton_Click(object sender, RoutedEventArgs e) => Close();
 
     private async Task InitializeWebViewAsync()
     {
@@ -186,7 +225,8 @@ public partial class MainWindow : Window, IDisposable
         {
             MessagePanel.Visibility = Visibility.Visible;
             WebView.Visibility = Visibility.Collapsed;
-            SetMessage("Web UIを読み込めません。", "Serverの状態を確認してから、再試行してください。");
+            SetMessage("画面を読み込めません。", "アプリの画面を準備できませんでした。もう一度読み込めます。");
+            ShowFallbackActions(false);
             RetryButton.IsEnabled = true;
         }
     }
@@ -211,8 +251,20 @@ public partial class MainWindow : Window, IDisposable
     {
         if (connectionOptions.IsLocal)
         {
+            LocalChannelRequest? request = null;
+            try
+            {
+                request = LocalChannelProtocol.ParseRequest(e.WebMessageAsJson, e.Source);
+            }
+            catch (LocalChannelProtocolException)
+            {
+            }
             var localResponse = await localCompositionRoot.DispatchAsync(e.WebMessageAsJson, e.Source);
             WebView.CoreWebView2.PostWebMessageAsJson(localResponse);
+            if (request?.Operation == "executionProfile.update")
+            {
+                ApplyExecutionProfileUpdate(localResponse);
+            }
             return;
         }
 
@@ -236,6 +288,34 @@ public partial class MainWindow : Window, IDisposable
             response = BridgeProtocol.Error("invalid_json", "Bridgeメッセージの形式が正しくありません。", null);
         }
         WebView.CoreWebView2.PostWebMessageAsJson(response);
+    }
+
+    private async void ApplyExecutionProfileUpdate(string responseJson)
+    {
+        try
+        {
+            if (LocalChannelProtocol.ParseMessage(responseJson) is not LocalChannelResponse response || response.Result is not JsonElement result)
+            {
+                return;
+            }
+
+            var profile = JsonSerializer.Deserialize<ExecutionProfile>(result.GetRawText(), ProfileJsonOptions);
+            if (profile is null || profile.Mode != ExecutionProfileMode.Server)
+            {
+                return;
+            }
+
+            connectionOptions = ServerConnectionOptions.FromProfile(profile);
+            openLocalSettings = false;
+            UpdateServerUrlText();
+            await ConnectAsync();
+        }
+        catch (JsonException)
+        {
+        }
+        catch (LocalChannelProtocolException)
+        {
+        }
     }
 
     private void Window_Closing(object? sender, System.ComponentModel.CancelEventArgs e)

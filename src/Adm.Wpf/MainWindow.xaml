@@ -27,6 +27,14 @@
                         Click="RetryButton_Click"
                         Content="再試行"
                         IsEnabled="False" />
+                <Button x:Name="ExitButton"
+                        Width="72"
+                        Height="32"
+                        Margin="12,0,0,0"
+                        HorizontalAlignment="Right"
+                        DockPanel.Dock="Right"
+                        Click="ExitButton_Click"
+                        Content="終了" />
                 <StackPanel>
                     <TextBlock FontSize="14" FontWeight="SemiBold" Foreground="#F5F7FF" Text="AI Development Manager" />
                     <TextBlock x:Name="StatusText" Margin="0,3,0,0" Foreground="#B6C1D9" Text="接続を準備しています。" />
@@ -38,9 +46,14 @@
         <Grid Grid.Row="1">
             <wv2:WebView2 x:Name="WebView" Visibility="Collapsed" />
             <Border x:Name="MessagePanel" Margin="28" Padding="28" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#1D2535" CornerRadius="10">
-                <StackPanel Width="460">
+                <StackPanel Width="520">
                     <TextBlock x:Name="MessageTitle" FontSize="22" FontWeight="SemiBold" Foreground="#F5F7FF" Text="接続を準備しています。" TextWrapping="Wrap" />
                     <TextBlock x:Name="MessageDescription" Margin="0,12,0,0" Foreground="#B6C1D9" TextWrapping="Wrap" />
+                    <StackPanel x:Name="FallbackActions" Margin="0,20,0,0" Orientation="Horizontal" Visibility="Collapsed">
+                        <Button x:Name="ContinueLocalButton" Margin="0,0,8,0" Padding="16,8" Click="ContinueLocalButton_Click" Content="このPCで続ける" />
+                        <Button x:Name="OpenSettingsButton" Margin="0,0,8,0" Padding="16,8" Click="OpenSettingsButton_Click" Content="接続先を設定" />
+                        <Button x:Name="FallbackExitButton" Padding="16,8" Click="ExitButton_Click" Content="終了" />
+                    </StackPanel>
                 </StackPanel>
             </Border>
         </Grid>

@@ -34,3 +34,10 @@ Server接続失敗時には、Local mode、Server設定、再試行、終了の�
 - Web資産Buildは`Build-WebAssets.mjs`の排他ロック下で実行し、WPFとServerの出力へ同一内容を段階配置する。
 - Local modeは固定仮想origin以外のNavigation／Resourceを拒否し、新規Windowを開かない。
 - Local modeのUserDataFolderは`%LOCALAPPDATA%\AI Development Manager\WebView2\Local`に固定する。
+
+## P1-038 ローカルファースト起動UI
+
+- 引数なしのLocal modeはServer readiness確認を行わず、初回案内またはLocalホームを固定仮想originへ表示する。
+- Web UI読込失敗、またはServer modeの接続失敗時は、WPF側に再試行、設定確認、Localで続ける、終了のfallback導線を表示する。
+- Localの実行プロファイル変更はLocal Application Channel経由でWPFへ通知し、LAN Server選択時だけServer modeへ切り替える。Bridgeの許可操作は追加しない。
+- Local設定画面は`?settings=1`で明示表示し、通常起動では表示しない。
