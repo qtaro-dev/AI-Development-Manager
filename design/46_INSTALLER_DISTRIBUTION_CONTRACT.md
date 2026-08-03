@@ -111,3 +111,11 @@ WPF Clientの正式publish入口は`./scripts/installer/Publish-WpfClient.ps1`�
 Self-contained成果物には.NET Desktop Runtimeを同梱し、`publish-manifest.json`へSDK、TargetFramework、RID、Self-contained、版数、全ファイルSHA-256、合計サイズを記録する。`sbom.cdx.json`は成果物ファイルとSDK／RIDの検証情報を記録する。WebView2 Evergreen Runtimeは引き続き独立したWindows前提であり、.NET Runtime不足とは別の案内境界とする。
 
 Framework-dependent publish、single-file、trimmingはClientの正式配布入口として使用せず、publish検査で検出する。WPF Client MSIはP1-039のSelf-contained publish出力を入力とし、P1-040のShortcut・ARP改善は変更しない。
+
+## 11. P1-040 Client MSI操作性
+
+Client MSIはP1-039のSelf-contained複数ファイル出力を収録し、per-userの`ProgramMenuFolder`配下へ「AI Development Manager」ショートカットを作成する。デスクトップショートカットは作成しない。ショートカット、WPF実行ファイル、MSIのARP表示は、同一の決定的な製品アイコンと製品名を使用する。
+
+ARPには発行元、製品説明、About／Help URLを設定し、修復・更新・削除を許可する。Downgradeは`MajorUpgrade`で拒否する。通常uninstallはClient配布ファイルと空の予約フォルダーだけを対象にし、`UserData`、`.adm-meta`、業務データ、WebView2 UserData、Serverデータを削除しない。MSIログは`msiexec /l*v`で取得し、秘密情報を引数や独自ログへ渡さない。
+
+Runtime前提はWebView2 Evergreen Runtimeだけとし、.NET Desktop RuntimeのLaunchConditionは持たない。WebView2不足時は日本語でRuntime名、導入後の再実行を案内する。

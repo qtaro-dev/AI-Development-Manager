@@ -43,6 +43,7 @@ function New-ClientFilesFragment([string]$sourceRoot, [string]$outputFile) {
         Where-Object { $_.Extension -ne '.pdb' } |
         Sort-Object FullName
     $directories = @{}
+    $mainExecutableFileId = $null
     foreach ($file in $files) {
         $relativeDirectory = [System.IO.Path]::GetRelativePath($sourceRoot, $file.DirectoryName)
         if ($relativeDirectory -eq '.') { continue }
@@ -89,11 +90,20 @@ function New-ClientFilesFragment([string]$sourceRoot, [string]$outputFile) {
         $componentId = ConvertTo-WixId 'Cmp_' $relativePath
         $fileId = ConvertTo-WixId 'File_' $relativePath
         $guid = ConvertTo-WixGuid "client-file:$relativePath"
+        if ($file.Name -eq 'Adm.Wpf.exe') { $mainExecutableFileId = $fileId }
         $lines.Add(('      <Component Id="{0}" Directory="{1}" Guid="{2}">' -f $componentId, $directoryId, $guid))
         $lines.Add(('        <RegistryValue Root="HKCU" Key="Software\AI Development Manager\Client\InstallerComponents\{0}" Name="Installed" Value="1" Type="integer" KeyPath="yes" />' -f $componentId))
         $lines.Add(('        <File Id="{0}" Source="{1}" />' -f $fileId, (Escape-Xml $file.FullName)))
         $lines.Add('      </Component>')
     }
+    if ($null -eq $mainExecutableFileId) { throw 'Adm.Wpf.exe was not found in the Client publish output.' }
+    $lines.Add('    </ComponentGroup>')
+    $lines.Add('    <ComponentGroup Id="ClientStartMenu" Directory="ClientProgramsMenuFolder">')
+    $lines.Add('      <Component Id="ClientStartMenuComponent" Guid="DCE8BB3E-6D5E-4B4B-9B7C-3E7B4E442F9A">')
+    $lines.Add('        <RegistryValue Root="HKCU" Key="Software\AI Development Manager\Client\StartMenu" Name="Installed" Value="1" Type="integer" KeyPath="yes" />')
+    $lines.Add('        <Shortcut Id="ClientStartMenuShortcut" Name="AI Development Manager" Description="AI Development Managerを起動" Target="[CLIENTFOLDER]Adm.Wpf.exe" WorkingDirectory="CLIENTFOLDER" Icon="ProductIcon" IconIndex="0" />')
+    $lines.Add('        <RemoveFolder Id="RemoveClientStartMenu" On="uninstall" />')
+    $lines.Add('      </Component>')
     $lines.Add('    </ComponentGroup>')
     $lines.Add('    <ComponentGroup Id="ClientDirectoryCleanup" Directory="CLIENTROOT">')
     $cleanupDirectories = [System.Collections.Generic.List[object]]::new()
@@ -125,11 +135,14 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "WPF self-contained publish failed with exit code $LASTEXITCODE" }
 
     New-ClientFilesFragment $publishPath (Join-Path $generatedPath 'ClientFiles.wxs')
+    & pwsh -NoProfile -File '.\scripts\installer\New-ProductIcon.ps1' -OutputPath (Join-Path $generatedPath 'Product.ico')
+    if ($LASTEXITCODE -ne 0) { throw "Product icon generation failed with exit code $LASTEXITCODE" }
 
     & dotnet build '.\installer\wpf-client\wpf-client.wixproj' `
         --configuration $Configuration `
         -p:ClientPublishDir=$publishPath `
         -p:GeneratedClientFiles=$(Join-Path $generatedPath 'ClientFiles.wxs') `
+        -p:ProductIconPath=$(Join-Path $generatedPath 'Product.ico') `
         -p:RestoreConfigFile=$(Join-Path $repositoryRoot 'eng/NuGet.ClientPublish.config') `
         -p:OutputPath=$packagePath
     if ($LASTEXITCODE -ne 0) { throw "WPF Client MSI build failed with exit code $LASTEXITCODE" }

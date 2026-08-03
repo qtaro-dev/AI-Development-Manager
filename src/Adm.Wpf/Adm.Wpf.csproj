@@ -18,7 +18,13 @@
     <WebProjectDirectory>$(MSBuildThisFileDirectory)..\Adm.Web</WebProjectDirectory>
     <WebAssetSourceDirectory>$(WebProjectDirectory)\dist</WebAssetSourceDirectory>
     <WpfWebAssetOutputDirectory>$(MSBuildThisFileDirectory)..\..\artifacts\bin\$(MSBuildProjectName)\$(Configuration)\$(TargetFramework)\WebAssets</WpfWebAssetOutputDirectory>
+    <ProductIconPath>$(BaseIntermediateOutputPath)Product.ico</ProductIconPath>
+    <ApplicationIcon>$(ProductIconPath)</ApplicationIcon>
   </PropertyGroup>
+
+  <Target Name="GenerateWpfProductIcon" BeforeTargets="PrepareForBuild">
+    <Exec Command="pwsh -NoProfile -File &quot;$(MSBuildThisFileDirectory)..\..\scripts\installer\New-ProductIcon.ps1&quot; -OutputPath &quot;$(ProductIconPath)&quot;" />
+  </Target>
 
   <Target Name="BuildWpfWebAssets" BeforeTargets="Build;Publish" Condition="'$(DesignTimeBuild)' != 'true'">
     <Exec Command="node &quot;$(MSBuildThisFileDirectory)..\..\scripts\web\Build-WebAssets.mjs&quot;" WorkingDirectory="$(WebProjectDirectory)" />

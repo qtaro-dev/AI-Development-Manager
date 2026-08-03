@@ -8,7 +8,8 @@
     <SuppressIces>ICE91</SuppressIces>
     <ClientPublishDir Condition="'$(ClientPublishDir)' == ''">$(MSBuildThisFileDirectory)..\..\artifacts\package-input\wpf-client</ClientPublishDir>
     <GeneratedClientFiles Condition="'$(GeneratedClientFiles)' == ''">$(MSBuildThisFileDirectory)..\..\artifacts\installer-generated\ClientFiles.wxs</GeneratedClientFiles>
-    <DefineConstants>ProductVersion=$(ProductVersion);BuildNumber=$(BuildNumber);ClientPublishDir=$(ClientPublishDir)</DefineConstants>
+    <ProductIconPath Condition="'$(ProductIconPath)' == ''">$(MSBuildThisFileDirectory)..\..\artifacts\installer-generated\Product.ico</ProductIconPath>
+    <DefineConstants>ProductVersion=$(ProductVersion);BuildNumber=$(BuildNumber);ClientPublishDir=$(ClientPublishDir);ProductIconPath=$(ProductIconPath)</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

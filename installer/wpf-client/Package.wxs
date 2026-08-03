@@ -8,18 +8,29 @@
     <SummaryInformation Description="AI Development Manager WPF Client" />
     <MajorUpgrade DowngradeErrorMessage="新しいバージョンが既にインストールされています。" />
     <MediaTemplate EmbedCab="yes" />
+    <Icon Id="ProductIcon" SourceFile="$(var.ProductIconPath)" />
+    <Property Id="ARPPRODUCTICON" Value="ProductIcon" />
+    <Property Id="ARPURLINFOABOUT" Value="https://github.com/qtaro-dev/AI-Development-Manager" />
+    <Property Id="ARPHELPLINK" Value="https://github.com/qtaro-dev/AI-Development-Manager" />
 
     <Property Id="WEBVIEW2RUNTIMEVERSION">
       <RegistrySearch Id="SearchWebView2RuntimeMachine" Root="HKLM" Key="SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}" Name="pv" Type="raw" />
       <RegistrySearch Id="SearchWebView2RuntimeUser" Root="HKCU" Key="Software\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}" Name="pv" Type="raw" />
     </Property>
-    <Launch Condition="WEBVIEW2RUNTIMEVERSION OR Installed" Message="Microsoft Edge WebView2 Runtimeをインストールしてから、WPF Clientを導入してください。" />
+    <Launch Condition="WEBVIEW2RUNTIMEVERSION OR Installed" Message="Microsoft Edge WebView2 Runtimeが見つかりません。Runtimeをインストールしてから、AI Development Manager Clientを導入してください。" />
 
     <Feature Id="MainFeature" Title="AI Development Manager Client" Level="1">
       <ComponentGroupRef Id="ClientFiles" />
       <ComponentGroupRef Id="ClientDirectoryCleanup" />
+      <ComponentGroupRef Id="ClientStartMenu" />
     </Feature>
   </Package>
+
+  <Fragment>
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="ClientProgramsMenuFolder" Name="AI Development Manager" />
+    </StandardDirectory>
+  </Fragment>
 
   <Fragment>
     <StandardDirectory Id="LocalAppDataFolder">

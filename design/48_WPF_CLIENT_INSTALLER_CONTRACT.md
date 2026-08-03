@@ -62,3 +62,9 @@ P1-026で確認された.NET Desktop Runtime前提、ショートカット、Ser
 ## P1-039 Self-contained入力
 
 Client MSIのpublish入力は`Publish-WpfClient.ps1`による`win-x64` Self-contained複数ファイル成果物へ更新する。MSIは.NET Desktop Runtimeを前提条件として要求せず、WebView2 Evergreen Runtimeだけを独立した前提条件として検査する。成果物の版数、SHA-256、SBOMはpublish出力の`publish-manifest.json`と`sbom.cdx.json`で確認する。
+
+## P1-040 操作性修正
+
+スタートメニューのper-userショートカットは`AI Development Manager`として作成し、Targetは収録された`Adm.Wpf.exe`、WorkingDirectoryはClient配置先、Iconは製品アイコンとする。デスクトップショートカットは作成しない。ARPの製品名、説明、発行元、About／Help URL、製品アイコンを定義し、修復・更新・削除の入口を保持する。
+
+WebView2 Evergreen RuntimeのLaunchConditionだけを維持し、.NET Runtimeの前提条件は要求しない。uninstall時にUserData、`.adm-meta`、業務データ、WebView2 UserData、Serverデータを削除しない。MSI操作の詳細ログは利用者が`msiexec /l*v <log-path>`で取得できる。
