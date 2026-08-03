@@ -20,9 +20,20 @@ $expectedProjects = @(
     'Adm.Wpf'
 )
 
-$forbiddenByProject = @{
-    'Adm.Core' = @('Adm.Application', 'Adm.Infrastructure.Windows', 'Adm.Server.Host', 'Adm.Wpf')
-    'Adm.Application' = @('Adm.Infrastructure.Windows', 'Adm.Server.Host', 'Adm.Wpf')
+$allowedByProject = @{
+    'Adm.Core' = @()
+    'Adm.Application' = @('Adm.Core')
+    'Adm.Infrastructure.Windows' = @()
+    'Adm.Server.Host' = @('Adm.Application', 'Adm.Infrastructure.Windows')
+    'Adm.Wpf' = @('Adm.Application')
+}
+
+$requiredByProject = @{
+    'Adm.Core' = @()
+    'Adm.Application' = @('Adm.Core')
+    'Adm.Infrastructure.Windows' = @()
+    'Adm.Server.Host' = @('Adm.Application', 'Adm.Infrastructure.Windows')
+    'Adm.Wpf' = @('Adm.Application')
 }
 
 function Get-ProjectReferences {
@@ -68,13 +79,23 @@ function Assert-ProjectReferences {
     )
 
     $references = @(Get-ProjectReferences -ProjectPath $ProjectPath)
+    $actualNames = @($references | ForEach-Object { $_.ProjectName } | Sort-Object -Unique)
+    $allowedNames = @($allowedByProject[$ProjectName])
+    foreach ($actualName in $actualNames) {
+        if ($allowedNames -notcontains $actualName) {
+            throw "$ProjectName has a forbidden ProjectReference to $actualName"
+        }
+    }
+
+    foreach ($requiredName in @($requiredByProject[$ProjectName])) {
+        if ($actualNames -notcontains $requiredName) {
+            throw "$ProjectName is missing required ProjectReference to $requiredName"
+        }
+    }
+
     foreach ($reference in $references) {
         if ($reference.Include -match '(?i)(^|[\\/])poc([\\/]|$)' -or $reference.ResolvedPath -match '(?i)[\\/]poc([\\/]|$)') {
             throw "$ProjectName has a forbidden PoC ProjectReference: $($reference.Include)"
-        }
-
-        if ($forbiddenByProject.ContainsKey($ProjectName) -and $forbiddenByProject[$ProjectName] -contains $reference.ProjectName) {
-            throw "$ProjectName has a forbidden ProjectReference to $($reference.ProjectName)"
         }
     }
 }
@@ -88,7 +109,7 @@ function Assert-ForbiddenNamespace {
         [string[]]$SourceFiles
     )
 
-    if (-not $forbiddenByProject.ContainsKey($ProjectName)) {
+    if ($ProjectName -notin @('Adm.Core', 'Adm.Application')) {
         return
     }
 
@@ -114,30 +135,38 @@ function Assert-AssemblyReferences {
     }
 
     $assembly = [System.Reflection.Assembly]::LoadFrom($assemblyPath)
+    $actualNames = @($assembly.GetReferencedAssemblies() | Where-Object { $_.Name -like 'Adm.*' } | ForEach-Object { $_.Name } | Sort-Object -Unique)
+    $allowedNames = @($allowedByProject[$ProjectName])
+    foreach ($actualName in $actualNames) {
+        if ($allowedNames -notcontains $actualName) {
+            throw "$ProjectName has a forbidden compiled assembly reference: $actualName"
+        }
+    }
+
     foreach ($reference in $assembly.GetReferencedAssemblies()) {
         if ($reference.Name -match '(?i)(Poc|PoC)') {
             throw "$ProjectName has a forbidden PoC assembly reference: $($reference.Name)"
-        }
-
-        if ($ProjectName -eq 'Adm.Core' -and $reference.Name -match '^(Adm\.(Application|Infrastructure\.Windows|Server\.Host|Wpf))$') {
-            throw "Adm.Core has a forbidden compiled assembly reference: $($reference.Name)"
-        }
-
-        if ($ProjectName -eq 'Adm.Application' -and $reference.Name -match '^Adm\.(Infrastructure\.Windows|Server\.Host|Wpf)$') {
-            throw "Adm.Application has a forbidden compiled assembly reference: $($reference.Name)"
         }
     }
 }
 
 function Assert-IntentionalViolationDetected {
-    $fixturePath = Join-Path $testRoot 'fixtures\CoreWithForbiddenReference.csproj'
-    try {
-        Assert-ProjectReferences -ProjectName 'Adm.Core' -ProjectPath $fixturePath
-        throw 'The intentional forbidden ProjectReference fixture was not detected.'
-    }
-    catch [System.Management.Automation.RuntimeException] {
-        if ($_.Exception.Message -notlike '*forbidden ProjectReference*') {
-            throw
+    $projectFixtures = @(
+        @{ ProjectName = 'Adm.Core'; Path = 'CoreWithForbiddenReference.csproj' }
+        @{ ProjectName = 'Adm.Wpf'; Path = 'WpfWithForbiddenServerReference.csproj' }
+        @{ ProjectName = 'Adm.Server.Host'; Path = 'ServerWithForbiddenWpfReference.csproj' }
+        @{ ProjectName = 'Adm.Infrastructure.Windows'; Path = 'InfrastructureWithForbiddenWpfReference.csproj' }
+    )
+
+    foreach ($fixture in $projectFixtures) {
+        try {
+            Assert-ProjectReferences -ProjectName $fixture.ProjectName -ProjectPath (Join-Path $testRoot "fixtures\$($fixture.Path)")
+            throw "The intentional forbidden ProjectReference fixture was not detected: $($fixture.Path)"
+        }
+        catch [System.Management.Automation.RuntimeException] {
+            if ($_.Exception.Message -notlike '*forbidden ProjectReference*') {
+                throw
+            }
         }
     }
 

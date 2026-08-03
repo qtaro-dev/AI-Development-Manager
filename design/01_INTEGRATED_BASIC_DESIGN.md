@@ -520,3 +520,19 @@ WPFは`--server-url`で指定したlocalhost Serverのreadinessを確認して�
 P1-019／P1-020のServer配信Web UIとWebView2契約はServer modeの互換経路として維持する。Local modeではKestrel、localhostポート、HTTP API、隠れたServer自動起動を行わない。Server未導入・停止・障害・接続不能時は、ローカル利用、Server設定、再試行、終了の導線を持つ設計を後続UI実装へ渡す。
 
 初回起動では必須選択ウィザードを表示せず、WPFパッケージ内の共通React UIによるローカルホームを直ちに表示する。Local modeではApplication Services、保存Adapter、索引・バックアップ境界を同一プロセス内で利用し、Server modeとの同時書込みは`.adm-meta`配下の所有リースで制御する。
+
+## 22. P1-030 製品モジュール境界
+
+P1-028のローカルファースト方針とP1-029の条件付き採用結果を受け、`Adm.Wpf`と`Adm.Server.Host`を独立Composition Rootとして固定する。WPFはLocal mode、Server HostはServer modeの起動・構成境界を担当し、Application／Coreの同じ契約をそれぞれのプロセス内で構成する。両Host、DI Container、プロセスを共有する意味ではない。
+
+| モジュール | 責務 | 許可する直接参照 |
+| --- | --- | --- |
+| `Adm.Core` | Windows非依存のドメイン規則・値 | なし |
+| `Adm.Application` | Windows／HTTP／UI非依存のユースケース・Port | `Adm.Core` |
+| `Adm.Infrastructure.Windows` | Windows固有Adapter | なし（P1-030ではApplication参照を先行追加しない） |
+| `Adm.Server.Host` | Server modeのHTTP／Host Composition Root | `Adm.Application`, `Adm.Infrastructure.Windows` |
+| `Adm.Wpf` | Local modeのWPF／WebView2 Composition Root | `Adm.Application` |
+
+`Adm.Wpf`と`Adm.Server.Host`の相互参照、InfrastructureからHost／WPFへの参照、Core／ApplicationからWindows固有Namespaceへの参照、製品からPoCへの参照を禁止する。`tests/Adm.Architecture.Tests/Invoke-ArchitectureBoundaryTests.ps1`はProjectReferenceの許可・必須集合と、Build済みAssemblyの許可・禁止依存を検査する。
+
+P1-029の条件付き採用事項は後続WPF実装の入力として維持する。すなわち、WebView2 Evergreen Runtime、実行単位で分離したUserDataFolder、固定仮想HTTPS origin、Navigation／Resource境界、配布後のRuntime差とWindows実機回帰を受入条件とする。本節ではWebView2の製品実装、DI登録、Local Application Channel、DataAccess Portを実装しない。
