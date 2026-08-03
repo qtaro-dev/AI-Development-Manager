@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "kind": "request",
+  "requestId": "request-001",
+  "operation": "test.echo",
+  "payload": {
+    "value": "fixture"
+  }
+}

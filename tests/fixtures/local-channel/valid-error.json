@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "kind": "error",
+  "requestId": "request-001",
+  "error": {
+    "code": "handler_failed",
+    "messageKey": "errors.localChannel.handlerFailed"
+  }
+}

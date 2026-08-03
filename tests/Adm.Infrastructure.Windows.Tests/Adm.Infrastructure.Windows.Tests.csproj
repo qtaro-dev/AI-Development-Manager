@@ -18,4 +18,7 @@
     <ProjectReference Include="..\..\src\Adm.Infrastructure.Windows\Adm.Infrastructure.Windows.csproj" />
     <ProjectReference Include="..\..\src\Adm.Wpf\Adm.Wpf.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\fixtures\local-channel\*.json" Link="Fixtures\local-channel\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>

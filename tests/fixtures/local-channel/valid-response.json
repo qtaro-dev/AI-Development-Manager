@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "kind": "response",
+  "requestId": "request-001",
+  "result": {
+    "value": "fixture"
+  }
+}

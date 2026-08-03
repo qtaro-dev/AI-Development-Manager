@@ -23,3 +23,7 @@ WPFはWebView2のトップレベル文書からのWebMessageだけを扱い、�
 ## P1-028 Local Application Channelとの分離
 
 ADR-019のLocal Application Channelは業務操作のRequest、Response、Errorを扱う別契約であり、WPF Bridgeへ追加しない。Platform Bridgeは引き続きWindows固有の限定操作だけを扱い、任意コード、任意コマンド、自由なファイルアクセス、業務データ操作を公開しない。React UIはDataAccess Portを介してLocal Application ChannelまたはServer modeのHTTP API Adapterを選択する。
+
+## P1-033 Local Channel v1との実装分離
+
+Local Application Channelは`Adm.Wpf.LocalChannel`と`src/Adm.Web/src/data-access/local/`に閉じた別契約であり、Platform Bridgeの型・Event Handler・operation registryを共有しない。Local Channelの製品registryはP1-033では空で、テスト専用operationだけが別テストregistryへ登録される。従って`getHostInfo`はLocal Channelから実行できない。

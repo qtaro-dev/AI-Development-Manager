@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Navigation;
 using Microsoft.Web.WebView2.Core;
 using Adm.Wpf.Bridge;
+using Adm.Wpf.LocalChannel;
 using Adm.Wpf.Shell;
 
 namespace Adm.Wpf;
@@ -15,6 +16,7 @@ public partial class MainWindow : Window
     private static readonly TimeSpan WebViewInitializationTimeout = TimeSpan.FromSeconds(10);
     private static readonly HttpClient httpClient = new() { Timeout = TimeSpan.FromSeconds(1) };
     private readonly ServerConnectionOptions connectionOptions;
+    private readonly LocalChannelDispatcher localChannel = new(LocalChannelOperationRegistry.Empty);
     private bool isInitialized;
 
     public MainWindow()
@@ -183,8 +185,15 @@ public partial class MainWindow : Window
             "Content-Type: text/plain; charset=utf-8");
     }
 
-    private void CoreWebView2_WebMessageReceived(object? sender, CoreWebView2WebMessageReceivedEventArgs e)
+    private async void CoreWebView2_WebMessageReceived(object? sender, CoreWebView2WebMessageReceivedEventArgs e)
     {
+        if (connectionOptions.IsLocal)
+        {
+            var localResponse = await localChannel.DispatchAsync(e.WebMessageAsJson, e.Source);
+            WebView.CoreWebView2.PostWebMessageAsJson(localResponse);
+            return;
+        }
+
         string response;
         try
         {
