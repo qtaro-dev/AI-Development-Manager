@@ -14,4 +14,20 @@
     <ProjectReference Include="..\Adm.Application\Adm.Application.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <WebProjectDirectory>$(MSBuildThisFileDirectory)..\Adm.Web</WebProjectDirectory>
+    <WebAssetSourceDirectory>$(WebProjectDirectory)\dist</WebAssetSourceDirectory>
+    <WpfWebAssetOutputDirectory>$(MSBuildThisFileDirectory)..\..\artifacts\bin\$(MSBuildProjectName)\$(Configuration)\$(TargetFramework)\WebAssets</WpfWebAssetOutputDirectory>
+  </PropertyGroup>
+
+  <Target Name="BuildWpfWebAssets" BeforeTargets="Build;Publish" Condition="'$(DesignTimeBuild)' != 'true'">
+    <Exec Command="node &quot;$(MSBuildThisFileDirectory)..\..\scripts\web\Build-WebAssets.mjs&quot;" WorkingDirectory="$(WebProjectDirectory)" />
+    <ItemGroup>
+      <WpfWebAssetFiles Include="$(WebAssetSourceDirectory)\**\*" />
+    </ItemGroup>
+    <RemoveDir Directories="$(WpfWebAssetOutputDirectory)" />
+    <MakeDir Directories="$(WpfWebAssetOutputDirectory)" />
+    <Copy SourceFiles="@(WpfWebAssetFiles)" DestinationFiles="@(WpfWebAssetFiles->'$(WpfWebAssetOutputDirectory)\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+
 </Project>

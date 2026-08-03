@@ -1,9 +1,16 @@
 namespace Adm.Wpf.Shell;
 
-public sealed record ServerConnectionOptions(Uri ServerUri)
+public enum WpfExecutionMode
+{
+    Local,
+    Server,
+}
+
+public sealed record ServerConnectionOptions(WpfExecutionMode Mode, Uri? ServerUri)
 {
     public const string ServerUrlArgument = "--server-url";
     public static readonly Uri DefaultServerUri = new("http://127.0.0.1:5181/");
+    public bool IsLocal => Mode == WpfExecutionMode.Local;
 
     public static ServerConnectionOptions FromArguments(string[]? args)
     {
@@ -15,7 +22,7 @@ public sealed record ServerConnectionOptions(Uri ServerUri)
 
         if (string.IsNullOrWhiteSpace(value))
         {
-            return new ServerConnectionOptions(DefaultServerUri);
+            return new ServerConnectionOptions(WpfExecutionMode.Local, null);
         }
 
         if (!Uri.TryCreate(value, UriKind.Absolute, out var uri) || !ShellNavigationPolicy.IsLocalHttpUri(uri))
@@ -23,7 +30,7 @@ public sealed record ServerConnectionOptions(Uri ServerUri)
             throw new ArgumentException("Server URLはlocalhostのhttp://またはhttps://で指定してください。", nameof(args));
         }
 
-        return new ServerConnectionOptions(EnsureTrailingSlash(uri));
+        return new ServerConnectionOptions(WpfExecutionMode.Server, EnsureTrailingSlash(uri));
     }
 
     private static Uri EnsureTrailingSlash(Uri uri) =>

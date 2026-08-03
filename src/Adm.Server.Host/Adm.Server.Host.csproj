@@ -22,8 +22,7 @@
     <PropertyGroup>
       <ResolvedWebAssetOutputDirectory>$(TargetDir)wwwroot</ResolvedWebAssetOutputDirectory>
     </PropertyGroup>
-    <Exec Command="npm.cmd ci --ignore-scripts" WorkingDirectory="$(WebProjectDirectory)" />
-    <Exec Command="npm.cmd run build" WorkingDirectory="$(WebProjectDirectory)" />
+    <Exec Command="node &quot;$(MSBuildThisFileDirectory)..\..\scripts\web\Build-WebAssets.mjs&quot;" WorkingDirectory="$(WebProjectDirectory)" />
     <ItemGroup>
       <WebAssetFiles Include="$(WebAssetSourceDirectory)\**\*" />
     </ItemGroup>
