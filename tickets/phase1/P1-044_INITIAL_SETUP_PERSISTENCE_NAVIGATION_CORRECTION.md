@@ -33,4 +33,22 @@ Phase 2開始時に判断する。本チケットでは実装しない。
 
 ## 状態
 
-作成済み。未着手。
+実装完了。Build／Test／Architecture検査済み。P1-045へ進行可能。
+
+## 実装結果
+
+- 実行プロファイル読込結果へ`hasPersistedProfile`を追加し、永続設定の存在をWeb UIへ明示した。
+- 有効な保存済みプロファイルがある場合、LocalStorageの状態に依存せず初回画面を再表示せずLocalホームへ遷移する。
+- Local／Serverいずれの保存成功時も初回起動済み状態を保存し、次回起動の通常遷移を統一した。
+- Local設定の保存失敗時はホームへ遷移せず、入力画面にエラーを表示して再試行できるようにした。
+- 保存後は成功応答を受けてから画面遷移し、WPF側の既存Server切替経路と整合させた。
+
+## 検証結果
+
+- Debug／Release Build: 成功、警告0・エラー0
+- .NET Test: 74件成功
+- Web Test: 40件成功
+- Web typecheck／format: 成功
+- Web DataAccess／Message／Token／Bundle検査: 成功
+- Architecture検査: 成功
+- Windows実機確認: P1-041再試験で確認済み。P1-045のMSI変更は未着手。

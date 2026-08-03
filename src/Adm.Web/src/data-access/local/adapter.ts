@@ -55,7 +55,8 @@ function isExecutionProfileReadResult(
         isExecutionProfile(candidate.profile) &&
         typeof candidate.usedLocalFallback === "boolean" &&
         (typeof candidate.warningCode === "string" ||
-            candidate.warningCode === null)
+            candidate.warningCode === null) &&
+        typeof candidate.hasPersistedProfile === "boolean"
     );
 }
 

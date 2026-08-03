@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { App } from "./App";
@@ -56,9 +56,28 @@ describe("App foundation", () => {
         expect(screen.getByRole("heading", { name: "利用方法" })).toBeVisible();
         expect(screen.getByLabelText("Server URL")).toBeDisabled();
     });
+
+    it("opens the Local home from a persisted profile without the startup screen", async () => {
+        window.localStorage.removeItem("adm.startup.localAcknowledged");
+        const dataAccess = createDataAccess(true);
+        renderWithProviders(
+            <App dataAccess={dataAccess} apiBoundary="local" />,
+        );
+
+        await waitFor(() =>
+            expect(
+                screen.getByRole("heading", {
+                    name: "AI Development Manager",
+                }),
+            ).toBeVisible(),
+        );
+        expect(
+            screen.queryByRole("heading", { name: /初回設定/ }),
+        ).not.toBeInTheDocument();
+    });
 });
 
-function createDataAccess(): DataAccessPort {
+function createDataAccess(hasPersistedProfile = false): DataAccessPort {
     return {
         getFoundationStatus: vi.fn(async () => ({
             kind: "success" as const,
@@ -79,6 +98,7 @@ function createDataAccess(): DataAccessPort {
                 },
                 usedLocalFallback: false,
                 warningCode: null,
+                hasPersistedProfile,
             },
         })),
         updateExecutionProfile: vi.fn(async (update) => ({

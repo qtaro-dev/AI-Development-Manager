@@ -21,7 +21,8 @@ public sealed record ExecutionProfileUpdate(
 public sealed record ExecutionProfileReadResult(
     ExecutionProfile Profile,
     bool UsedLocalFallback,
-    string? WarningCode);
+    string? WarningCode,
+    bool HasPersistedProfile);
 
 public interface IExecutionProfileStore
 {
@@ -73,11 +74,11 @@ public sealed class ExecutionProfileService
             var json = await store.ReadAsync(cancellationToken);
             if (string.IsNullOrWhiteSpace(json))
             {
-                return new(DefaultLocal(), false, null);
+                return new(DefaultLocal(), false, null, false);
             }
 
             var profile = ParseAndValidate(json);
-            return new(profile, false, null);
+            return new(profile, false, null, true);
         }
         catch (OperationCanceledException)
         {
@@ -85,7 +86,7 @@ public sealed class ExecutionProfileService
         }
         catch (Exception exception) when (exception is JsonException or ExecutionProfileValidationException or IOException or UnauthorizedAccessException)
         {
-            return new(DefaultLocal(), true, "profile_recovered_local");
+            return new(DefaultLocal(), true, "profile_recovered_local", true);
         }
     }
 

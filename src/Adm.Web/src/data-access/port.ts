@@ -21,6 +21,7 @@ export type ExecutionProfileReadResult = {
     readonly profile: ExecutionProfile;
     readonly usedLocalFallback: boolean;
     readonly warningCode: string | null;
+    readonly hasPersistedProfile: boolean;
 };
 
 export type DataAccessFailureCode =

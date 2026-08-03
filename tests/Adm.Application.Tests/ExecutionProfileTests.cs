@@ -14,6 +14,7 @@ public sealed class ExecutionProfileTests
         Assert.Equal(ExecutionProfileMode.Local, result.Profile.Mode);
         Assert.False(result.UsedLocalFallback);
         Assert.Null(result.WarningCode);
+        Assert.False(result.HasPersistedProfile);
     }
 
     [Fact]
@@ -27,6 +28,7 @@ public sealed class ExecutionProfileTests
 
         Assert.Equal("https://server.example.test:8443/", saved.ServerUri);
         Assert.Equal(saved, result.Profile);
+        Assert.True(result.HasPersistedProfile);
         Assert.Contains("\"mode\":\"server\"", store.Json, StringComparison.Ordinal);
     }
 

@@ -7,7 +7,7 @@ export type StartupView = "startup" | "settings" | "connection-failed";
 type StartupExperienceProps = {
     readonly view: StartupView;
     readonly profile: ExecutionProfile;
-    readonly onContinueLocal: () => Promise<void>;
+    readonly onContinueLocal: () => Promise<boolean>;
     readonly onSave: (
         mode: ExecutionProfileMode,
         serverUri: string | null,
@@ -30,6 +30,7 @@ export function StartupExperience({
     const [serverUri, setServerUri] = useState(profile.serverUri ?? "");
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [localSaveError, setLocalSaveError] = useState(false);
 
     useEffect(() => {
         setMode(profile.mode);
@@ -50,6 +51,12 @@ export function StartupExperience({
         );
         setSaving(false);
         if (!saved) setError(message("startup.profileSaveFailed"));
+    }
+
+    async function continueLocal() {
+        setLocalSaveError(false);
+        const saved = await onContinueLocal();
+        if (!saved) setLocalSaveError(true);
     }
 
     if (view === "settings") {
@@ -106,7 +113,7 @@ export function StartupExperience({
                     <button
                         className="startup-primary-action"
                         type="button"
-                        onClick={() => void onContinueLocal()}
+                        onClick={() => void continueLocal()}
                         autoFocus
                     >
                         {message("startup.continueLocal")}
@@ -135,6 +142,11 @@ export function StartupExperience({
                         {message("startup.exit")}
                     </button>
                 </div>
+                {localSaveError && (
+                    <p className="startup-error" role="alert">
+                        {message("startup.profileSaveFailed")}
+                    </p>
+                )}
                 <p className="startup-footnote">
                     {message("startup.localReady")}
                 </p>

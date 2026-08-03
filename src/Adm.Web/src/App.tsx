@@ -48,6 +48,14 @@ export function App({
             (result) => {
                 if (result?.kind === "success") {
                     setProfile(result.value.profile);
+                    if (
+                        !initialSettings &&
+                        result.value.hasPersistedProfile &&
+                        !result.value.usedLocalFallback
+                    ) {
+                        markStartupAcknowledged();
+                        setView("home");
+                    }
                 }
             },
         );
@@ -63,8 +71,8 @@ export function App({
         });
         if (result.kind !== "success") return false;
         setProfile(result.value);
+        markStartupAcknowledged();
         if (mode === "local") {
-            markStartupAcknowledged();
             setView("home");
         } else {
             setView("home");
@@ -72,14 +80,16 @@ export function App({
         return true;
     }
 
-    async function continueLocal() {
-        markStartupAcknowledged();
-        setProfile(defaultProfile);
-        setView("home");
-        await dataAccess.updateExecutionProfile({
+    async function continueLocal(): Promise<boolean> {
+        const result = await dataAccess.updateExecutionProfile({
             mode: "local",
             serverUri: null,
         });
+        if (result.kind !== "success") return false;
+        markStartupAcknowledged();
+        setProfile(result.value);
+        setView("home");
+        return true;
     }
 
     function markStartupAcknowledged() {

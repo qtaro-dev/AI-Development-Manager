@@ -97,11 +97,31 @@ describe("StartupExperience", () => {
         expect(handlers.onRetry).toHaveBeenCalledOnce();
         expect(handlers.onContinueLocal).toHaveBeenCalledOnce();
     });
+
+    it("keeps the setup screen open when Local profile saving fails", async () => {
+        const user = userEvent.setup();
+        const handlers = createHandlers(false);
+        renderWithProviders(
+            <StartupExperience
+                {...handlers}
+                view="startup"
+                profile={localProfile}
+            />,
+        );
+
+        await user.click(
+            screen.getByRole("button", { name: "このPCで続ける" }),
+        );
+        expect(screen.getByRole("alert")).toHaveTextContent(
+            "設定を保存できませんでした。",
+        );
+        expect(screen.getByRole("heading", { name: /初回設定/ })).toBeVisible();
+    });
 });
 
-function createHandlers() {
+function createHandlers(continueLocalResult = true) {
     return {
-        onContinueLocal: vi.fn(async () => undefined),
+        onContinueLocal: vi.fn(async () => continueLocalResult),
         onSave: vi.fn(async () => true),
         onRetry: vi.fn(),
         onExit: vi.fn(),
