@@ -135,6 +135,9 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "WPF self-contained publish failed with exit code $LASTEXITCODE" }
 
     New-ClientFilesFragment $publishPath (Join-Path $generatedPath 'ClientFiles.wxs')
+    if (-not (Test-Path -LiteralPath (Join-Path $publishPath 'WebAssets\index.html') -PathType Leaf)) {
+        throw 'WebAssets/index.htmlがPublish成果物にありません。MSIを生成しません。'
+    }
     & pwsh -NoProfile -File '.\scripts\installer\New-ProductIcon.ps1' -OutputPath (Join-Path $generatedPath 'Product.ico')
     if ($LASTEXITCODE -ne 0) { throw "Product icon generation failed with exit code $LASTEXITCODE" }
 
@@ -153,6 +156,12 @@ try {
 $msi = Get-ChildItem -LiteralPath $packagePath -Filter '*.msi' -File | Sort-Object LastWriteTime -Descending | Select-Object -First 1
 if ($null -eq $msi) { throw "WPF Client MSI was not created under $packagePath" }
 
+& pwsh -NoProfile -File '.\scripts\installer\Validate-WpfClientWebAssets.ps1' `
+    -PublishRoot $publishPath `
+    -GeneratedFragment (Join-Path $generatedPath 'ClientFiles.wxs') `
+    -MsiPath $msi.FullName
+if ($LASTEXITCODE -ne 0) { throw "WPF Client WebAssets validation failed with exit code $LASTEXITCODE" }
+
 $manifest = [ordered]@{
     product = 'AI Development Manager Client'
     package = $msi.Name
@@ -168,6 +177,7 @@ $manifest = [ordered]@{
     publish_trimmed = $false
     publish_manifest = 'publish-manifest.json'
     sbom = 'sbom.cdx.json'
+    web_assets = 'WebAssets/index.html and all files under WebAssets are validated against the MSI.'
     server_data_policy = 'The client package does not contain or remove Server data.'
 }
 $manifest | ConvertTo-Json -Depth 5 | Out-File -LiteralPath (Join-Path $packagePath 'manifest.json') -Encoding utf8

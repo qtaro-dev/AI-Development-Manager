@@ -55,4 +55,20 @@ P1-041クリーンVM試験で確認された「Web UIの配布物がありませ
 
 ## 状態
 
-是正チケット作成済み。未着手。
+実装・自動検証完了。P1-041クリーンVM再実施待ち。
+
+## 実装結果
+
+- `Adm.Wpf`のPublish完了後にproduction WebAssetsを`$(PublishDir)WebAssets`へコピーし、Self-contained publish成果物へ確実に含めるよう修正した。
+- `WebAssetResolver`の探索契約を`AppContext.BaseDirectory\WebAssets`へ明示的に固定した。
+- MSI生成前に`WebAssets/index.html`を必須検査し、Publish成果物とWiX Fragmentの相対パス・SHA-256を突合する検査を追加した。
+- MSI生成後にWindows InstallerのMSI Fileテーブルを検査し、WebAssets全4ファイルがMSI内部へ収録されていることを確認するようにした。
+- セットアップウィザード未表示の原因は、PackageへWiX標準UIを参照していなかったことと切り分けた。`WixUI_Minimal`、UTF-8コードページ、UI拡張を追加し、MSIのDialog 18行／InstallUISequence 18行を確認した。サイレント実行時にUIが出ない挙動は仕様として維持する。
+
+### 自動検証結果
+
+- Publish: `artifacts/package-input/wpf-client/WebAssets/index.html`、`assets/*`を確認。
+- WiX Fragment: `artifacts/installer-generated/ClientFiles.wxs`とPublishのWebAssets 4ファイルが一致。
+- MSI: `artifacts/packages/client/AI-Development-Manager-Client-0.1.0-1-x64.msi`のFileテーブルと一致。
+- MSI SHA-256: `F819AC2EA98D8CD6F868A28B5502256AD740556AA4307B98FA3F2B3B23AEC48A`。
+- P1-041の実機再試験およびインストール後実ファイルのVM確認は、P1-041の試験結果を変更せず、別証拠として後続に実施する。

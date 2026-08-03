@@ -13,6 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="WixToolset.UI.wixext" />
     <Compile Include="$(GeneratedClientFiles)" Condition="Exists('$(GeneratedClientFiles)')" />
   </ItemGroup>
 </Project>

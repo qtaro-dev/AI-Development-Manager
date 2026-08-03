@@ -36,4 +36,15 @@
     <Copy SourceFiles="@(WpfWebAssetFiles)" DestinationFiles="@(WpfWebAssetFiles->'$(WpfWebAssetOutputDirectory)\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
 
+  <!-- dotnet publish uses a separate output directory. Copy the already-built SPA
+       into that directory so the self-contained MSI input contains WebAssets. -->
+  <Target Name="CopyWpfWebAssetsToPublish" AfterTargets="Publish" Condition="'$(DesignTimeBuild)' != 'true' And '$(PublishDir)' != ''">
+    <ItemGroup>
+      <PublishedWpfWebAssetFiles Include="$(WebAssetSourceDirectory)\**\*" />
+    </ItemGroup>
+    <RemoveDir Directories="$(PublishDir)WebAssets" />
+    <MakeDir Directories="$(PublishDir)WebAssets" />
+    <Copy SourceFiles="@(PublishedWpfWebAssetFiles)" DestinationFiles="@(PublishedWpfWebAssetFiles->'$(PublishDir)WebAssets\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+
 </Project>
