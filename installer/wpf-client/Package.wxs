@@ -6,9 +6,9 @@
       Version="$(var.ProductVersion)"
       UpgradeCode="4BCF0E1B-8FA9-43E7-9D30-5E9C0ADAA2C8"
       Scope="perUser"
-      Codepage="65001">
-    <SummaryInformation Description="AI Development Manager WPF Client" />
-    <MajorUpgrade DowngradeErrorMessage="新しいバージョンが既にインストールされています。" />
+      Codepage="932">
+    <SummaryInformation Description="!(loc.PackageDescription)" />
+    <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeErrorMessage)" />
     <MediaTemplate EmbedCab="yes" />
     <Icon Id="ProductIcon" SourceFile="$(var.ProductIconPath)" />
     <Property Id="ARPPRODUCTICON" Value="ProductIcon" />
@@ -20,9 +20,9 @@
       <RegistrySearch Id="SearchWebView2RuntimeMachine" Root="HKLM" Key="SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}" Name="pv" Type="raw" />
       <RegistrySearch Id="SearchWebView2RuntimeUser" Root="HKCU" Key="Software\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}" Name="pv" Type="raw" />
     </Property>
-    <Launch Condition="WEBVIEW2RUNTIMEVERSION OR Installed" Message="Microsoft Edge WebView2 Runtimeが見つかりません。Runtimeをインストールしてから、AI Development Manager Clientを導入してください。" />
+    <Launch Condition="WEBVIEW2RUNTIMEVERSION OR Installed" Message="!(loc.WebView2MissingMessage)" />
 
-    <Feature Id="MainFeature" Title="AI Development Manager Client" Level="1">
+    <Feature Id="MainFeature" Title="!(loc.FeatureTitle)" Description="!(loc.FeatureDescription)" Level="1">
       <ComponentGroupRef Id="ClientFiles" />
       <ComponentGroupRef Id="ClientDirectoryCleanup" />
       <ComponentGroupRef Id="ClientStartMenu" />

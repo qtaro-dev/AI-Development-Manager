@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WixLocalization xmlns="http://wixtoolset.org/schemas/v4/wxl" Culture="ja-JP">
+  <String Id="PackageDescription" Value="AI Development Manager Client インストーラー" />
+  <String Id="DowngradeErrorMessage" Value="新しいバージョンが既にインストールされています。" />
+  <String Id="WebView2MissingMessage" Value="Microsoft Edge WebView2 Runtimeが見つかりません。Runtimeをインストールしてから、AI Development Manager Clientを導入してください。" />
+  <String Id="FeatureTitle" Value="AI Development Manager Client" />
+  <String Id="FeatureDescription" Value="AI Development ManagerのWindowsクライアントをインストールします。" />
+</WixLocalization>

@@ -153,7 +153,7 @@ try {
     Pop-Location
 }
 
-$msi = Get-ChildItem -LiteralPath $packagePath -Filter '*.msi' -File | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+$msi = Get-ChildItem -LiteralPath $packagePath -Filter '*.msi' -File -Recurse | Sort-Object LastWriteTime -Descending | Select-Object -First 1
 if ($null -eq $msi) { throw "WPF Client MSI was not created under $packagePath" }
 
 & pwsh -NoProfile -File '.\scripts\installer\Validate-WpfClientWebAssets.ps1' `

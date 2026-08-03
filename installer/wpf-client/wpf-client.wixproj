@@ -3,6 +3,7 @@
     <OutputType>Package</OutputType>
     <Platform>x64</Platform>
     <DebugType>none</DebugType>
+    <Cultures>ja-JP</Cultures>
     <OutputName>AI-Development-Manager-Client-$(ProductVersion)-$(BuildNumber)-x64</OutputName>
     <!-- ICE91 is an intentional per-user MSI warning; ICE38/ICE64 remain enabled. -->
     <SuppressIces>ICE91</SuppressIces>
