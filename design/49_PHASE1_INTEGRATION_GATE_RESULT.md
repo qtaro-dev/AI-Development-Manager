@@ -70,3 +70,7 @@ Phase 2の認証、HTTPS、権限、LAN公開、プロジェクト登録は未�
 - Server console／MSI検証: `artifacts/p1-027/`
 
 `artifacts/`配下は生成証拠であり、Git管理対象へ追加しない。
+
+## P1-028による判定境界の更新
+
+P1-028 ADR-019により、Phase 1のWindowsアプリ単体Local modeと、任意導入Server modeの完了条件を分離する。P1-025／P1-027のInstaller・Service実機未完了は履歴として残し、Local modeの設計判断を妨げない。ただし、Local Application Channel、初回導線、実際のローカル業務機能は未実装であり、本ADRだけでPhase 1全体を正式完了扱いにしない。

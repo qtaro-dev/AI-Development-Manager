@@ -19,3 +19,9 @@ WebView2 Evergreen Runtimeがない、または初期化できない場合は、
 ## Navigation境界
 
 許可するNavigationは設定Serverと同じscheme、host、portのoriginだけとする。外部URLはWebView2内で開かず拒否する。業務データBridge、Explorer起動、認証Cookieの実運用はP1-021以降へ分離する。
+
+## P1-028 Local mode補足
+
+本契約のServer URL、readiness、origin制約はServer modeに適用する。ADR-019により、Windowsアプリの既定起動はLocal modeとし、Server未導入・停止・障害・接続不能でもWebView2またはLocal UIのホームへ進める設計へ置換する。Local modeではServer URLのreadiness確認、Kestrel、localhostポート、HTTP APIを起動しない。
+
+Server接続失敗時には、Local mode、Server設定、再試行、終了の利用者向け導線を持たせる。具体的な画面とLocal Application Channelは後続チケットで実装し、本契約ではNavigation安全境界を変更しない。

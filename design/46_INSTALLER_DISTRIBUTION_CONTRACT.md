@@ -97,3 +97,9 @@ WPF配布・保持契約は`design/48_WPF_CLIENT_INSTALLER_CONTRACT.md`に記録
 - [Create a Windows Service installer - .NET](https://learn.microsoft.com/en-us/dotnet/core/extensions/windows-service-with-installer)
 - [Distribute your app and the WebView2 Runtime](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/distribution)
 - [Evergreen vs. fixed version of the WebView2 Runtime](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/evergreen-vs-fixed-version)
+
+## 9. P1-028による配布境界補足
+
+Windowsアプリを主製品とするADR-019により、WPF Client MSIは通常利用の主パッケージ、Server MSIは任意導入の追加パッケージとして扱う。Client MSIの導入・起動はServer MSI、Windows Service、LAN、HTTPSを必須条件にしない。
+
+既存のServer MSIのper-machine／Service契約とClient MSIのper-user／WebView2契約は、Server modeおよび追加機能の配布契約として維持する。P1-025／P1-027で未完了のServer Service実機確認とInstaller Runtime確認は履歴・残課題として保持し、Local modeの通常起動条件から分離する。P1-028ではInstaller実装やRuntime方式を変更しない。

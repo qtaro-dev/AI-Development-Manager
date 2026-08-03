@@ -66,3 +66,9 @@ pwsh -NoProfile -File .\scripts\installer\Build-ServerInstaller.ps1 -Configurati
 
 - 実機での管理者／標準ユーザー権限差、Serviceアカウントの保存先ACL、更新失敗時の復元はP1-027で最終確認する。
 - 署名証明書の正式な保管先とCI署名ジョブは、秘密情報をリポジトリへ置かない境界のまま、配布運用時に確定する。
+
+## P1-028 Server任意導入補足
+
+ADR-019により、本Server MSIとWindows ServiceはWindowsアプリの通常利用に必須ではなく、Server mode、LAN共有、ブラウザ利用、AI連携、REST API等の追加機能へ位置付ける。Service登録・開始失敗、Server未導入、停止、障害がWindowsアプリのLocal modeを妨げない。
+
+per-machine、LocalService、localhost限定、ProgramData保持、Firewall・HTTPS証明書を自動変更しない境界は維持する。P1-028ではServer MSI、Service、起動引数、ポートを変更しない。

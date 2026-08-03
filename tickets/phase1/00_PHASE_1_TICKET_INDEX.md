@@ -44,6 +44,7 @@
 | 25 | [P1-025](P1-025_SERVER_INSTALLER_SERVICE_REGISTRATION.md) | E | Serverインストーラー・Service登録 | P1-005, P1-008, P1-011, P1-012, P1-024 | 管理者向けServerパッケージを作る | install/update/uninstallとService起動を実機確認 | 実装完了（実機確認待ち） |
 | 26 | [P1-026](P1-026_WPF_CLIENT_INSTALLER.md) | E | WPF Clientインストーラー | P1-021, P1-023, P1-024 | 標準ユーザー向けWPFパッケージを作る | install/update/uninstallとRuntime案内を確認 | 実装完了（実機確認待ち） |
 | 27 | [P1-027](P1-027_PHASE1_INTEGRATION_GATE.md) | A | Phase 1統合・Phase 2引継ぎゲート | P1-001～P1-026 | Phase 1成果物を監査しPhase 2開始可否を判断可能にする | 全条件、証拠、残課題、Phase 2入力が揃う | 実施済み（Phase 1正式完了保留） |
+| 28 | [P1-028](P1-028_LOCAL_FIRST_EXECUTION_ADR.md) | A | ローカルファースト実行モデルADR | P1-027 | Windowsアプリを主製品、Serverを任意の追加機能とする責務を確定する | Serverなしのローカル実行と最小Channel境界が一意 | 実装完了（レビュー待ち） |
 
 ## 3. 依存関係
 
@@ -98,6 +99,7 @@ flowchart TD
     Z --> AA
     J --> AA
     V --> AA
+    AA --> AB["P1-028 Local-first ADR"]
 ```
 
 ## 4. Phase 1完了ゲート
@@ -111,3 +113,11 @@ P1-027は、P1-001～P1-026が完了し、次の証拠が揃った後に実施�
 - Edge、Chrome、WebView2、IME、DPI確認結果
 - Server/WPF別パッケージのinstall/update/uninstall結果
 - Phase 2へ送る認証、HTTPS、権限、プロジェクト登録の未実装境界
+
+## 5. Phase 1ローカルファースト再設計
+
+Windows 11クリーン環境での実機検証結果とユーザー方針により、P1-027の後続としてP1-028を追加した。P1-028では、Windowsアプリを主製品、Server/APIをAI連携、LAN共有、Web公開、外部接続のための追加機能とする実行モデルをADRで確定する。
+
+Phase 1のLocal Application ChannelはRequest、Response、Errorの最小範囲に限定し、Progress、Cancel、Streaming等を先行実装しない。P1-029以降のチケットはP1-028のレビュー・実施・承認後に一件ずつ作成する。
+
+P1-028のADR正本は`../../design/50_ADR_019_LOCAL_FIRST_EXECUTION_MODEL.md`である。Windowsアプリを主製品、Server/APIを任意導入の追加機能とし、P1-025／P1-027のServer MSI・Service未完了をLocal modeの完了条件から分離する。

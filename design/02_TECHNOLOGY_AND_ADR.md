@@ -372,3 +372,9 @@ ServerとWPF Clientを別パッケージとし、両方にWiX Toolset v4のMSI�
 - React releases: https://react.dev/versions
 - Vite guide: https://vite.dev/guide/
 - SQLite FTS5: https://www.sqlite.org/fts5.html
+
+## ADR-019 ローカルファースト実行モデル
+
+P1-028で`design/50_ADR_019_LOCAL_FIRST_EXECUTION_MODEL.md`を追加した。Windowsアプリを主製品、Server/APIを任意導入の追加機能とし、Local modeではServer Host、Kestrel、localhostポート、HTTP APIを起動しない。React UIはDataAccess Portを介してLocal Application ChannelまたはHTTP API Adapterを選択し、両経路は同じApplication／Core契約へ収束させる。
+
+従来のWPF WebView2・Server・Bridge・Installerの判断は削除せず、Server modeまたはWindows固有操作の既存契約として維持・補足する。認証、HTTPS、LAN公開、Service、業務機能、Local Application Channelの具体実装は本ADRの対象外である。

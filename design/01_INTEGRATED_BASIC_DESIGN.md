@@ -512,3 +512,11 @@ ASP.NET Core Serverは、`Adm.Web`のproduction buildをServer成果物の`wwwro
 ## 20. P1-020 WPF WebView2 Shell
 
 WPFは`--server-url`で指定したlocalhost Serverのreadinessを確認してから、P1-019と同じproduction Web UIをWebView2で表示する。Runtime不足、Server未起動、読込失敗は日本語の次操作付き案内とする。WebView2内のNavigationは設定Serverと同じoriginに限定し、WPF終了時にServerを停止しない。業務データ操作、Explorer操作、認証Cookieの実運用は後続チケットへ分離する。
+
+## 21. P1-028 ローカルファースト実行モデル（ADR-019による補足・置換）
+
+`design/50_ADR_019_LOCAL_FIRST_EXECUTION_MODEL.md`を正本とする。Windowsアプリを主製品とし、Server/APIは任意導入の追加経路へ位置付ける。従来の「WPFはServerへ接続してから利用する」記述はServer modeに限定して置換し、Local modeではWPF内のLocal Application Channelから同じApplication／Core契約を利用する。
+
+P1-019／P1-020のServer配信Web UIとWebView2契約はServer modeの互換経路として維持する。Local modeではKestrel、localhostポート、HTTP API、隠れたServer自動起動を行わない。Server未導入・停止・障害・接続不能時は、ローカル利用、Server設定、再試行、終了の導線を持つ設計を後続UI実装へ渡す。
+
+初回起動では必須選択ウィザードを表示せず、WPFパッケージ内の共通React UIによるローカルホームを直ちに表示する。Local modeではApplication Services、保存Adapter、索引・バックアップ境界を同一プロセス内で利用し、Server modeとの同時書込みは`.adm-meta`配下の所有リースで制御する。

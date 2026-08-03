@@ -19,3 +19,7 @@ WPFはWebView2のトップレベル文書からのWebMessageだけを扱い、�
 ## 将来拡張
 
 ファイル／フォルダ選択、Explorer起動、通知、Server制御などは、操作ごとに入力形式、権限、origin、監査、キャンセル、失敗時の復元案内を別途設計・レビューしてから追加する。
+
+## P1-028 Local Application Channelとの分離
+
+ADR-019のLocal Application Channelは業務操作のRequest、Response、Errorを扱う別契約であり、WPF Bridgeへ追加しない。Platform Bridgeは引き続きWindows固有の限定操作だけを扱い、任意コード、任意コマンド、自由なファイルアクセス、業務データ操作を公開しない。React UIはDataAccess Portを介してLocal Application ChannelまたはServer modeのHTTP API Adapterを選択する。

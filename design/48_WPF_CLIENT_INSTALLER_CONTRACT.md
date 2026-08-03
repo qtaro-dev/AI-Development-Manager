@@ -52,3 +52,9 @@ pwsh -NoProfile -File .\scripts\installer\Build-WpfClientInstaller.ps1 -Configur
 
 - per-user MSIのWindows Installer実機install、更新、repair、uninstallはP1-027で確認する。
 - WebView2 Evergreen Runtimeの配布経路はMicrosoft公式のBootstrapper／Standalone導入案内に限定し、Client MSIへの無断同梱は行わない。
+
+## P1-028 Local-first補足
+
+WPF Client MSIはWindowsアプリ主製品の配布物であり、Server MSIは任意導入の追加パッケージである。Clientのインストール、起動、Local modeの通常利用にServer Service、localhost接続、LAN、HTTPSを必須としない。既存のServer URL、WebView2 Runtime、WebView2 UserData、Serverデータ非操作の契約はServer modeまたは既存の安全境界として維持する。
+
+P1-026で確認された.NET Desktop Runtime前提、ショートカット、Server接続失敗時の導線はP1-028では実装せず、ADR-019を入力とする後続実装のレビュー事項として保持する。
