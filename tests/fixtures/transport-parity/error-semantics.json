@@ -1,0 +1,35 @@
+[
+  {
+    "case": "invalid-input",
+    "local": {
+      "code": "invalid_request",
+      "messageKey": "errors.localChannel.invalidRequest"
+    },
+    "http": {
+      "code": "validation_failed",
+      "messageKey": "errors.validation.invalid_input"
+    }
+  },
+  {
+    "case": "unsupported-operation",
+    "local": {
+      "code": "operation_not_allowed",
+      "messageKey": "errors.localChannel.operationNotAllowed"
+    },
+    "http": {
+      "code": "not_found",
+      "messageKey": "errors.resource.not_found"
+    }
+  },
+  {
+    "case": "internal-failure",
+    "local": {
+      "code": "handler_failed",
+      "messageKey": "errors.localChannel.handlerFailed"
+    },
+    "http": {
+      "code": "internal_error",
+      "messageKey": "errors.system.unexpected"
+    }
+  }
+]

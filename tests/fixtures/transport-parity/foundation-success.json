@@ -1,0 +1,7 @@
+{
+  "case": "foundation-ready",
+  "expected": {
+    "state": "ready",
+    "contractVersion": "1.0"
+  }
+}

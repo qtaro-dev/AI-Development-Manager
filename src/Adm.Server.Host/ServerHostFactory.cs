@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Adm.Infrastructure.Windows.Hosting;
+using Adm.Application.Foundation;
 using Adm.Server.Host.Api;
 using Adm.Server.Host.Configuration;
 using Adm.Server.Host.Errors;
@@ -33,6 +34,7 @@ public static class ServerHostFactory
         var builder = WebApplication.CreateBuilder(args ?? Array.Empty<string>());
         configureHost?.Invoke(builder.Host);
         builder.Services.AddServerConfiguration(builder.Configuration);
+        builder.Services.AddSingleton<IGetFoundationStatusUseCase>(_ => new GetFoundationStatusUseCase("v1", "server"));
         builder.Services.AddAdmHealth();
         builder.Services.AddOpenApi("v1", options => options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
         builder.Services.ConfigureHttpJsonOptions(options =>

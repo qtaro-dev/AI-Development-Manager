@@ -15,7 +15,12 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Adm.Testing\Adm.Testing.csproj" />
+    <ProjectReference Include="..\..\src\Adm.Application\Adm.Application.csproj" />
     <ProjectReference Include="..\..\src\Adm.Server.Host\Adm.Server.Host.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\fixtures\transport-parity\*.json" Link="Fixtures\transport-parity\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <Target Name="CopyServerWebAssetsForIntegrationTests" AfterTargets="Build">

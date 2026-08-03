@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Adm.Application.Foundation;
 using Adm.Server.Host.Errors;
 
 namespace Adm.Server.Host.Api;
@@ -10,12 +11,16 @@ public static class ApiEndpointExtensions
     {
         var api = endpoints.MapGroup("/api/v1");
 
-        api.MapGet("/version", () => new ApiVersionResponse(
-                "v1",
-                "1.0",
-                DateTimeOffset.UtcNow,
-                ApiStatus.Ready,
-                null))
+        api.MapGet("/version", async (IGetFoundationStatusUseCase useCase, CancellationToken cancellationToken) =>
+            {
+                var status = await useCase.ExecuteAsync(cancellationToken);
+                return new ApiVersionResponse(
+                    status.ApiVersion,
+                    status.ContractVersion,
+                    status.ServerTimeUtc,
+                    ApiStatus.Ready,
+                    null);
+            })
             .WithName("GetApiVersion")
             .WithTags("System")
             .WithSummary("Returns the API version and protocol readiness.")
