@@ -123,6 +123,7 @@ Assert-NoForbiddenTrackedFiles
 Invoke-RecordedCommand dotnet @('restore', 'AIDevelopmentManager.sln') (Join-Path $evidencePath 'dotnet-restore.log')
 Invoke-RecordedCommand dotnet @('build', 'AIDevelopmentManager.sln', '--configuration', 'Debug', '--no-restore') (Join-Path $evidencePath 'dotnet-build-debug.log')
 Invoke-RecordedCommand dotnet @('build', 'AIDevelopmentManager.sln', '--configuration', 'Release', '--no-restore') (Join-Path $evidencePath 'dotnet-build-release.log')
+Invoke-RecordedCommand pwsh @('-NoProfile', '-File', '.\scripts\installer\Publish-WpfClient.ps1', '-Configuration', 'Release', '-OutputPath', 'artifacts/ci-evidence/p1-039-client') (Join-Path $evidencePath 'p1-039-client-publish.log')
 
 New-Item -ItemType Directory -Force -Path (Join-Path $evidencePath 'test-results') | Out-Null
 Invoke-RecordedCommand dotnet @('test', 'AIDevelopmentManager.sln', '--configuration', 'Debug', '--no-build', '--no-restore', '--logger', 'trx', '--results-directory', (Join-Path $evidencePath 'test-results')) (Join-Path $evidencePath 'dotnet-test.log')

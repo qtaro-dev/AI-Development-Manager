@@ -58,3 +58,7 @@ pwsh -NoProfile -File .\scripts\installer\Build-WpfClientInstaller.ps1 -Configur
 WPF Client MSIはWindowsアプリ主製品の配布物であり、Server MSIは任意導入の追加パッケージである。Clientのインストール、起動、Local modeの通常利用にServer Service、localhost接続、LAN、HTTPSを必須としない。既存のServer URL、WebView2 Runtime、WebView2 UserData、Serverデータ非操作の契約はServer modeまたは既存の安全境界として維持する。
 
 P1-026で確認された.NET Desktop Runtime前提、ショートカット、Server接続失敗時の導線はP1-028では実装せず、ADR-019を入力とする後続実装のレビュー事項として保持する。
+
+## P1-039 Self-contained入力
+
+Client MSIのpublish入力は`Publish-WpfClient.ps1`による`win-x64` Self-contained複数ファイル成果物へ更新する。MSIは.NET Desktop Runtimeを前提条件として要求せず、WebView2 Evergreen Runtimeだけを独立した前提条件として検査する。成果物の版数、SHA-256、SBOMはpublish出力の`publish-manifest.json`と`sbom.cdx.json`で確認する。

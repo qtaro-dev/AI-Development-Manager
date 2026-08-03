@@ -16,10 +16,13 @@ if ($sdkVersion -ne '10.0.302') {
 $publishPath = Join-Path $repositoryRoot 'artifacts/package-input/wpf-client'
 $packagePath = Join-Path $repositoryRoot 'artifacts/packages/client'
 $generatedPath = Join-Path $repositoryRoot 'artifacts/installer-generated'
+$nugetScratchPath = Join-Path $repositoryRoot 'artifacts/nuget-scratch'
 if (Test-Path -LiteralPath $publishPath) {
     Remove-Item -LiteralPath $publishPath -Recurse -Force
 }
 New-Item -ItemType Directory -Force -Path $publishPath, $packagePath, $generatedPath | Out-Null
+New-Item -ItemType Directory -Force -Path $nugetScratchPath | Out-Null
+$env:NUGET_SCRATCH = $nugetScratchPath
 
 function ConvertTo-WixId([string]$prefix, [string]$value) {
     $hash = [System.Security.Cryptography.SHA256]::HashData([System.Text.Encoding]::UTF8.GetBytes($value))
@@ -118,16 +121,8 @@ function New-ClientFilesFragment([string]$sourceRoot, [string]$outputFile) {
 
 Push-Location $repositoryRoot
 try {
-    & dotnet restore '.\src\Adm.Wpf\Adm.Wpf.csproj' --runtime win-x64
-    if ($LASTEXITCODE -ne 0) { throw "WPF restore failed with exit code $LASTEXITCODE" }
-
-    & dotnet publish '.\src\Adm.Wpf\Adm.Wpf.csproj' `
-        --configuration $Configuration `
-        --runtime win-x64 `
-        --self-contained false `
-        --no-restore `
-        --output $publishPath
-    if ($LASTEXITCODE -ne 0) { throw "WPF publish failed with exit code $LASTEXITCODE" }
+    & pwsh -NoProfile -File '.\scripts\installer\Publish-WpfClient.ps1' -Configuration $Configuration -OutputPath 'artifacts/package-input/wpf-client'
+    if ($LASTEXITCODE -ne 0) { throw "WPF self-contained publish failed with exit code $LASTEXITCODE" }
 
     New-ClientFilesFragment $publishPath (Join-Path $generatedPath 'ClientFiles.wxs')
 
@@ -135,6 +130,7 @@ try {
         --configuration $Configuration `
         -p:ClientPublishDir=$publishPath `
         -p:GeneratedClientFiles=$(Join-Path $generatedPath 'ClientFiles.wxs') `
+        -p:RestoreConfigFile=$(Join-Path $repositoryRoot 'eng/NuGet.ClientPublish.config') `
         -p:OutputPath=$packagePath
     if ($LASTEXITCODE -ne 0) { throw "WPF Client MSI build failed with exit code $LASTEXITCODE" }
 } finally {
@@ -154,6 +150,11 @@ $manifest = [ordered]@{
     install_scope = 'per-user'
     runtime_prerequisite = 'Microsoft Edge WebView2 Evergreen Runtime'
     runtime_missing_action = 'Display Japanese prerequisite guidance; do not install or elevate silently.'
+    dotnet_distribution = 'Self-contained; Microsoft.NETCore.App is included in the package.'
+    publish_single_file = $false
+    publish_trimmed = $false
+    publish_manifest = 'publish-manifest.json'
+    sbom = 'sbom.cdx.json'
     server_data_policy = 'The client package does not contain or remove Server data.'
 }
 $manifest | ConvertTo-Json -Depth 5 | Out-File -LiteralPath (Join-Path $packagePath 'manifest.json') -Encoding utf8

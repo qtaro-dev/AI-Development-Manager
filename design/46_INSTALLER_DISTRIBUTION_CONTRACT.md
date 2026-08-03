@@ -103,3 +103,11 @@ WPF配布・保持契約は`design/48_WPF_CLIENT_INSTALLER_CONTRACT.md`に記録
 Windowsアプリを主製品とするADR-019により、WPF Client MSIは通常利用の主パッケージ、Server MSIは任意導入の追加パッケージとして扱う。Client MSIの導入・起動はServer MSI、Windows Service、LAN、HTTPSを必須条件にしない。
 
 既存のServer MSIのper-machine／Service契約とClient MSIのper-user／WebView2契約は、Server modeおよび追加機能の配布契約として維持する。P1-025／P1-027で未完了のServer Service実機確認とInstaller Runtime確認は履歴・残課題として保持し、Local modeの通常起動条件から分離する。P1-028ではInstaller実装やRuntime方式を変更しない。
+
+## 10. P1-039 Client Self-contained配布
+
+WPF Clientの正式publish入口は`./scripts/installer/Publish-WpfClient.ps1`とし、Release、`win-x64`、Self-contained、複数ファイル、trimmingなしを固定する。`src/Adm.Wpf/Properties/PublishProfiles/WinX64SelfContained.pubxml`は同じ境界を宣言的に保持する。
+
+Self-contained成果物には.NET Desktop Runtimeを同梱し、`publish-manifest.json`へSDK、TargetFramework、RID、Self-contained、版数、全ファイルSHA-256、合計サイズを記録する。`sbom.cdx.json`は成果物ファイルとSDK／RIDの検証情報を記録する。WebView2 Evergreen Runtimeは引き続き独立したWindows前提であり、.NET Runtime不足とは別の案内境界とする。
+
+Framework-dependent publish、single-file、trimmingはClientの正式配布入口として使用せず、publish検査で検出する。WPF Client MSIはP1-039のSelf-contained publish出力を入力とし、P1-040のShortcut・ARP改善は変更しない。
