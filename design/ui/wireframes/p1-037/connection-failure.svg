@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" role="img" aria-labelledby="title desc">
+  <title id="title">P1-037 サーバー接続失敗</title>
+  <desc id="desc">接続失敗後もLocal継続、設定、再試行、終了を選択できる画面</desc>
+  <rect width="960" height="640" fill="#f5f7fb"/><rect width="960" height="64" fill="#172033"/>
+  <text x="32" y="40" fill="#fff" font-family="Segoe UI, sans-serif" font-size="21" font-weight="700">AI Development Manager</text>
+  <rect x="32" y="104" width="896" height="456" rx="16" fill="#fff" stroke="#d6dce8"/>
+  <circle cx="112" cy="184" r="34" fill="#fff0ed"/><path d="M99 171l26 26m0-26l-26 26" stroke="#c83b32" stroke-width="7"/>
+  <text x="176" y="178" fill="#172033" font-family="Segoe UI, sans-serif" font-size="28" font-weight="700">サーバーに接続できません</text>
+  <text x="176" y="214" fill="#536078" font-family="Segoe UI, sans-serif" font-size="17">このPCだけで続けるか、接続先を確認してから再試行できます。</text>
+  <rect x="80" y="264" width="800" height="82" rx="10" fill="#fff8e6" stroke="#e5c56a"/>
+  <text x="108" y="298" fill="#6e5310" font-family="Segoe UI, sans-serif" font-size="15" font-weight="700">接続先</text>
+  <text x="108" y="326" fill="#536078" font-family="Segoe UI, sans-serif" font-size="15">設定されたサーバーへ接続できません。サーバーの状態または接続先を確認してください。</text>
+  <rect x="80" y="394" width="188" height="56" rx="8" fill="#2457c5"/><text x="174" y="429" text-anchor="middle" fill="#fff" font-family="Segoe UI, sans-serif" font-size="16" font-weight="700">このPCで続ける</text>
+  <rect x="288" y="394" width="164" height="56" rx="8" fill="#fff" stroke="#aeb9cb"/><text x="370" y="429" text-anchor="middle" fill="#24324a" font-family="Segoe UI, sans-serif" font-size="16">接続先を設定</text>
+  <rect x="472" y="394" width="164" height="56" rx="8" fill="#fff" stroke="#aeb9cb"/><text x="554" y="429" text-anchor="middle" fill="#24324a" font-family="Segoe UI, sans-serif" font-size="16">もう一度試す</text>
+  <rect x="656" y="394" width="100" height="56" rx="8" fill="#fff" stroke="#aeb9cb"/><text x="706" y="429" text-anchor="middle" fill="#24324a" font-family="Segoe UI, sans-serif" font-size="16">終了</text>
+  <text x="80" y="506" fill="#536078" font-family="Segoe UI, sans-serif" font-size="14">主操作: このPCで続ける　　診断情報は画面主文から分離し、必要時だけ表示</text>
+</svg>

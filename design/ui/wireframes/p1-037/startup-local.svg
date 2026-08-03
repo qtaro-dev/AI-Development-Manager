@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" role="img" aria-labelledby="title desc">
+  <title id="title">P1-037 Local既定起動</title>
+  <desc id="desc">Serverへ接続せず、このPCで利用を開始する起動画面</desc>
+  <rect width="960" height="640" fill="#f5f7fb"/>
+  <rect x="0" y="0" width="960" height="64" fill="#172033"/>
+  <text x="32" y="40" fill="#ffffff" font-family="Segoe UI, sans-serif" font-size="21" font-weight="700">AI Development Manager</text>
+  <rect x="32" y="104" width="896" height="456" rx="16" fill="#ffffff" stroke="#d6dce8"/>
+  <circle cx="112" cy="184" r="34" fill="#e5f5ec"/><path d="M96 184l11 11 22-25" fill="none" stroke="#18864b" stroke-width="7"/>
+  <text x="176" y="178" fill="#172033" font-family="Segoe UI, sans-serif" font-size="28" font-weight="700">このPCで利用を開始します</text>
+  <text x="176" y="214" fill="#536078" font-family="Segoe UI, sans-serif" font-size="17">サーバーに接続しなくても、チケットやMarkdownを管理できます。</text>
+  <rect x="80" y="276" width="800" height="96" rx="12" fill="#f2f6ff" stroke="#b6c9f5"/>
+  <text x="108" y="314" fill="#233b75" font-family="Segoe UI, sans-serif" font-size="17" font-weight="700">Localモード</text>
+  <text x="108" y="344" fill="#536078" font-family="Segoe UI, sans-serif" font-size="15">このアプリに組み込まれた画面を開きます。設定から接続先を変更できます。</text>
+  <rect x="80" y="420" width="224" height="56" rx="8" fill="#2457c5"/><text x="192" y="455" text-anchor="middle" fill="#fff" font-family="Segoe UI, sans-serif" font-size="17" font-weight="700">このPCで続ける</text>
+  <rect x="328" y="420" width="224" height="56" rx="8" fill="#fff" stroke="#aeb9cb"/><text x="440" y="455" text-anchor="middle" fill="#24324a" font-family="Segoe UI, sans-serif" font-size="17">接続先を設定</text>
+  <rect x="576" y="420" width="136" height="56" rx="8" fill="#fff" stroke="#aeb9cb"/><text x="644" y="455" text-anchor="middle" fill="#24324a" font-family="Segoe UI, sans-serif" font-size="17">終了</text>
+  <text x="80" y="522" fill="#536078" font-family="Segoe UI, sans-serif" font-size="14">Tab: このPCで続ける → 接続先を設定 → 終了　　Enter: 選択　　Escape: 閉じる</text>
+</svg>

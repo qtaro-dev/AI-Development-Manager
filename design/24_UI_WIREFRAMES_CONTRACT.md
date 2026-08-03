@@ -32,6 +32,10 @@
 
 `src/Adm.Web/src/styles/tokens.css`を寸法、余白、radius、focus、文字、意味色の実装正本とした。`:root`をLight、`:root[data-theme="dark"]`をDarkとして同じ意味Tokenを共有し、`ThemeProvider`が`light`／`dark`／`system`を解決する。利用者選択の永続化は`localStorage`の`adm.theme`に限定し、秘密情報や業務データは保存しない。最終基準画像への全画面調整、個別業務画面、独自アイコンは対象外とした。
 
+## P1-037起動・接続・設定ワイヤーフレーム
+
+P1-037では、P0-021の共通シェルを前提に、Local既定起動、Server接続失敗、実行プロファイル設定、Web UI読込失敗時のWPF fallbackを追加の設計ゲートとして整理した。P1-037専用SVGは`design/ui/wireframes/p1-037/`、状態遷移と文言は`design/ui/p1-037-transition-and-copy.md`を正本とする。製品コード変更、Server自動起動、認証、業務画面は含めない。
+
 ## P1-023実装結果
 
 Edge／Chromeで標準production Web buildを実行し、レスポンシブshell、Theme、Dialog、キーボード、focus復帰、deep linkの互換検査を追加した。DPI相当値は自動検査とWindows表示倍率の実機確認を区別し、WebView2はRuntime版とWPF Shell起動を別証拠として記録する。
