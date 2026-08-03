@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "format:check": "prettier --check .",
     "build": "tsc -b && vite build",
+    "data-access:check": "node ../../scripts/web/Validate-WebDataAccessBoundary.mjs",
     "verify:bundle": "node ../../scripts/web/Validate-WebBundle.mjs",
     "messages:check": "node ../../scripts/web/Validate-WebMessages.mjs",
     "tokens:check": "node ../../scripts/web/Validate-WebTokens.mjs",

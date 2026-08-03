@@ -1,13 +1,21 @@
-import { readRuntimeConfig } from "./env";
 import { RouteOutlet } from "./routes/RouteOutlet";
 import { FeedbackCatalog } from "./components/feedback/FeedbackCatalog";
 import { BridgeCatalog } from "./platform-bridge/BridgeCatalog";
 import { message } from "./messages/catalog";
+import type { DataAccessPort } from "./data-access";
 import "./styles.css";
 
-const runtimeConfig = readRuntimeConfig();
+export function App({
+    dataAccess,
+    apiBoundary,
+}: {
+    dataAccess: DataAccessPort;
+    apiBoundary: string;
+}) {
+    // The Port is injected at the composition boundary; business operations are
+    // intentionally added by later tickets without changing this shell.
+    void dataAccess;
 
-export function App() {
     return (
         <RouteOutlet pageTitle={message("shell.navTickets")}>
             <section className="foundation-card" aria-labelledby="app-title">
@@ -17,7 +25,7 @@ export function App() {
                 <dl className="runtime-details">
                     <div>
                         <dt>{message("app.apiBoundary")}</dt>
-                        <dd>{runtimeConfig.apiBaseUrl}</dd>
+                        <dd>{apiBoundary}</dd>
                     </div>
                     <div>
                         <dt>{message("app.status")}</dt>
