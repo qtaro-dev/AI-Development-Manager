@@ -1,7 +1,7 @@
 # AI Development Manager Phase 1 実装チケット一覧
 
-版: 1.0
-状態: 計画作成済み、実装未着手
+版: 1.2
+状態: P1-028承認済み、P1-029条件付き採用レビュー待ち
 基準日: 2026-08-03
 
 ## 1. Phase 1方針
@@ -44,7 +44,8 @@
 | 25 | [P1-025](P1-025_SERVER_INSTALLER_SERVICE_REGISTRATION.md) | E | Serverインストーラー・Service登録 | P1-005, P1-008, P1-011, P1-012, P1-024 | 管理者向けServerパッケージを作る | install/update/uninstallとService起動を実機確認 | 実装完了（実機確認待ち） |
 | 26 | [P1-026](P1-026_WPF_CLIENT_INSTALLER.md) | E | WPF Clientインストーラー | P1-021, P1-023, P1-024 | 標準ユーザー向けWPFパッケージを作る | install/update/uninstallとRuntime案内を確認 | 実装完了（実機確認待ち） |
 | 27 | [P1-027](P1-027_PHASE1_INTEGRATION_GATE.md) | A | Phase 1統合・Phase 2引継ぎゲート | P1-001～P1-026 | Phase 1成果物を監査しPhase 2開始可否を判断可能にする | 全条件、証拠、残課題、Phase 2入力が揃う | 実施済み（Phase 1正式完了保留） |
-| 28 | [P1-028](P1-028_LOCAL_FIRST_EXECUTION_ADR.md) | A | ローカルファースト実行モデルADR | P1-027 | Windowsアプリを主製品、Serverを任意の追加機能とする責務を確定する | Serverなしのローカル実行と最小Channel境界が一意 | 実装完了（レビュー待ち） |
+| 28 | [P1-028](P1-028_LOCAL_FIRST_EXECUTION_ADR.md) | A | ローカルファースト実行モデルADR | P1-027 | Windowsアプリを主製品、Serverを任意の追加機能とする責務を確定する | Serverなしのローカル実行と最小Channel境界が一意 | 承認済み |
+| 29 | [P1-029](P1-029_WEBVIEW2_OFFLINE_UI_POC.md) | A | WebView2オフラインUI PoC | P1-028 | Serverなしで組み込みReact UIをWebView2へ安全に表示できるか確認する | オフライン表示、固定origin、Server非依存、安全境界を証拠化 | 実施済み（条件付き採用、レビュー待ち） |
 
 ## 3. 依存関係
 
@@ -100,6 +101,7 @@ flowchart TD
     J --> AA
     V --> AA
     AA --> AB["P1-028 Local-first ADR"]
+    AB --> AC["P1-029 Offline UI PoC"]
 ```
 
 ## 4. Phase 1完了ゲート
@@ -121,3 +123,5 @@ Windows 11クリーン環境での実機検証結果とユーザー方針によ�
 Phase 1のLocal Application ChannelはRequest、Response、Errorの最小範囲に限定し、Progress、Cancel、Streaming等を先行実装しない。P1-029以降のチケットはP1-028のレビュー・実施・承認後に一件ずつ作成する。
 
 P1-028のADR正本は`../../design/50_ADR_019_LOCAL_FIRST_EXECUTION_MODEL.md`である。Windowsアプリを主製品、Server/APIを任意導入の追加機能とし、P1-025／P1-027のServer MSI・Service未完了をLocal modeの完了条件から分離する。
+
+P1-028はBuild、Test、Architecture検査合格を含む実装結果についてユーザー承認済みである。P1-029では製品コードを変更せず、独立PoCとして仮想HTTPS originからの組み込みReact UI表示、オフライン動作、Navigation安全境界、Server／待受ポート非使用を確認する。Local Application ChannelとP1-030以降は対象外とする。
