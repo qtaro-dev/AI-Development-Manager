@@ -34,7 +34,9 @@ $webViewVersions = @(
         if (Test-Path -LiteralPath $root) {
             foreach ($key in Get-ChildItem -LiteralPath $root) {
                 $property = Get-ItemProperty -LiteralPath $key.PSPath
-                if ($property.name -eq 'Microsoft Edge WebView2 Runtime') { $property.pv }
+                $nameProperty = $property.PSObject.Properties['name']
+                $versionProperty = $property.PSObject.Properties['pv']
+                if ($null -ne $nameProperty -and $nameProperty.Value -eq 'Microsoft Edge WebView2 Runtime' -and $null -ne $versionProperty) { $versionProperty.Value }
             }
         }
     }

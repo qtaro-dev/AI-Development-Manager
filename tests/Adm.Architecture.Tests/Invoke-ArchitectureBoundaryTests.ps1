@@ -167,7 +167,10 @@ foreach ($projectName in $expectedProjects) {
     Assert-ForbiddenNamespace -ProjectName $projectName -SourceFiles $sourceFiles
 
     [xml]$project = Get-Content -LiteralPath $projectPath -Raw
-    $targetFramework = [string]$project.Project.PropertyGroup.TargetFramework
+    $targetFramework = @($project.Project.PropertyGroup | Where-Object { $_.PSObject.Properties.Name -contains 'TargetFramework' } | ForEach-Object { [string]$_.TargetFramework } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })[0]
+    if ([string]::IsNullOrWhiteSpace($targetFramework)) {
+        throw "TargetFramework was not found: $projectPath"
+    }
     Assert-AssemblyReferences -ProjectName $projectName -TargetFramework $targetFramework
 }
 

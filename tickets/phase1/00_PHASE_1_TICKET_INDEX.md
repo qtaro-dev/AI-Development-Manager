@@ -43,7 +43,7 @@
 | 24 | [P1-024](P1-024_INSTALLER_TECHNOLOGY_ADR.md) | E | 配布・インストーラー方式ADR | P1-012, P1-020 | Server/WPF別パッケージの実装方式を固定する | 権限、更新、削除、署名経路をADR化 | 完了 |
 | 25 | [P1-025](P1-025_SERVER_INSTALLER_SERVICE_REGISTRATION.md) | E | Serverインストーラー・Service登録 | P1-005, P1-008, P1-011, P1-012, P1-024 | 管理者向けServerパッケージを作る | install/update/uninstallとService起動を実機確認 | 実装完了（実機確認待ち） |
 | 26 | [P1-026](P1-026_WPF_CLIENT_INSTALLER.md) | E | WPF Clientインストーラー | P1-021, P1-023, P1-024 | 標準ユーザー向けWPFパッケージを作る | install/update/uninstallとRuntime案内を確認 | 実装完了（実機確認待ち） |
-| 27 | [P1-027](P1-027_PHASE1_INTEGRATION_GATE.md) | A | Phase 1統合・Phase 2引継ぎゲート | P1-001～P1-026 | Phase 1成果物を監査しPhase 2開始可否を判断可能にする | 全条件、証拠、残課題、Phase 2入力が揃う | 未着手 |
+| 27 | [P1-027](P1-027_PHASE1_INTEGRATION_GATE.md) | A | Phase 1統合・Phase 2引継ぎゲート | P1-001～P1-026 | Phase 1成果物を監査しPhase 2開始可否を判断可能にする | 全条件、証拠、残課題、Phase 2入力が揃う | 実施済み（Phase 1正式完了保留） |
 
 ## 3. 依存関係
 
