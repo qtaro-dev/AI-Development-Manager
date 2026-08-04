@@ -33,7 +33,7 @@ Phase 2開始時に判断する。本チケットでは実装しない。
 
 ## 状態
 
-実装完了。Build／Test／Architecture検査済み。P1-045へ進行可能。
+再オープン。クリーンVMで初回設定ボタン押下後の応答・保存・遷移が未解決だったため、Local ChannelのWebView2文字列メッセージ送受信を是正中。
 
 ## 実装結果
 
@@ -51,4 +51,12 @@ Phase 2開始時に判断する。本チケットでは実装しない。
 - Web typecheck／format: 成功
 - Web DataAccess／Message／Token／Bundle検査: 成功
 - Architecture検査: 成功
-- Windows実機確認: P1-041再試験で確認済み。P1-045のMSI変更は未着手。
+- Windows実機確認: クリーンVMで未解決。修正後に再確認する。
+
+## 再調査結果
+
+- Web側Local Channelは`window.chrome.webview.postMessage`へJSON文字列を渡しているが、WPF側が`WebMessageAsJson`を直接解析していた。文字列メッセージではJSON値のラッピングが発生し、契約Requestとして処理されない経路になっていた。
+- WPF側の応答も、JSON文字列を`PostWebMessageAsJson`へ渡していたため、Web側の`MessageEvent.data`がLocalChannelClientの期待する文字列にならず、要求Promiseが完了しない経路になっていた。
+- Local ChannelはWPF側で`TryGetWebMessageAsString()`、応答で`PostWebMessageAsString()`を使用するよう修正し、Platform Bridgeのオブジェクト送受信とは分離する。
+- 保存先は`%LOCALAPPDATA%\AI Development Manager\Config\execution-profile.json`。保存は一時ファイルへ書込み・Flush後に初回はMove、既存時はReplaceする。
+- 保存完了応答をWeb側が受信してから`setView("home")`し、再起動時は同じファイルを読み、`hasPersistedProfile`で初回画面を抑止する。

@@ -251,16 +251,26 @@ public partial class MainWindow : Window, IDisposable
     {
         if (connectionOptions.IsLocal)
         {
+            string localMessage;
+            try
+            {
+                localMessage = e.TryGetWebMessageAsString();
+            }
+            catch (InvalidOperationException)
+            {
+                localMessage = e.WebMessageAsJson;
+            }
+
             LocalChannelRequest? request = null;
             try
             {
-                request = LocalChannelProtocol.ParseRequest(e.WebMessageAsJson, e.Source);
+                request = LocalChannelProtocol.ParseRequest(localMessage, e.Source);
             }
             catch (LocalChannelProtocolException)
             {
             }
-            var localResponse = await localCompositionRoot.DispatchAsync(e.WebMessageAsJson, e.Source);
-            WebView.CoreWebView2.PostWebMessageAsJson(localResponse);
+            var localResponse = await localCompositionRoot.DispatchAsync(localMessage, e.Source);
+            WebView.CoreWebView2.PostWebMessageAsString(localResponse);
             if (request?.Operation == "executionProfile.update")
             {
                 ApplyExecutionProfileUpdate(localResponse);

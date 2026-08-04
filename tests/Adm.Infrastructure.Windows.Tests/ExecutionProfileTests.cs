@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Adm.Application.ExecutionProfiles;
 using Adm.Wpf.Configuration;
 
@@ -33,6 +34,9 @@ public sealed class ExecutionProfileTests
 
         var update = await root.DispatchAsync("{\"version\":1,\"kind\":\"request\",\"requestId\":\"p1\",\"operation\":\"executionProfile.update\",\"payload\":{\"mode\":\"server\",\"serverUri\":\"https://server.example.test\"}}", source);
         Assert.True(update.Contains("\"mode\":\"server\"", StringComparison.Ordinal), update);
+        using var response = JsonDocument.Parse(update);
+        Assert.Equal("response", response.RootElement.GetProperty("kind").GetString());
+        Assert.Equal("p1", response.RootElement.GetProperty("requestId").GetString());
 
         var rejected = await root.DispatchAsync("{\"version\":1,\"kind\":\"request\",\"requestId\":\"p2\",\"operation\":\"executionProfile.update\",\"payload\":{\"mode\":\"server\",\"serverUri\":\"http://server.example.test\"}}", source);
         Assert.Contains("\"code\":\"invalid_request\"", rejected, StringComparison.Ordinal);
