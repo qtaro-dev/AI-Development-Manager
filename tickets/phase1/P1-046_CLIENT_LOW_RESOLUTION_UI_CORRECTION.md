@@ -36,3 +36,30 @@ P1-044再試験のクリーンVM（1280×720）で確認された、Client上部
 ## 状態
 
 是正チケット作成済み。Phase 2開始時に優先順位を判断する。実装未着手。
+
+## 予備調査結果
+
+### WPF／WebView2サイズ経路
+
+- WPFの`WebView2`はGridの`*`行へ配置され、`Width`／`Height`の明示計算はない。現在、`ActualWidth`、`ActualHeight`、`SizeChanged`、DPI変換値、`CoreWebView2.ZoomFactor`を記録する実装もない。
+- WPFウィンドウの初期値は`1280×820`、最小値は`720×480`。WebView2の表示領域は上部WPFヘッダー分だけ差し引かれる。
+- 初回設定からホームへの遷移は同一WebView内のReact state変更であり、WPFウィンドウサイズやWebView2のサイズを変更する処理はない。
+
+### Web UIレイアウト
+
+- `body`、`.app-shell`、`.startup-screen`が`min-height: 100vh`を使用する。
+- `body`には`min-width`があり、`.app-shell`は固定サイドバー＋本文のGridで構成される。900px以下ではサイドバーがレール表示へ切り替わる。
+- `overflow-x`／`overflow-y`の明示的な全体制御はなく、`overflow: hidden`は一部の省略表示やダイアログ内部に限定される。
+- 固定オーバーレイとしてフィードバックダイアログが存在するが、表示状態でない通常の初回設定・ホーム画面に常時存在する構造ではない。クリック遮断は実機で`elementFromPoint`等を使って確認する必要がある。
+
+### VirtualBox／DPI差異
+
+- リポジトリ上はVirtualBox、Guest Additions、WebView2 Runtimeの組み合わせを判定・記録する処理がないため、Guest Additions有無による差異は未判定。
+- 初回表示とホーム遷移でWPF側のサイズ変更処理は存在しない。遷移後だけ左へずれる現象は、現時点ではCSS単独の原因と断定できず、DPI変換、WebView2 viewport、VirtualBox表示ドライバーの差分を含む実機計測が必要。
+
+### P1-046で追加する計測項目
+
+- WPFの`ActualWidth`／`ActualHeight`、WindowのDPI、`TransformToDevice`、WebView2の`ZoomFactor`を初回表示・`SizeChanged`・ホーム遷移後に記録する。
+- Web側の`innerWidth`、`innerHeight`、`devicePixelRatio`、`scrollX`、`scrollY`、`scrollWidth`、`clientWidth`を同じ時点で記録する。
+- 主要ボタンの矩形と`document.elementFromPoint`を照合し、透明要素、固定オーバーレイ、座標ずれ、Tab／Enter／Spaceの発火を確認する。
+- VirtualBox Guest Additionsあり／なし、表示スケール100～200%、1280×720／1366×768／1600×900で比較する。
