@@ -272,6 +272,13 @@ public partial class MainWindow : Window, IDisposable
                 localMessage = e.WebMessageAsJson;
             }
 
+            if (string.Equals(localMessage, "exit", StringComparison.Ordinal) &&
+                LocalChannelProtocol.IsAllowedTopLevelSource(e.Source))
+            {
+                await Dispatcher.InvokeAsync(Close);
+                return;
+            }
+
             LocalChannelRequest? request = null;
             try
             {

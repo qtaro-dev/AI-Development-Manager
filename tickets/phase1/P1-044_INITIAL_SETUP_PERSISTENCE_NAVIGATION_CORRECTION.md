@@ -60,3 +60,18 @@ Phase 2開始時に判断する。本チケットでは実装しない。
 - Local ChannelはWPF側で`TryGetWebMessageAsString()`、応答で`PostWebMessageAsString()`を使用するよう修正し、Platform Bridgeのオブジェクト送受信とは分離する。
 - 保存先は`%LOCALAPPDATA%\AI Development Manager\Config\execution-profile.json`。保存は一時ファイルへ書込み・Flush後に初回はMove、既存時はReplaceする。
 - 保存完了応答をWeb側が受信してから`setView("home")`し、再起動時は同じファイルを読み、`hasPersistedProfile`で初回画面を抑止する。
+
+## 追加再調査結果（終了操作）
+
+クリーンVMで初回設定画面下部の「終了」が反応しなかったため、完了扱いにせず再オープンを継続する。
+
+- 原因は、Web UIが`window.close()`のみを呼んでいたこと。WebView2へ埋め込まれたページはブラウザから起動した新規ウィンドウではないため、`window.close()`ではWPFプロセスを終了できない。
+- Web UIの上部・下部の終了操作は、WebView2埋め込み時に文字列メッセージ`"exit"`を送信する方式へ統一した。ブラウザ単体では従来どおり`window.close()`へフォールバックする。
+- WPF側はLocal WebViewの許可originを検証したうえで、完全一致する`"exit"`だけをUIスレッドへ渡して`Close()`する。Local ChannelのJSON要求とは混在させない。
+- 上部ヘッダーのWPF終了ボタンは既存の`ExitButton_Click`から同じ`Close()`経路を使用する。
+- Web単体テストで文字列メッセージ送信とブラウザフォールバックを追加確認した。WPFプロセス残留を含むクリーンVM確認は修正版MSIで再試験待ちのため、P1-044は未完了とする。
+
+## 終了操作修正版成果物
+
+- MSI: `artifacts/packages/client/ja-JP/AI-Development-Manager-Client-0.1.0-1-x64.msi`
+- SHA-256: `723E8101CFEA0B22DB309453780025B91198DBE5DF867A16A149D27933DF95E1`

@@ -10,6 +10,7 @@ import {
     StartupExperience,
     type StartupView,
 } from "./startup/StartupExperience";
+import { requestHostExit } from "./platform-bridge/hostExit";
 import "./styles.css";
 
 const STARTUP_ACKNOWLEDGED_KEY = "adm.startup.localAcknowledged";
@@ -108,7 +109,7 @@ export function App({
                 onContinueLocal={continueLocal}
                 onSave={saveProfile}
                 onRetry={() => setView("home")}
-                onExit={() => window.close()}
+                onExit={requestHostExit}
                 onCancel={() =>
                     setView(view === "settings" ? "home" : "settings")
                 }
