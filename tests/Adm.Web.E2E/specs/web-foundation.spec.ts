@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 
 const viewports = [
     { name: "desktop", width: 1440, height: 900 },
+    { name: "minimum-supported", width: 1280, height: 720 },
     { name: "tablet", width: 820, height: 900 },
     { name: "mobile", width: 320, height: 760 },
 ] as const;
@@ -33,6 +34,22 @@ test.describe("production Web foundation", () => {
             await page.screenshot({ path: testInfo.outputPath(`viewport-${viewport.name}.png`), fullPage: true });
         });
     }
+
+    test("keeps the minimum supported viewport within the horizontal viewport", async ({ page }) => {
+        await page.setViewportSize({ width: 1280, height: 720 });
+        await expect(page.getByRole("heading", { name: "チケット" })).toBeVisible();
+
+        const metrics = await page.evaluate(() => ({
+            viewportWidth: document.documentElement.clientWidth,
+            documentWidth: document.documentElement.scrollWidth,
+            bodyWidth: document.body.scrollWidth,
+            appWidth: document.querySelector<HTMLElement>(".app-shell")?.scrollWidth ?? 0,
+        }));
+
+        expect(metrics.documentWidth).toBeLessThanOrEqual(metrics.viewportWidth);
+        expect(metrics.bodyWidth).toBeLessThanOrEqual(metrics.viewportWidth);
+        expect(metrics.appWidth).toBeLessThanOrEqual(metrics.viewportWidth);
+    });
 
     test("serves a deep link through SPA fallback and reloads it", async ({ page }) => {
         await page.goto("/tickets/demo");

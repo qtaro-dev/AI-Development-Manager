@@ -44,7 +44,27 @@ P1-044再試験のクリーンVM（1280×720）で確認された、Client上部
 
 ## 状態
 
-是正チケット作成済み。Phase 2開始時に優先順位を判断する。実装未着手。
+実装済み。Release MSIを再生成済み。VirtualBox Guest Additions有無、表示倍率100～200%、および実機での全画面・主要操作の最終確認は利用者側のクリーンVM確認待ちとする。1024×768対応は引き続き対象外。
+
+## P1-046実装内容
+
+- WPFウィンドウにレイアウト丸めとピクセルスナップを有効化し、起動時にWindowsの作業領域へ収まるよう初期サイズをクランプ・中央配置する。1280×720の作業領域でも上部が画面外へ出ない。
+- WebView2をGrid領域へ明示的にStretch配置し、最小幅・最小高さを0として親領域のサイズ計算を妨げないようにした。
+- Web UIの`html`、`body`、`#root`、`.app-shell`の幅・高さと最小サイズをviewportへ統一し、bodyとAppShellの横はみ出しを抑止した。
+- メイン領域、初回設定画面、フィードバックダイアログへ縦スクロールを設定し、1280×720の縦方向に収まらない操作へ到達可能にした。
+- サイドバーのレール化 breakpointを900px以下から1100px以下へ拡張し、狭い表示領域で本文幅を確保する。
+- 高さ760px以下では初回設定カード、アイコン、余白を縮小するcompactレイアウトを追加した。
+- 1280×720の横scrollWidthがviewportを超えないことを検査するE2Eケースを追加した。
+
+## P1-046検証結果
+
+- `dotnet build --configuration Debug --no-restore`: 成功。
+- `dotnet build --configuration Release --no-restore`: 成功。
+- Debug／Release xUnit: Core 1件、Application 8件、Infrastructure.Windows 42件、Server統合 23件の合計74件を各構成で実行し、失敗なし。PlaywrightのServer終了処理は別途既知課題として残る。
+- Architecture検査: `tests/Adm.Architecture.Tests/Invoke-ArchitectureBoundaryTests.ps1` 成功（5 product projects）。
+- Web `typecheck`、`format:check`、`test`、`build`: 成功。Web単体テストは14ファイル・40件成功。
+- Playwrightの1280×720対象ケース: 横方向のdocument/body/AppShell overflow検査は成功。ただし既存のServer終了処理ハングによりPlaywrightプロセス全体の終了が戻らないため、関連するNode／dotnetプロセスを対象PIDに限定して停止した。
+- 1280×720のVirtualBox実機、表示倍率100～200%、Guest Additionsあり／なし、全画面・キーボード操作の最終確認は本開発環境では実施できないため、クリーンVMでの受入確認待ちとする。
 
 ## 予備調査結果
 

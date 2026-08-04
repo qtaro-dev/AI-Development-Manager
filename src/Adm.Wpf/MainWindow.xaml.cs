@@ -43,6 +43,8 @@ public partial class MainWindow : Window, IDisposable
 
     private async void Window_Loaded(object sender, RoutedEventArgs e)
     {
+        FitToWorkArea();
+
         if (!ServerConnectionOptions.HasServerUrlArgument(commandLineArgs))
         {
             var saved = await executionProfiles.GetAsync();
@@ -51,6 +53,15 @@ public partial class MainWindow : Window, IDisposable
         }
 
         await ConnectAsync();
+    }
+
+    private void FitToWorkArea()
+    {
+        var workArea = SystemParameters.WorkArea;
+        Width = Math.Min(Width, workArea.Width);
+        Height = Math.Min(Height, workArea.Height);
+        Left = workArea.Left + Math.Max(0, (workArea.Width - Width) / 2);
+        Top = workArea.Top + Math.Max(0, (workArea.Height - Height) / 2);
     }
 
     private async void RetryButton_Click(object sender, RoutedEventArgs e) => await ConnectAsync();

@@ -7,6 +7,8 @@
         Height="820"
         MinWidth="720"
         MinHeight="480"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
         WindowStartupLocation="CenterScreen"
         Loaded="Window_Loaded"
         Closing="Window_Closing">
@@ -44,7 +46,12 @@
         </Border>
 
         <Grid Grid.Row="1">
-            <wv2:WebView2 x:Name="WebView" Visibility="Collapsed" />
+            <wv2:WebView2 x:Name="WebView"
+                          MinWidth="0"
+                          MinHeight="0"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          Visibility="Collapsed" />
             <Border x:Name="MessagePanel" Margin="28" Padding="28" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#1D2535" CornerRadius="10">
                 <StackPanel Width="520">
                     <TextBlock x:Name="MessageTitle" FontSize="22" FontWeight="SemiBold" Foreground="#F5F7FF" Text="接続を準備しています。" TextWrapping="Wrap" />
