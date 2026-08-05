@@ -38,6 +38,16 @@ Penguin Hub、Penguin OS、意味検索、AIチャット、自動実装、汎用
 
 ## 2. 設計原則
 
+### 2.1 Phase 2 Local Project登録契約
+
+P2-001では、Local Projectの登録情報を`Adm.Core.Projects`の`RegisteredProject`として定義する。
+Project ID、表示名、検証済みRoot、登録日時、選択状態を製品共通のドメイン契約とし、入力Rootは
+`ProjectRootInput`、検証済みRootは`ValidatedProjectRoot`として型を分離する。
+
+登録カタログ、Root検証、時計、ID生成は`Adm.Application.Projects`のPortで表現する。
+Catalogは登録済みProject一覧とselected Project IDを一つのsnapshotとして扱い、Project Root配下を
+変更するAPIを含めない。登録解除は登録情報だけを対象とし、Project本体の削除は後続機能でも行わない。
+
 1. Markdownと添付ファイルを業務データの正本とする。
 2. Front Matterがない既存Markdownを読み込めることを必須とする。
 3. 既存Markdownへ分類結果や確認状態を無断で書き戻さない。
