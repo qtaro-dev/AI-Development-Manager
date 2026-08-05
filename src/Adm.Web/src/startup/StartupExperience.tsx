@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { message } from "../messages/catalog";
+import { message, type MessageKey } from "../messages/catalog";
 import type { ExecutionProfile, ExecutionProfileMode } from "../data-access";
 import { FeedbackBanner } from "../components/feedback/Feedback";
 import type { StartupStatus } from "./startupState";
@@ -166,18 +166,24 @@ export function StartupExperience({
 
 function StartupStatusFeedback({ status }: { readonly status: StartupStatus }) {
     if (status === "ready") return null;
-    const content = {
-        loading: ["info", "startup.loadingTitle", "startup.loading"] as const,
-        degraded: ["warning", "startup.degradedTitle", "startup.degraded"] as const,
-        recovered: ["info", "startup.recoveredTitle", "startup.recovered"] as const,
-        error: ["danger", "startup.errorTitle", "startup.error"] as const,
-        retrying: ["info", "startup.retryingTitle", "startup.retrying"] as const,
-    }[status];
+    type StatusFeedback = readonly [
+        kind: "warning" | "danger" | "info",
+        title: MessageKey,
+        description: MessageKey,
+    ];
+    const content: Record<Exclude<StartupStatus, "ready">, StatusFeedback> = {
+        loading: ["info", "startup.loadingTitle", "startup.loading"],
+        degraded: ["warning", "startup.degradedTitle", "startup.degraded"],
+        recovered: ["info", "startup.recoveredTitle", "startup.recovered"],
+        error: ["danger", "startup.errorTitle", "startup.error"],
+        retrying: ["info", "startup.retryingTitle", "startup.retrying"],
+    };
+    const [kind, title, description] = content[status];
     return (
         <FeedbackBanner
-            kind={content[0]}
-            title={message(content[1] as never)}
-            description={message(content[2] as never)}
+            kind={kind}
+            title={message(title)}
+            description={message(description)}
         />
     );
 }
