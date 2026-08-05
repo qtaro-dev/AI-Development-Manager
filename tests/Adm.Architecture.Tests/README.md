@@ -8,13 +8,13 @@ P1-003／P1-030の参照方向・Windows依存境界検査です。P1-004のxUni
 | --- | --- | --- |
 | `Adm.Core` | なし | なし |
 | `Adm.Application` | `Adm.Core` | `Adm.Core` |
-| `Adm.Infrastructure.Windows` | なし | なし |
+| `Adm.Infrastructure.Windows` | `Adm.Application` | `Adm.Application` |
 | `Adm.Server.Host` | `Adm.Application`, `Adm.Infrastructure.Windows` | 同左 |
 | `Adm.Wpf` | `Adm.Application` | `Adm.Application` |
 
-`Adm.Wpf`と`Adm.Server.Host`はそれぞれLocal mode／Server modeの独立Composition Rootであり、相互参照しません。Core／ApplicationはWindows固有Namespaceを参照せず、全製品プロジェクトからPoC参照を禁止します。ProjectReferenceでは許可集合と必須集合を、Build済みAssemblyでは許可集合と禁止依存を検査します。
+`Adm.Wpf`と`Adm.Server.Host`はそれぞれLocal mode／Server modeの独立Composition Rootであり、相互参照しません。`Adm.Infrastructure.Windows`はWindows固有Adapterとして、Application Portを実装する場合に限り`Adm.Application`を参照できます。Project関連のファイル処理、path security、atomic save、scan/watchはWPFへ配置せず、将来のWindows AdapterとしてInfrastructure境界へ配置します。Core／ApplicationはWindows固有Namespaceを参照せず、全製品プロジェクトからPoC参照を禁止します。ProjectReferenceでは許可集合と必須集合を、Build済みAssemblyでは許可集合と禁止依存を検査します。
 
-`fixtures/`には、Core→WPF、WPF→Server、Server→WPF、Windows Infrastructure→WPFの意図的違反を置き、検査が禁止参照を検出できることを確認します。
+`fixtures/`には、Core→WPF、WPF→Server、Server→WPF、Windows Infrastructure→WPF、Windows Infrastructure→Serverの意図的違反を置き、検査が禁止参照を検出できることを確認します。Infrastructure→Applicationは許可参照として実プロジェクトとBuild済みAssemblyの両方で確認します。
 
 実行方法（Debug成果物を検査）:
 

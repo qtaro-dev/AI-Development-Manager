@@ -5,6 +5,8 @@ export type {
     DataAccessFailureCode,
     DataAccessMode,
     DataAccessPort,
+    BusinessDataAccessPort,
+    HostSettingsPort,
     DataAccessResult,
     FoundationStatus,
     ExecutionProfile,

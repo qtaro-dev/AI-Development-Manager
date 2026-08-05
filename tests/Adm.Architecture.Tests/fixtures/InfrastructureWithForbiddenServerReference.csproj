@@ -1,0 +1,5 @@
+<Project>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Adm.Server.Host\Adm.Server.Host.csproj" />
+  </ItemGroup>
+</Project>

@@ -38,8 +38,17 @@ export type DataAccessResult<T> =
     | { readonly kind: "success"; readonly value: T }
     | { readonly kind: "failure"; readonly error: DataAccessFailure };
 
-export interface DataAccessPort {
+/**
+ * Business data access only. Host settings are intentionally kept in the
+ * separate HostSettingsPort so future project operations do not acquire a
+ * dependency on WPF execution-profile storage.
+ */
+export interface BusinessDataAccessPort {
     getFoundationStatus(): Promise<DataAccessResult<FoundationStatus>>;
+}
+
+/** WPF execution-profile and host-settings boundary. */
+export interface HostSettingsPort {
     getExecutionProfile(): Promise<
         DataAccessResult<ExecutionProfileReadResult>
     >;
@@ -47,3 +56,6 @@ export interface DataAccessPort {
         update: ExecutionProfileUpdate,
     ): Promise<DataAccessResult<ExecutionProfile>>;
 }
+
+/** Current UI composition combines the two explicit boundaries. */
+export type DataAccessPort = BusinessDataAccessPort & HostSettingsPort;

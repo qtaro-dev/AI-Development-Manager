@@ -23,7 +23,7 @@ $expectedProjects = @(
 $allowedByProject = @{
     'Adm.Core' = @()
     'Adm.Application' = @('Adm.Core')
-    'Adm.Infrastructure.Windows' = @()
+    'Adm.Infrastructure.Windows' = @('Adm.Application')
     'Adm.Server.Host' = @('Adm.Application', 'Adm.Infrastructure.Windows')
     'Adm.Wpf' = @('Adm.Application')
 }
@@ -31,7 +31,7 @@ $allowedByProject = @{
 $requiredByProject = @{
     'Adm.Core' = @()
     'Adm.Application' = @('Adm.Core')
-    'Adm.Infrastructure.Windows' = @()
+    'Adm.Infrastructure.Windows' = @('Adm.Application')
     'Adm.Server.Host' = @('Adm.Application', 'Adm.Infrastructure.Windows')
     'Adm.Wpf' = @('Adm.Application')
 }
@@ -156,6 +156,7 @@ function Assert-IntentionalViolationDetected {
         @{ ProjectName = 'Adm.Wpf'; Path = 'WpfWithForbiddenServerReference.csproj' }
         @{ ProjectName = 'Adm.Server.Host'; Path = 'ServerWithForbiddenWpfReference.csproj' }
         @{ ProjectName = 'Adm.Infrastructure.Windows'; Path = 'InfrastructureWithForbiddenWpfReference.csproj' }
+        @{ ProjectName = 'Adm.Infrastructure.Windows'; Path = 'InfrastructureWithForbiddenServerReference.csproj' }
     )
 
     foreach ($fixture in $projectFixtures) {

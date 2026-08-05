@@ -10,15 +10,18 @@ React UIからHTTP、WebView2、WPFなどの実行方式を分離し、同じUI�
 App / UI component
         |
         v
-DataAccessPort
+BusinessDataAccessPort / HostSettingsPort
         ^
         |
 Composition boundary ---- HTTP Adapter ---- api/client.ts ---- fetch
         |
         +---- Fake Adapter (tests)
         |
-        +---- Local Adapter (future; not implemented in P1-031)
+        +---- Local Adapter (business data; current foundation path)
+
 ```
+
+Host settings such as execution-profile are a separate `HostSettingsPort`. The current UI composition may combine the two interfaces as `DataAccessPort` for compatibility, but business operations must be added only to `BusinessDataAccessPort`; execution-profile must not be added to the business port.
 
 UIとPortはHTTP URL、HTTP status、例外本文、WebView2 APIを公開しない。`api/client.ts`と`fetch`はHTTP Adapterの内部に限定する。
 
