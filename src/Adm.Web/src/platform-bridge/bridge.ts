@@ -46,6 +46,7 @@ declare global {
 
 const VERSION = "1";
 const OPERATION = "getHostInfo";
+const MAX_BRIDGE_MESSAGE_BYTES = 16 * 1024;
 
 function getWebViewBridge() {
     return window.chrome?.webview;
@@ -56,12 +57,51 @@ function requestId() {
     return `adm-web-${uuid ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`}`;
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isBridgeResponse(value: unknown): value is BridgeResponse {
+    if (!isRecord(value)) return false;
+    if (
+        value.version !== VERSION ||
+        value.messageType !== "response" ||
+        value.operation !== OPERATION ||
+        typeof value.requestId !== "string" ||
+        !["ok", "error", "cancelled"].includes(value.status as string)
+    ) return false;
+    if (value.status === "ok") {
+        const payload = value.payload;
+        return isRecord(payload) &&
+            typeof payload.applicationName === "string" &&
+            typeof payload.bridgeVersion === "string" &&
+            typeof payload.runtime === "string";
+    }
+    if (value.status === "error") {
+        const error = value.error;
+        return isRecord(error) &&
+            typeof error.code === "string" &&
+            typeof error.message === "string" &&
+            typeof error.traceId === "string";
+    }
+    return true;
+}
+
+function postBridgeMessage(bridge: WebViewBridge, message: unknown) {
+    const bytes = new TextEncoder().encode(JSON.stringify(message)).byteLength;
+    if (bytes > MAX_BRIDGE_MESSAGE_BYTES) return false;
+    bridge.postMessage(message);
+    return true;
+}
+
 export function isHostBridgeAvailable() {
     return getWebViewBridge() !== undefined;
 }
 
 export function cancelHostRequest(id: string) {
-    getWebViewBridge()?.postMessage({
+    const bridge = getWebViewBridge();
+    if (!bridge) return;
+    postBridgeMessage(bridge, {
         version: VERSION,
         messageType: "cancel",
         operation: OPERATION,
@@ -87,12 +127,10 @@ export function getHostInfo(timeoutMs = 3000): Promise<HostInfo> {
             callback();
         };
         const onMessage = (event: MessageEvent<BridgeResponse>) => {
-            const response = event.data;
-            if (response?.requestId !== id) return;
+            const response = event.data as unknown;
+            if (!isRecord(response) || response.requestId !== id) return;
             if (
-                response.version !== VERSION ||
-                response.messageType !== "response" ||
-                response.operation !== OPERATION
+                !isBridgeResponse(response)
             ) {
                 finish(() =>
                     reject(
@@ -130,7 +168,7 @@ export function getHostInfo(timeoutMs = 3000): Promise<HostInfo> {
             });
         }, timeoutMs);
         bridge.addEventListener("message", onMessage);
-        bridge.postMessage({
+        postBridgeMessage(bridge, {
             version: VERSION,
             messageType: "request",
             operation: OPERATION,

@@ -384,6 +384,10 @@ public partial class MainWindow : Window, IDisposable
         {
             response = BridgeProtocol.Error("invalid_json", "Bridgeメッセージの形式が正しくありません。", null);
         }
+        catch (Exception)
+        {
+            response = BridgeProtocol.Error("bridge_error", "Bridgeメッセージを処理できませんでした。", null);
+        }
         if (!isDisposed && !lifecycle.LifetimeToken.IsCancellationRequested)
         {
             WebView.CoreWebView2.PostWebMessageAsJson(response);

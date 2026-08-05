@@ -35,6 +35,11 @@ function installBridge() {
                 listeners.push(listener),
         ),
         removeEventListener: vi.fn(),
+        emit(data: unknown) {
+            listeners.forEach((listener) =>
+                listener(new MessageEvent("message", { data })),
+            );
+        },
     };
     window.chrome = { webview };
     return webview;
@@ -93,5 +98,22 @@ describe("host bridge", () => {
         expect(webview.postMessage).toHaveBeenLastCalledWith(
             expect.objectContaining({ messageType: "cancel" }),
         );
+    });
+
+    it("rejects malformed responses without exposing their contents", async () => {
+        const webview = installBridge();
+        const pending = getHostInfo();
+        const id = webview.postMessage.mock.calls[0][0].requestId;
+
+        webview.emit({
+            version: "1",
+            messageType: "response",
+            operation: "getHostInfo",
+            requestId: id,
+            status: "ok",
+            payload: { applicationName: "secret", bridgeVersion: 1 },
+        });
+
+        await expect(pending).rejects.toMatchObject({ code: "bridge_error" });
     });
 });

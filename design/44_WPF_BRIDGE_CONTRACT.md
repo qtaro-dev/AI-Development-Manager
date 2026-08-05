@@ -6,7 +6,9 @@ WebView2上の製品Web UIとWPFホストの連携を、バージョン付きEnv
 
 ## Envelope
 
-要求は`version`、`messageType`、`operation`、`requestId`、`payload`を必須とする。現在の`version`は`1`、`messageType`は`request`または`cancel`、`operation`は`getHostInfo`のみ、payloadは空のJSON objectのみを受け付ける。未知フィールド、未知操作、長すぎる要求ID、不正なJSONは拒否する。
+要求は`version`、`messageType`、`operation`、`requestId`、`payload`を必須とする。現在の`version`は`1`、`messageType`は`request`または`cancel`、`operation`は`getHostInfo`のみ、payloadは空のJSON objectのみを受け付ける。各フィールドの型、未知フィールド、重複フィールド、未知操作、長すぎる要求ID、不正なJSONは拒否する。
+
+Bridge入力はUTF-8換算で`16 * 1024` bytes以下、JSONの最大深度は`8`とする。上限超過はそれぞれ`message_too_large`、`max_depth_exceeded`へ変換し、その他の構文不正は`invalid_json`へ変換する。Bridgeの入力検証はLocal Application Channelとは独立して行う。
 
 応答は`messageType=response`、要求ID、操作、`status=ok|error|cancelled`を返す。エラーは固定のコード、利用者向けメッセージ、要求IDをtraceIdとして返し、例外本文や秘密情報を返さない。
 
