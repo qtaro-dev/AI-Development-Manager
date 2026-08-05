@@ -71,7 +71,7 @@ public sealed class BridgeContractTests
     public void SizeAndDepthLimitsAreFixed()
     {
         var large = "{\"version\":\"1\",\"messageType\":\"request\",\"operation\":\"getHostInfo\",\"requestId\":\"adm-1\",\"payload\":{\"x\":\"" + new string('x', BridgeProtocol.MaxMessageBytes) + "\"}}";
-        var nested = "{\"version\":\"1\",\"messageType\":\"request\",\"operation\":\"getHostInfo\",\"requestId\":\"adm-1\",\"payload\":{" + string.Join(":{", Enumerable.Repeat("\"x\"", BridgeProtocol.MaxJsonDepth + 1)) + string.Concat(Enumerable.Repeat("}", BridgeProtocol.MaxJsonDepth + 1)) + "}}";
+        var nested = "{\"version\":\"1\",\"messageType\":\"request\",\"operation\":\"getHostInfo\",\"requestId\":\"adm-1\",\"payload\":" + string.Concat(Enumerable.Repeat("{\"x\":", BridgeProtocol.MaxJsonDepth + 1)) + "{}" + string.Concat(Enumerable.Repeat("}", BridgeProtocol.MaxJsonDepth + 1)) + "}";
 
         Assert.Equal("message_too_large", Assert.Throws<BridgeProtocolException>(() => BridgeProtocol.ParseRequest(large, "http://127.0.0.1:5181/", Origin)).Code);
         Assert.Equal("max_depth_exceeded", Assert.Throws<BridgeProtocolException>(() => BridgeProtocol.ParseRequest(nested, "http://127.0.0.1:5181/", Origin)).Code);
