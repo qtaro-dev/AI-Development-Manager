@@ -81,7 +81,7 @@ export function StartupExperience({
         );
     }
 
-    const failed = view === "connection-failed";
+    const failed = view === "connection-failed" || startupStatus === "error";
     return (
         <main className="startup-screen" aria-labelledby="startup-title">
             <section className="startup-panel">
