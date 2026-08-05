@@ -2,14 +2,18 @@ import { RouteOutlet } from "./routes/RouteOutlet";
 import { FeedbackCatalog } from "./components/feedback/FeedbackCatalog";
 import { BridgeCatalog } from "./platform-bridge/BridgeCatalog";
 import { message } from "./messages/catalog";
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import type { DataAccessPort } from "./data-access";
 import type { ExecutionProfile, ExecutionProfileMode } from "./data-access";
 import {
     StartupExperience,
     type StartupView,
 } from "./startup/StartupExperience";
+import {
+    initialStartupState,
+    startupReducer,
+    type StartupStatus,
+} from "./startup/startupState";
 import { requestHostExit } from "./platform-bridge/hostExit";
 import "./styles.css";
 
@@ -18,6 +22,15 @@ const defaultProfile: ExecutionProfile = {
     schemaVersion: 1,
     mode: "local",
     serverUri: null,
+};
+
+const startupStatusMessages: Record<StartupStatus, Parameters<typeof message>[0]> = {
+    loading: "startup.loading",
+    ready: "startup.ready",
+    degraded: "startup.degraded",
+    recovered: "startup.recovered",
+    error: "startup.error",
+    retrying: "startup.retrying",
 };
 
 export function App({
@@ -31,6 +44,13 @@ export function App({
     const initialSettings =
         new URLSearchParams(window.location.search).get("settings") === "1";
     const [profile, setProfile] = useState<ExecutionProfile>(defaultProfile);
+    const [startupState, dispatchStartup] = useReducer(
+        startupReducer,
+        initialStartupState,
+    );
+    const mounted = useRef(true);
+    const requestSequence = useRef(0);
+    const retryInFlight = useRef(false);
     const [view, setView] = useState<StartupView | "home">(() => {
         if (initialSettings) return "settings";
         if (
@@ -42,24 +62,73 @@ export function App({
         return "home";
     });
 
+    async function loadStartup(retry: boolean) {
+        if (retry && retryInFlight.current) return;
+        if (retry) retryInFlight.current = true;
+        const sequence = ++requestSequence.current;
+        dispatchStartup({ type: "request", retry });
+
+        try {
+            const [foundation, executionProfile] = await Promise.all([
+                dataAccess.getFoundationStatus(),
+                dataAccess.getExecutionProfile(),
+            ]);
+            if (!mounted.current || sequence !== requestSequence.current) return;
+            if (foundation.kind !== "success") {
+                dispatchStartup({ type: "failed", failure: foundation.error });
+                return;
+            }
+            if (executionProfile.kind !== "success") {
+                dispatchStartup({ type: "failed", failure: executionProfile.error });
+                return;
+            }
+
+            dispatchStartup({
+                type: "resolved",
+                foundation: foundation.value,
+                profile: executionProfile.value,
+            });
+            setProfile(executionProfile.value.profile);
+            if (!initialSettings && (view === "connection-failed" || executionProfile.value.hasPersistedProfile && !executionProfile.value.usedLocalFallback)) {
+                markStartupAcknowledged();
+                setView(
+                    executionProfile.value.hasPersistedProfile &&
+                        !executionProfile.value.usedLocalFallback
+                        ? "home"
+                        : "startup",
+                );
+            }
+        } catch {
+            if (mounted.current && sequence === requestSequence.current) {
+                dispatchStartup({
+                    type: "failed",
+                    failure: {
+                        code: "operation_failed",
+                        message: message("startup.error"),
+                        retryable: true,
+                        nextAction: "retry",
+                    },
+                });
+            }
+        } finally {
+            if (retry) retryInFlight.current = false;
+        }
+    }
+
     useEffect(() => {
-        void dataAccess.getFoundationStatus();
-        void Promise.resolve(dataAccess.getExecutionProfile()).then(
-            (result) => {
-                if (result?.kind === "success") {
-                    setProfile(result.value.profile);
-                    if (
-                        !initialSettings &&
-                        result.value.hasPersistedProfile &&
-                        !result.value.usedLocalFallback
-                    ) {
-                        markStartupAcknowledged();
-                        setView("home");
-                    }
-                }
-            },
-        );
+        mounted.current = true;
+        void loadStartup(false);
+        return () => {
+            mounted.current = false;
+            requestSequence.current += 1;
+        };
     }, [dataAccess]);
+
+    function retryStartup() {
+        if (startupState.status === "retrying") return;
+        setView("connection-failed");
+        void loadStartup(true);
+    }
 
     async function saveProfile(
         mode: ExecutionProfileMode,
@@ -100,17 +169,30 @@ export function App({
         }
     }
 
-    if (view !== "home") {
+    const fallbackNeedsReview =
+        (startupState.status === "degraded" ||
+            startupState.status === "recovered" &&
+                startupState.profile?.usedLocalFallback === true) &&
+        view === "home";
+    const effectiveView =
+        startupState.status === "error" && view === "home"
+            ? "connection-failed"
+            : fallbackNeedsReview
+              ? "startup"
+              : view;
+
+    if (effectiveView !== "home") {
         return (
             <StartupExperience
-                view={view}
+                view={effectiveView}
                 profile={profile}
+                startupStatus={startupState.status}
                 onContinueLocal={continueLocal}
                 onSave={saveProfile}
-                onRetry={() => setView("home")}
+                onRetry={retryStartup}
                 onExit={requestHostExit}
                 onCancel={() =>
-                    setView(view === "settings" ? "home" : "settings")
+                    setView(effectiveView === "settings" ? "home" : "settings")
                 }
             />
         );
@@ -132,7 +214,7 @@ export function App({
                     </div>
                     <div>
                         <dt>{message("app.status")}</dt>
-                        <dd>{message("app.foundationReady")}</dd>
+                        <dd>{message(startupStatusMessages[startupState.status])}</dd>
                     </div>
                 </dl>
             </section>

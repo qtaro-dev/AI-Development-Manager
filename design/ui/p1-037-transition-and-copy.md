@@ -13,6 +13,8 @@
 | 設定 | 「接続先を設定」を選択 | 利用方法を選択 | 保存 | 取消 |
 | Web UI読込失敗 | 埋込資産または初期化失敗 | 画面を読み込めません | もう一度読み込む | 設定を確認、終了 |
 
+P2-A05ではWeb startupの状態正本を`loading`、`ready`、`degraded`、`recovered`、`error`、`retrying`として管理する。foundation取得とexecution-profile取得の両方が成功するまで`ready`を表示せず、profile fallbackは`degraded`としてLocal継続と設定確認を案内する。再試行で復旧した場合は`recovered`とし、古い要求やUnmount後の応答は表示へ反映しない。
+
 ## 文言辞書キー案
 
 | Key | 表示文言 | 用途 |

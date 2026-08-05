@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { message } from "../messages/catalog";
 import type { ExecutionProfile, ExecutionProfileMode } from "../data-access";
+import { FeedbackBanner } from "../components/feedback/Feedback";
+import type { StartupStatus } from "./startupState";
 
 export type StartupView = "startup" | "settings" | "connection-failed";
 
 type StartupExperienceProps = {
     readonly view: StartupView;
     readonly profile: ExecutionProfile;
+    readonly startupStatus?: StartupStatus;
     readonly onContinueLocal: () => Promise<boolean>;
     readonly onSave: (
         mode: ExecutionProfileMode,
@@ -20,6 +23,7 @@ type StartupExperienceProps = {
 export function StartupExperience({
     view,
     profile,
+    startupStatus = "ready",
     onContinueLocal,
     onSave,
     onRetry,
@@ -61,16 +65,19 @@ export function StartupExperience({
 
     if (view === "settings") {
         return (
-            <SettingsPanel
-                mode={mode}
-                serverUri={serverUri}
-                saving={saving}
-                error={error}
-                onModeChange={setMode}
-                onServerUriChange={setServerUri}
-                onSave={() => void saveProfile()}
-                onCancel={onCancel}
-            />
+            <>
+                <StartupStatusFeedback status={startupStatus} />
+                <SettingsPanel
+                    mode={mode}
+                    serverUri={serverUri}
+                    saving={saving}
+                    error={error}
+                    onModeChange={setMode}
+                    onServerUriChange={setServerUri}
+                    onSave={() => void saveProfile()}
+                    onCancel={onCancel}
+                />
+            </>
         );
     }
 
@@ -78,6 +85,7 @@ export function StartupExperience({
     return (
         <main className="startup-screen" aria-labelledby="startup-title">
             <section className="startup-panel">
+                <StartupStatusFeedback status={startupStatus} />
                 <p className="eyebrow">{message("startup.eyebrow")}</p>
                 <div
                     className={`startup-status-icon${failed ? " is-failed" : ""}`}
@@ -130,6 +138,7 @@ export function StartupExperience({
                             className="startup-secondary-action"
                             type="button"
                             onClick={onRetry}
+                            disabled={startupStatus === "retrying"}
                         >
                             {message("startup.retry")}
                         </button>
@@ -152,6 +161,24 @@ export function StartupExperience({
                 </p>
             </section>
         </main>
+    );
+}
+
+function StartupStatusFeedback({ status }: { readonly status: StartupStatus }) {
+    if (status === "ready") return null;
+    const content = {
+        loading: ["info", "startup.loadingTitle", "startup.loading"] as const,
+        degraded: ["warning", "startup.degradedTitle", "startup.degraded"] as const,
+        recovered: ["info", "startup.recoveredTitle", "startup.recovered"] as const,
+        error: ["danger", "startup.errorTitle", "startup.error"] as const,
+        retrying: ["info", "startup.retryingTitle", "startup.retrying"] as const,
+    }[status];
+    return (
+        <FeedbackBanner
+            kind={content[0]}
+            title={message(content[1] as never)}
+            description={message(content[2] as never)}
+        />
     );
 }
 

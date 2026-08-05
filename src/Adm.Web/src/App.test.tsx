@@ -5,23 +5,50 @@ import { App } from "./App";
 import type { DataAccessPort } from "./data-access";
 import { renderWithProviders } from "./test/test-utils";
 
-const fakeDataAccess: DataAccessPort = {
-    getFoundationStatus: vi.fn(),
-    getExecutionProfile: vi.fn(),
-    updateExecutionProfile: vi.fn(),
-};
-
 describe("App foundation", () => {
-    it("exposes the product identity and runtime API boundary", () => {
+    it("exposes the product identity and runtime API boundary", async () => {
         renderWithProviders(
-            <App dataAccess={fakeDataAccess} apiBoundary="/api/v1" />,
+            <App dataAccess={createDataAccess()} apiBoundary="/api/v1" />,
         );
 
         expect(
             screen.getByRole("heading", { name: "AI Development Manager" }),
         ).toBeVisible();
         expect(screen.getByText("/api/v1")).toBeVisible();
-        expect(screen.getByText("基盤準備完了")).toBeVisible();
+        await waitFor(() =>
+            expect(screen.getByText("基盤を利用できます。")).toBeVisible(),
+        );
+    });
+
+    it("does not show ready when foundation loading fails and retries once", async () => {
+        const user = userEvent.setup();
+        const dataAccess = createDataAccess();
+        vi.mocked(dataAccess.getFoundationStatus)
+            .mockResolvedValueOnce({
+                kind: "failure",
+                error: {
+                    code: "operation_failed",
+                    message: "failed",
+                    retryable: true,
+                    nextAction: "retry",
+                },
+            })
+            .mockResolvedValueOnce({
+                kind: "success",
+                value: {
+                    state: "ready",
+                    apiVersion: "local",
+                    contractVersion: "1.0",
+                    serverTimeUtc: "2026-08-04T00:00:00Z",
+                },
+            });
+        renderWithProviders(<App dataAccess={dataAccess} apiBoundary="local" />);
+
+        await waitFor(() => expect(screen.getByRole("alert")).toBeVisible());
+        expect(screen.queryByText("基盤を利用できます。")).not.toBeInTheDocument();
+        await user.click(screen.getByRole("button", { name: "もう一度試す" }));
+        await waitFor(() => expect(screen.getByText("再試行後に基盤を復旧しました。")).toBeVisible());
+        expect(dataAccess.getFoundationStatus).toHaveBeenCalledTimes(2);
     });
 
     it("shows first-run Local setup and then opens the Local home", async () => {
