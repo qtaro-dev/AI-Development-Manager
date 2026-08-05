@@ -4,11 +4,17 @@ public sealed class WindowLifecycleCoordinator : IDisposable
 {
     private readonly object sync = new();
     private readonly CancellationTokenSource lifetime = new();
+    private readonly CancellationToken lifetimeToken;
     private ConnectionAttempt? currentAttempt;
     private long nextGeneration;
     private bool isDisposed;
 
-    public CancellationToken LifetimeToken => lifetime.Token;
+    public WindowLifecycleCoordinator()
+    {
+        lifetimeToken = lifetime.Token;
+    }
+
+    public CancellationToken LifetimeToken => lifetimeToken;
 
     public ConnectionAttempt BeginAttempt()
     {
@@ -53,6 +59,7 @@ public sealed class WindowLifecycleCoordinator : IDisposable
 public sealed class ConnectionAttempt : IDisposable
 {
     private readonly CancellationTokenSource cancellation;
+    private bool isDisposed;
 
     internal ConnectionAttempt(long generation, CancellationToken lifetimeToken)
     {
@@ -64,7 +71,24 @@ public sealed class ConnectionAttempt : IDisposable
 
     public CancellationToken Token => cancellation.Token;
 
-    internal void Cancel() => cancellation.Cancel();
+    internal void Cancel()
+    {
+        if (isDisposed)
+        {
+            return;
+        }
 
-    public void Dispose() => cancellation.Dispose();
+        cancellation.Cancel();
+    }
+
+    public void Dispose()
+    {
+        if (isDisposed)
+        {
+            return;
+        }
+
+        isDisposed = true;
+        cancellation.Dispose();
+    }
 }
