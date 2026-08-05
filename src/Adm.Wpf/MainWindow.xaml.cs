@@ -26,8 +26,10 @@ public partial class MainWindow : Window, IDisposable
     private readonly LocalCompositionRoot localCompositionRoot;
     private readonly ExecutionProfileService executionProfiles;
     private readonly string[] commandLineArgs;
+    private readonly WindowLifecycleCoordinator lifecycle = new();
     private bool openLocalSettings;
     private bool isInitialized;
+    private bool webViewEventsRegistered;
     private bool isDisposed;
 
     public MainWindow()
@@ -43,16 +45,24 @@ public partial class MainWindow : Window, IDisposable
 
     private async void Window_Loaded(object sender, RoutedEventArgs e)
     {
-        FitToWorkArea();
-
-        if (!ServerConnectionOptions.HasServerUrlArgument(commandLineArgs))
+        await RunEventHandlerAsync(async () =>
         {
-            var saved = await executionProfiles.GetAsync();
-            connectionOptions = ServerConnectionOptions.FromProfile(saved.Profile);
-            UpdateServerUrlText();
-        }
+            FitToWorkArea();
 
-        await ConnectAsync();
+            if (!ServerConnectionOptions.HasServerUrlArgument(commandLineArgs))
+            {
+                var saved = await executionProfiles.GetAsync(lifecycle.LifetimeToken);
+                if (isDisposed)
+                {
+                    return;
+                }
+
+                connectionOptions = ServerConnectionOptions.FromProfile(saved.Profile);
+                UpdateServerUrlText();
+            }
+
+            await ConnectAsync();
+        });
     }
 
     private void FitToWorkArea()
@@ -64,10 +74,16 @@ public partial class MainWindow : Window, IDisposable
         Top = workArea.Top + Math.Max(0, (workArea.Height - Height) / 2);
     }
 
-    private async void RetryButton_Click(object sender, RoutedEventArgs e) => await ConnectAsync();
+    private async void RetryButton_Click(object sender, RoutedEventArgs e) => await RunEventHandlerAsync(ConnectAsync);
 
     private async Task ConnectAsync()
     {
+        if (isDisposed)
+        {
+            return;
+        }
+
+        using var attempt = lifecycle.BeginAttempt();
         RetryButton.IsEnabled = false;
         FallbackActions.Visibility = Visibility.Collapsed;
         MessagePanel.Visibility = Visibility.Visible;
@@ -78,8 +94,13 @@ public partial class MainWindow : Window, IDisposable
             SetMessage("ローカルUIを準備しています。", "サーバーに接続せず、このアプリに組み込まれた画面を表示しています。");
         }
 
-        if (!connectionOptions.IsLocal && !await WaitForServerAsync())
+        if (!connectionOptions.IsLocal && !await WaitForServerAsync(attempt.Token))
         {
+            if (!lifecycle.IsCurrent(attempt))
+            {
+                return;
+            }
+
             SetMessage("サーバーに接続できません。", "このPCだけで続けるか、接続先を確認してから再試行できます。");
             ShowFallbackActions(true);
             RetryButton.IsEnabled = true;
@@ -88,7 +109,12 @@ public partial class MainWindow : Window, IDisposable
 
         try
         {
-            await InitializeWebViewAsync();
+            await InitializeWebViewAsync(attempt.Token);
+            if (!lifecycle.IsCurrent(attempt))
+            {
+                return;
+            }
+
             WebView.Source = connectionOptions.IsLocal
                 ? GetLocalStartUri()
                 : connectionOptions.ServerUri;
@@ -98,20 +124,26 @@ public partial class MainWindow : Window, IDisposable
                 ? "ローカルUIを表示しています。"
                 : "共通Web UIを表示しています。";
         }
+        catch (OperationCanceledException) when (attempt.Token.IsCancellationRequested || isDisposed)
+        {
+        }
         catch (WebAssetUnavailableException)
         {
+            if (!lifecycle.IsCurrent(attempt)) return;
             SetMessage("Web UIの配布物がありません。", "アプリを修復または再インストールしてから、再試行してください。終了する場合は、この画面を閉じてください。");
             ShowFallbackActions(false);
             RetryButton.IsEnabled = true;
         }
         catch (Exception exception) when (IsRuntimeMissing(exception))
         {
+            if (!lifecycle.IsCurrent(attempt)) return;
             SetMessage("WebView2 Runtimeが必要です。", "Microsoft Edge WebView2 Runtimeをインストールしてから、再試行してください。");
             ShowFallbackActions(false);
             RetryButton.IsEnabled = true;
         }
         catch (Exception)
         {
+            if (!lifecycle.IsCurrent(attempt)) return;
             SetMessage("Web UIを表示できません。", "WebView2の初期化に失敗しました。再試行してください。");
             ShowFallbackActions(false);
             RetryButton.IsEnabled = true;
@@ -135,23 +167,29 @@ public partial class MainWindow : Window, IDisposable
 
     private async void ContinueLocalButton_Click(object sender, RoutedEventArgs e)
     {
-        openLocalSettings = false;
-        connectionOptions = new ServerConnectionOptions(WpfExecutionMode.Local, null);
-        UpdateServerUrlText();
-        await ConnectAsync();
+        await RunEventHandlerAsync(async () =>
+        {
+            openLocalSettings = false;
+            connectionOptions = new ServerConnectionOptions(WpfExecutionMode.Local, null);
+            UpdateServerUrlText();
+            await ConnectAsync();
+        });
     }
 
     private async void OpenSettingsButton_Click(object sender, RoutedEventArgs e)
     {
-        openLocalSettings = true;
-        connectionOptions = new ServerConnectionOptions(WpfExecutionMode.Local, null);
-        UpdateServerUrlText();
-        await ConnectAsync();
+        await RunEventHandlerAsync(async () =>
+        {
+            openLocalSettings = true;
+            connectionOptions = new ServerConnectionOptions(WpfExecutionMode.Local, null);
+            UpdateServerUrlText();
+            await ConnectAsync();
+        });
     }
 
     private void ExitButton_Click(object sender, RoutedEventArgs e) => Close();
 
-    private async Task InitializeWebViewAsync()
+    private async Task InitializeWebViewAsync(CancellationToken cancellationToken)
     {
         if (isInitialized)
         {
@@ -166,15 +204,11 @@ public partial class MainWindow : Window, IDisposable
 
         var userDataFolder = UserDataFolderResolver.GetLocalModeFolder();
         var environment = await CoreWebView2Environment.CreateAsync(userDataFolder: userDataFolder)
-            .WaitAsync(WebViewInitializationTimeout);
+            .WaitAsync(WebViewInitializationTimeout, cancellationToken);
         await WebView.EnsureCoreWebView2Async(environment)
-            .WaitAsync(WebViewInitializationTimeout);
-        WebView.CoreWebView2.NavigationStarting += CoreWebView2_NavigationStarting;
-        WebView.CoreWebView2.NavigationCompleted += CoreWebView2_NavigationCompleted;
-        WebView.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
-        WebView.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
-        WebView.CoreWebView2.WebResourceRequested += CoreWebView2_WebResourceRequested;
-        WebView.CoreWebView2.WebMessageReceived += CoreWebView2_WebMessageReceived;
+            .WaitAsync(WebViewInitializationTimeout, cancellationToken);
+        cancellationToken.ThrowIfCancellationRequested();
+        RegisterWebViewEvents();
         WebView.CoreWebView2.Settings.AreDevToolsEnabled = false;
 
         if (connectionOptions.IsLocal)
@@ -188,7 +222,7 @@ public partial class MainWindow : Window, IDisposable
         isInitialized = true;
     }
 
-    private async Task<bool> WaitForServerAsync()
+    private async Task<bool> WaitForServerAsync(CancellationToken cancellationToken)
     {
         var deadline = DateTimeOffset.UtcNow + ReadinessTimeout;
         var readinessUri = new Uri(connectionOptions.ServerUri!, "health/ready");
@@ -197,7 +231,7 @@ public partial class MainWindow : Window, IDisposable
         {
             try
             {
-                using var response = await httpClient.GetAsync(readinessUri);
+                using var response = await httpClient.GetAsync(readinessUri, cancellationToken);
                 if (response.IsSuccessStatusCode)
                 {
                     return true;
@@ -209,8 +243,12 @@ public partial class MainWindow : Window, IDisposable
             catch (TaskCanceledException)
             {
             }
+            catch (OperationCanceledException)
+            {
+                return false;
+            }
 
-            await Task.Delay(250);
+            await Task.Delay(250, cancellationToken);
         }
 
         return false;
@@ -218,6 +256,12 @@ public partial class MainWindow : Window, IDisposable
 
     private void CoreWebView2_NavigationStarting(object? sender, CoreWebView2NavigationStartingEventArgs e)
     {
+        if (isDisposed || lifecycle.LifetimeToken.IsCancellationRequested)
+        {
+            e.Cancel = true;
+            return;
+        }
+
         var allowed = Uri.TryCreate(e.Uri, UriKind.Absolute, out var candidate) &&
             (connectionOptions.IsLocal
                 ? LocalWebViewPolicy.IsAllowedNavigation(candidate)
@@ -232,6 +276,11 @@ public partial class MainWindow : Window, IDisposable
 
     private void CoreWebView2_NavigationCompleted(object? sender, CoreWebView2NavigationCompletedEventArgs e)
     {
+        if (isDisposed)
+        {
+            return;
+        }
+
         if (!e.IsSuccess)
         {
             MessagePanel.Visibility = Visibility.Visible;
@@ -246,6 +295,11 @@ public partial class MainWindow : Window, IDisposable
 
     private void CoreWebView2_WebResourceRequested(object? sender, CoreWebView2WebResourceRequestedEventArgs e)
     {
+        if (isDisposed)
+        {
+            return;
+        }
+
         if (!connectionOptions.IsLocal || !Uri.TryCreate(e.Request.Uri, UriKind.Absolute, out var candidate) || LocalWebViewPolicy.IsAllowedResource(candidate))
         {
             return;
@@ -260,6 +314,16 @@ public partial class MainWindow : Window, IDisposable
 
     private async void CoreWebView2_WebMessageReceived(object? sender, CoreWebView2WebMessageReceivedEventArgs e)
     {
+        await RunEventHandlerAsync(() => HandleWebMessageReceivedAsync(e));
+    }
+
+    private async Task HandleWebMessageReceivedAsync(CoreWebView2WebMessageReceivedEventArgs e)
+    {
+        if (isDisposed || lifecycle.LifetimeToken.IsCancellationRequested)
+        {
+            return;
+        }
+
         if (connectionOptions.IsLocal)
         {
             string localMessage;
@@ -288,6 +352,11 @@ public partial class MainWindow : Window, IDisposable
             {
             }
             var localResponse = await localCompositionRoot.DispatchAsync(localMessage, e.Source);
+            if (isDisposed || lifecycle.LifetimeToken.IsCancellationRequested)
+            {
+                return;
+            }
+
             WebView.CoreWebView2.PostWebMessageAsString(localResponse);
             if (request?.Operation == "executionProfile.update")
             {
@@ -315,11 +384,24 @@ public partial class MainWindow : Window, IDisposable
         {
             response = BridgeProtocol.Error("invalid_json", "Bridgeメッセージの形式が正しくありません。", null);
         }
-        WebView.CoreWebView2.PostWebMessageAsJson(response);
+        if (!isDisposed && !lifecycle.LifetimeToken.IsCancellationRequested)
+        {
+            WebView.CoreWebView2.PostWebMessageAsJson(response);
+        }
     }
 
     private async void ApplyExecutionProfileUpdate(string responseJson)
     {
+        await RunEventHandlerAsync(() => ApplyExecutionProfileUpdateAsync(responseJson));
+    }
+
+    private async Task ApplyExecutionProfileUpdateAsync(string responseJson)
+    {
+        if (isDisposed || lifecycle.LifetimeToken.IsCancellationRequested)
+        {
+            return;
+        }
+
         try
         {
             if (LocalChannelProtocol.ParseMessage(responseJson) is not LocalChannelResponse response || response.Result is not JsonElement result)
@@ -359,9 +441,59 @@ public partial class MainWindow : Window, IDisposable
         }
 
         isDisposed = true;
+        lifecycle.Dispose();
+        UnregisterWebViewEvents();
         localCompositionRoot.Dispose();
         WebView.Dispose();
         GC.SuppressFinalize(this);
+    }
+
+    private void RegisterWebViewEvents()
+    {
+        if (webViewEventsRegistered || WebView.CoreWebView2 is null)
+        {
+            return;
+        }
+
+        WebView.CoreWebView2.NavigationStarting += CoreWebView2_NavigationStarting;
+        WebView.CoreWebView2.NavigationCompleted += CoreWebView2_NavigationCompleted;
+        WebView.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
+        WebView.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
+        WebView.CoreWebView2.WebResourceRequested += CoreWebView2_WebResourceRequested;
+        WebView.CoreWebView2.WebMessageReceived += CoreWebView2_WebMessageReceived;
+        webViewEventsRegistered = true;
+    }
+
+    private void UnregisterWebViewEvents()
+    {
+        if (!webViewEventsRegistered || WebView.CoreWebView2 is null)
+        {
+            return;
+        }
+
+        WebView.CoreWebView2.NavigationStarting -= CoreWebView2_NavigationStarting;
+        WebView.CoreWebView2.NavigationCompleted -= CoreWebView2_NavigationCompleted;
+        WebView.CoreWebView2.NewWindowRequested -= CoreWebView2_NewWindowRequested;
+        WebView.CoreWebView2.WebResourceRequested -= CoreWebView2_WebResourceRequested;
+        WebView.CoreWebView2.WebMessageReceived -= CoreWebView2_WebMessageReceived;
+        webViewEventsRegistered = false;
+    }
+
+    private async Task RunEventHandlerAsync(Func<Task> handler)
+    {
+        try
+        {
+            await handler();
+        }
+        catch (OperationCanceledException) when (isDisposed || lifecycle.LifetimeToken.IsCancellationRequested)
+        {
+        }
+        catch (Exception) when (!isDisposed)
+        {
+            SetMessage("Web UIを表示できません。", "WebView2の初期化に失敗しました。再試行してください。");
+            ShowFallbackActions(false);
+            RetryButton.IsEnabled = true;
+        }
     }
 
     private void SetMessage(string title, string description)

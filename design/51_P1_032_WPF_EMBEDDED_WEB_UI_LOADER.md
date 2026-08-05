@@ -22,6 +22,8 @@
 - 新規Windowは常にHandledとする。
 - UserDataFolderは`%LOCALAPPDATA%\AI Development Manager\WebView2\Local`に固定し、他アプリと共有しない。
 - `CreateAsync`と`EnsureCoreWebView2Async`は非同期で実行し、10秒のタイムアウトを設ける。
+- Window終了または新しい接続要求が開始された場合は、接続・初期化処理をキャンセルし、古い処理の結果をUIへ反映しない。
+- WebView2イベントは初期化時に一度だけ登録し、破棄前に解除する。
 
 ## Server mode互換
 

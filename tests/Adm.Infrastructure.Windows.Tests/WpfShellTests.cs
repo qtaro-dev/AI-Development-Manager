@@ -5,6 +5,33 @@ namespace Adm.Infrastructure.Windows.Tests;
 public sealed class WpfShellTests
 {
     [Fact]
+    public void NewAttemptCancelsPreviousAttemptAndTracksLatestGeneration()
+    {
+        using var lifecycle = new WindowLifecycleCoordinator();
+        using var first = lifecycle.BeginAttempt();
+        using var second = lifecycle.BeginAttempt();
+
+        Assert.True(first.Token.IsCancellationRequested);
+        Assert.False(lifecycle.IsCurrent(first));
+        Assert.True(lifecycle.IsCurrent(second));
+        Assert.True(second.Generation > first.Generation);
+    }
+
+    [Fact]
+    public void DisposingLifecycleCancelsCurrentAttemptAndIsIdempotent()
+    {
+        using var lifecycle = new WindowLifecycleCoordinator();
+        using var attempt = lifecycle.BeginAttempt();
+
+        lifecycle.Dispose();
+        lifecycle.Dispose();
+
+        Assert.True(lifecycle.LifetimeToken.IsCancellationRequested);
+        Assert.True(attempt.Token.IsCancellationRequested);
+        Assert.False(lifecycle.IsCurrent(attempt));
+    }
+
+    [Fact]
     public void NoArgumentsSelectLocalMode()
     {
         var options = ServerConnectionOptions.FromArguments([]);

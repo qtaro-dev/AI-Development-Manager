@@ -35,6 +35,14 @@ Server接続失敗時には、Local mode、Server設定、再試行、終了の�
 - Local modeは固定仮想origin以外のNavigation／Resourceを拒否し、新規Windowを開かない。
 - Local modeのUserDataFolderは`%LOCALAPPDATA%\AI Development Manager\WebView2\Local`に固定する。
 
+## P2-A02 lifecycle
+
+- Windowのlifetime cancellationを接続、readiness待機、WebView2初期化へ伝播する。
+- 接続要求は世代管理し、新しい要求が開始された時点で古い要求をキャンセルする。古い要求はUI、Navigation、Web messageを更新しない。
+- WebView2イベントは一箇所で登録し、Dispose前に同じハンドラーを解除する。
+- Window終了時はlifetime cancellation、WebView2イベント解除、Local Composition Root終了、WebView2破棄の順で処理する。Disposeは冪等とする。
+- Local First、固定origin、Server任意経路、外部Navigation拒否の境界は変更しない。
+
 ## P1-038 ローカルファースト起動UI
 
 - 引数なしのLocal modeはServer readiness確認を行わず、初回案内またはLocalホームを固定仮想originへ表示する。
