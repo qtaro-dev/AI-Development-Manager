@@ -50,7 +50,7 @@ describe("Local Application DataAccess Adapter", () => {
 
         await expect(result).resolves.toMatchObject({
             kind: "failure",
-            error: { code: "operation_failed", nextAction: "retry" },
+            error: { code: "channel_unavailable", nextAction: "close" },
         });
     });
 });
