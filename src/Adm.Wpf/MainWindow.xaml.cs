@@ -414,7 +414,7 @@ public partial class MainWindow : Window, IDisposable
             }
 
             var profile = JsonSerializer.Deserialize<ExecutionProfile>(result.GetRawText(), ProfileJsonOptions);
-            if (profile is null || profile.Mode != ExecutionProfileMode.Server)
+            if (profile is null)
             {
                 return;
             }

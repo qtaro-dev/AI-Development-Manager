@@ -30,7 +30,7 @@ v1のトップレベルキーはEnvelopeごとに固定し、未知フィール�
 
 ## 検証上限
 
-- 固定Local origin: `https://app.ai-development-manager.local/index.html`（scheme、host、port、pathを完全一致）。
+- 固定Local origin: `https://app.ai-development-manager.local/index.html`（scheme、host、port、pathを完全一致）。設定復旧時だけ`?settings=1`を許可し、その他のquery、fragment、pathは拒否する。
 - トップレベル文書以外、外部origin、`file://`、Server originからのLocal Requestは拒否する。
 - UTF-8メッセージ上限は1 MiB、JSON最大深度は16。
 - `requestId`は1～64文字のASCII英数字、`_`、`-`。`operation`は1～100文字で、英字始まりの明示形式のみ許可する。

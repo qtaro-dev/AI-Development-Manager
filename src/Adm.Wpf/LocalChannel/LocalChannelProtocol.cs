@@ -133,12 +133,7 @@ public static class LocalChannelProtocol
 
     public static bool IsAllowedTopLevelSource(string? source) =>
         Uri.TryCreate(source, UriKind.Absolute, out var candidate) &&
-        string.Equals(candidate.Scheme, LocalWebViewPolicy.StartUri.Scheme, StringComparison.OrdinalIgnoreCase) &&
-        string.Equals(candidate.Host, LocalWebViewPolicy.StartUri.Host, StringComparison.OrdinalIgnoreCase) &&
-        candidate.Port == LocalWebViewPolicy.StartUri.Port &&
-        string.Equals(candidate.AbsolutePath, LocalWebViewPolicy.StartUri.AbsolutePath, StringComparison.Ordinal) &&
-        string.IsNullOrEmpty(candidate.Query) &&
-        string.IsNullOrEmpty(candidate.Fragment);
+        LocalWebViewPolicy.IsAllowedTopLevelDocument(candidate);
 
     private static void EnsureMessageSize(string json)
     {

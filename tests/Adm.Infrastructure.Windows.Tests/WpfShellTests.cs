@@ -59,8 +59,10 @@ public sealed class WpfShellTests
     [Fact]
     public void LocalOriginAllowsOnlyTheFixedVirtualOrigin()
     {
-        Assert.True(LocalWebViewPolicy.IsAllowedNavigation(new Uri("https://app.ai-development-manager.local/")));
+        Assert.True(LocalWebViewPolicy.IsAllowedNavigation(new Uri("https://app.ai-development-manager.local/index.html")));
+        Assert.True(LocalWebViewPolicy.IsAllowedNavigation(new Uri("https://app.ai-development-manager.local/index.html?settings=1")));
         Assert.False(LocalWebViewPolicy.IsAllowedNavigation(new Uri("https://example.com/")));
+        Assert.False(LocalWebViewPolicy.IsAllowedNavigation(new Uri("https://app.ai-development-manager.local/index.html?settings=2")));
         Assert.False(LocalWebViewPolicy.IsAllowedNavigation(new Uri("file:///C:/secret.txt")));
         Assert.False(LocalWebViewPolicy.IsAllowedResource(new Uri("http://127.0.0.1:5181/")));
     }

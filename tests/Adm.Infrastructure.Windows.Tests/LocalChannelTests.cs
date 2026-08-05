@@ -97,6 +97,29 @@ public sealed class LocalChannelTests
     }
 
     [Fact]
+    public void SettingsTopLevelSourceAllowsProfileRecovery()
+    {
+        var source = "https://app.ai-development-manager.local/index.html?settings=1";
+
+        var request = LocalChannelProtocol.ParseRequest(ReadFixture("valid-request.json"), source);
+
+        Assert.Equal("request-001", request.RequestId);
+    }
+
+    [Theory]
+    [InlineData("https://app.ai-development-manager.local/index.html?settings=2")]
+    [InlineData("https://app.ai-development-manager.local/index.html?settings=1&extra=1")]
+    [InlineData("https://app.ai-development-manager.local/index.html#settings")]
+    [InlineData("https://app.ai-development-manager.local/other.html?settings=1")]
+    public void UnapprovedSettingsSourceIsRejected(string source)
+    {
+        var exception = Assert.Throws<LocalChannelProtocolException>(() =>
+            LocalChannelProtocol.ParseRequest(ReadFixture("valid-request.json"), source));
+
+        Assert.Equal("invalid_request", exception.Code);
+    }
+
+    [Fact]
     public void MessageOverOneMiBIsRejected()
     {
         var payload = new string('x', LocalChannelProtocol.MaxMessageBytes);

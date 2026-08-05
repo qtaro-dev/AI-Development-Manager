@@ -28,9 +28,8 @@ export function App({
     apiBoundary: string;
 }) {
     const isLocalRuntime = apiBoundary === "local";
-    const initialSettings = new URLSearchParams(window.location.search).has(
-        "settings",
-    );
+    const initialSettings =
+        new URLSearchParams(window.location.search).get("settings") === "1";
     const [profile, setProfile] = useState<ExecutionProfile>(defaultProfile);
     const [view, setView] = useState<StartupView | "home">(() => {
         if (initialSettings) return "settings";
