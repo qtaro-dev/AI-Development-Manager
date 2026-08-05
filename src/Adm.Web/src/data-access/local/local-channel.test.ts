@@ -119,8 +119,11 @@ describe("Local Application Channel v1", () => {
         const client = new LocalChannelClient(transport);
 
         const request = client.request("test.echo", {}, { timeoutMs: 10 });
+        const rejection = expect(request).rejects.toMatchObject({
+            code: "timeout",
+        });
         await vi.advanceTimersByTimeAsync(10);
-        await expect(request).rejects.toMatchObject({ code: "timeout" });
+        await rejection;
         receive?.(
             JSON.stringify({
                 version: 1,
