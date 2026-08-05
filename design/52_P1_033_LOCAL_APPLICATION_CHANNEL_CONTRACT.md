@@ -42,7 +42,13 @@ TypeScriptの正本実装は`src/Adm.Web/src/data-access/local/`に置き、`Loc
 
 ## Error
 
-公開する安定コードは`invalid_json`、`invalid_request`、`unsupported_version`、`message_too_large`、`operation_not_allowed`、`handler_failed`、`channel_unavailable`とする。Errorには`code`とReact側の`messageKey`だけを返し、例外本文、Stack Trace、パス、秘密値を返さない。
+公開する安定コードは`invalid_json`、`invalid_request`、`unsupported_version`、`message_too_large`、`operation_not_allowed`、`handler_failed`、`timeout`、`cancelled`、`channel_unavailable`とする。Errorには`code`とReact側の`messageKey`だけを返し、例外本文、Stack Trace、パス、秘密値を返さない。
+
+## P2-A01 lifecycle
+
+Web側の`LocalChannelClient`要求は、Protocol Error、timeout、caller cancellation、channel unavailableのいずれかで有限に終了する。要求ごとにtimeoutと`AbortSignal`を指定でき、timeout／cancel／disposeで保留Mapから要求を除去する。`dispose`は冪等で、購読解除後に保留要求を`channel_unavailable`で終了し、以後の要求をTransportへ送信しない。timeout、cancel、dispose後のlate response、unknown response、duplicate responseは無視する。
+
+DataAccess Adapterはlifecycle Errorを安全なDataAccess Failureへ変換し、例外本文をUIへ渡さない。Local Adapterは`dispose`を公開するが、HTTP Adapterの再試行方式やLocal Channelのoperation allowlist、Envelope v1、固定originは変更しない。
 
 ## Fixtureと検証
 

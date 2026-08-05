@@ -1,4 +1,8 @@
-import { LocalChannelClient, type LocalChannelTransport } from "./client";
+import {
+    LocalChannelClient,
+    type LocalChannelTransport,
+} from "./client";
+import { LocalChannelProtocolError } from "./protocol";
 import type {
     DataAccessFailure,
     DataAccessPort,
@@ -8,6 +12,8 @@ import type {
     ExecutionProfileReadResult,
     ExecutionProfileUpdate,
 } from "../port";
+
+export type LocalDataAccessPort = DataAccessPort & { dispose(): void };
 
 const FOUNDATION_STATUS_OPERATION = "getFoundationStatus";
 
@@ -62,8 +68,31 @@ function isExecutionProfileReadResult(
 
 export function createLocalDataAccess(
     transport: LocalChannelTransport,
-): DataAccessPort {
+): LocalDataAccessPort {
     const client = new LocalChannelClient(transport);
+
+    const failureFrom = <T>(
+        error: unknown,
+        fallbackMessage: string,
+    ): DataAccessResult<T> => {
+        if (error instanceof LocalChannelProtocolError) {
+            if (error.code === "timeout") {
+                return failure("timeout", fallbackMessage, true, "retry");
+            }
+            if (error.code === "cancelled") {
+                return failure("cancelled", fallbackMessage, true, "retry");
+            }
+            if (error.code === "channel_unavailable") {
+                return failure(
+                    "channel_unavailable",
+                    fallbackMessage,
+                    false,
+                    "close",
+                );
+            }
+        }
+        return failure("operation_failed", fallbackMessage, true, "retry");
+    };
 
     return {
         async getFoundationStatus(): Promise<
@@ -82,12 +111,10 @@ export function createLocalDataAccess(
                           false,
                           "close",
                       );
-            } catch {
-                return failure(
-                    "operation_failed",
+            } catch (error) {
+                return failureFrom(
+                    error,
                     "ローカル処理を完了できませんでした。",
-                    true,
-                    "retry",
                 );
             }
         },
@@ -102,12 +129,10 @@ export function createLocalDataAccess(
                           false,
                           "close",
                       );
-            } catch {
-                return failure<ExecutionProfileReadResult>(
-                    "operation_failed",
+            } catch (error) {
+                return failureFrom<ExecutionProfileReadResult>(
+                    error,
                     "実行プロファイルを読み込めませんでした。",
-                    true,
-                    "retry",
                 );
             }
         },
@@ -125,14 +150,13 @@ export function createLocalDataAccess(
                           false,
                           "close",
                       );
-            } catch {
-                return failure<ExecutionProfile>(
-                    "operation_failed",
+            } catch (error) {
+                return failureFrom<ExecutionProfile>(
+                    error,
                     "実行プロファイルを保存できませんでした。",
-                    true,
-                    "retry",
                 );
             }
         },
+        dispose: () => client.dispose(),
     };
 }

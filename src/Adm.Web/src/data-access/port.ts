@@ -25,7 +25,12 @@ export type ExecutionProfileReadResult = {
 };
 
 export type DataAccessFailureCode =
-    "adapter_unavailable" | "operation_failed" | "invalid_result";
+    | "adapter_unavailable"
+    | "operation_failed"
+    | "invalid_result"
+    | "timeout"
+    | "cancelled"
+    | "channel_unavailable";
 
 export type DataAccessFailure = {
     readonly code: DataAccessFailureCode;

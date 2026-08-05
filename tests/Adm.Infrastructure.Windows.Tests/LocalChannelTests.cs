@@ -149,5 +149,29 @@ public sealed class LocalChannelTests
         Assert.Contains("\"code\":\"channel_unavailable\"", response);
     }
 
+    [Fact]
+    public async Task HostShutdownCancellationReturnsChannelUnavailable()
+    {
+        using var cancellation = new CancellationTokenSource();
+        var dispatcher = new LocalChannelDispatcher(
+            LocalChannelOperationRegistry.FromHandlers(new Dictionary<string, LocalChannelHandler>(StringComparer.Ordinal)
+            {
+                ["test.wait"] = async (_, token) =>
+                {
+                    await Task.Delay(Timeout.InfiniteTimeSpan, token);
+                    return null;
+                },
+            }));
+        cancellation.Cancel();
+
+        var response = await dispatcher.DispatchAsync(
+            "{\"version\":1,\"kind\":\"request\",\"requestId\":\"request-shutdown\",\"operation\":\"test.wait\",\"payload\":{}}",
+            LocalSource,
+            cancellation.Token);
+
+        Assert.Contains("\"code\":\"channel_unavailable\"", response);
+        Assert.DoesNotContain("TaskCanceledException", response);
+    }
+
     private static string ReadFixture(string name) => File.ReadAllText(Path.Combine(FixtureRoot, name));
 }
