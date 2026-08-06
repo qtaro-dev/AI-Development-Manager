@@ -1,6 +1,4 @@
 import { RouteOutlet } from "./routes/RouteOutlet";
-import { FeedbackCatalog } from "./components/feedback/FeedbackCatalog";
-import { BridgeCatalog } from "./platform-bridge/BridgeCatalog";
 import { message } from "./messages/catalog";
 import { useEffect, useReducer, useRef, useState } from "react";
 import type { DataAccessPort } from "./data-access";
@@ -15,6 +13,7 @@ import {
     type StartupStatus,
 } from "./startup/startupState";
 import { requestHostExit } from "./platform-bridge/hostExit";
+import { ProjectPage } from "./projects/ProjectPage";
 import "./styles.css";
 
 const STARTUP_ACKNOWLEDGED_KEY = "adm.startup.localAcknowledged";
@@ -200,7 +199,7 @@ export function App({
 
     return (
         <RouteOutlet
-            pageTitle={message("shell.navTickets")}
+            pageTitle={message("shell.navProjects")}
             onSettings={() => setView("settings")}
         >
             <section className="foundation-card" aria-labelledby="app-title">
@@ -218,8 +217,7 @@ export function App({
                     </div>
                 </dl>
             </section>
-            <FeedbackCatalog />
-            <BridgeCatalog />
+            <ProjectPage dataAccess={dataAccess} onSettings={() => setView("settings")} />
         </RouteOutlet>
     );
 }

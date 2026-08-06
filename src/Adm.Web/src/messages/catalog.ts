@@ -20,6 +20,7 @@ const catalog = {
     "common.retryCount": "再試行（{{count}}回目）",
     "shell.workspace": "ワークスペース",
     "shell.navTickets": "チケット",
+    "shell.navProjects": "Project",
     "shell.navTestCases": "テストケース",
     "shell.navSearch": "検索",
     "shell.navKnowledge": "ナレッジ",
@@ -127,6 +128,37 @@ const catalog = {
     "bridge.rejected": "許可されていないBridgeメッセージは拒否されます。",
     "bridge.securityNote":
         "任意コード実行、任意コマンド実行、自由なファイルアクセスは許可されていません。",
+    "project.eyebrow": "LOCAL PROJECTS",
+    "project.title": "登録Project",
+    "project.description": "このPCで利用するProjectを登録・選択します。",
+    "project.register": "フォルダーを選択して登録",
+    "project.loading": "Project一覧を読み込んでいます。",
+    "project.saving": "Projectを保存しています。",
+    "project.ready": "Project一覧を利用できます。",
+    "project.cancelled": "操作を取り消しました。",
+    "project.cancelledTitle": "登録を取り消しました",
+    "project.cancelledDescription": "フォルダーは登録されていません。",
+    "project.browserTitle": "Windowsフォルダー選択が必要です",
+    "project.browserDescription": "通常のブラウザではフォルダーを選択できません。Windowsアプリで開いてください。",
+    "project.errorTitle": "Projectを処理できません",
+    "project.errorGeneric": "Projectを処理できませんでした。再試行してください。",
+    "project.errorTimeout": "処理がタイムアウトしました。再試行してください。",
+    "project.errorCancelled": "処理を取り消しました。",
+    "project.errorUnavailable": "Local Channelを利用できません。設定を確認してください。",
+    "project.errorInvalidResult": "Project応答を確認できませんでした。再試行してください。",
+    "project.checkSettings": "設定を確認",
+    "project.rootWarningTitle": "ProjectのRootを確認してください",
+    "project.rootUnavailable": "Rootへアクセスできません。登録情報は削除されていません。",
+    "project.rootWarning": "Rootの状態を確認できません。登録情報は保持されています。",
+    "project.emptyTitle": "登録Projectがありません",
+    "project.emptyDescription": "フォルダーを選択して、Local Projectを登録してください。",
+    "project.listLabel": "登録Project一覧",
+    "project.selected": "選択中",
+    "project.select": "選択",
+    "project.clearSelection": "選択解除",
+    "project.unregister": "登録解除",
+    "project.unregisterConfirm": "{{name}}の登録を解除しますか？",
+    "project.filesRemain": "登録解除しても、Projectフォルダー内のファイルやフォルダーは削除されません。",
 } as const;
 
 export type MessageKey = keyof typeof catalog;
@@ -138,6 +170,7 @@ type MessageArguments = {
         current: string;
         total: string;
     };
+    "project.unregisterConfirm": { name: string };
 };
 
 export function message<K extends MessageKey>(

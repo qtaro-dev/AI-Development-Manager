@@ -9,11 +9,11 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
+    { key: "projects", label: message("shell.navProjects"), icon: "⌂" },
     {
         key: "tickets",
         label: message("shell.navTickets"),
         icon: "▦",
-        active: true,
     },
     { key: "test-cases", label: message("shell.navTestCases"), icon: "✓" },
     { key: "search", label: message("shell.navSearch"), icon: "⌕" },
@@ -62,10 +62,10 @@ export function AppShell({
                 >
                     {navItems.map((item) => (
                         <a
-                            className={`nav-item${item.active ? " is-active" : ""}`}
+                            className={`nav-item${(item.key === "projects" ? pageTitle === message("shell.navProjects") : item.key === "tickets" ? pageTitle !== message("shell.navProjects") : false) ? " is-active" : ""}`}
                             href={`#${item.key}`}
                             key={item.key}
-                            aria-current={item.active ? "page" : undefined}
+                            aria-current={(item.key === "projects" ? pageTitle === message("shell.navProjects") : item.key === "tickets" ? pageTitle !== message("shell.navProjects") : false) ? "page" : undefined}
                             aria-label={item.label}
                         >
                             <span className="nav-icon" aria-hidden="true">
