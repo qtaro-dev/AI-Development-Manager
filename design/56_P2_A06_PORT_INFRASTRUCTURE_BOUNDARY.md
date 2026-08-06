@@ -52,3 +52,13 @@ Architecture検査はProjectReferenceとBuild済みAssemblyの両方について
 P2-A06では具体的Project型が未確定だったためInfrastructure→Coreを許可行列へ含めていなかった。P2-A07で、P2-001のCoreドメインモデルを移動・複製せず、Windows Adapterに限定してこの不足を補正した。
 
 Local First、独立Composition Root、operation allowlist、固定origin、WebView2専用UserDataFolder、Navigation／Resource境界は変更しない。
+
+## P2-A08 WPF composition boundary correction
+
+`Adm.Wpf` is the Local mode Composition Root and may reference `Adm.Application`,
+`Adm.Core`, and `Adm.Infrastructure.Windows`. Infrastructure concrete types are
+constructed only by `src/Adm.Wpf/Composition/` and the startup boundary in
+`App.xaml.cs`. `MainWindow`, Bridge, Shell, and Local Channel handlers receive
+configured dependencies and do not call Windows adapters directly. Local Channel
+handlers invoke Application use cases only; Project operations remain a separate
+P2-007 change.

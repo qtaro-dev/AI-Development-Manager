@@ -32,13 +32,14 @@ public partial class MainWindow : Window, IDisposable
     private bool webViewEventsRegistered;
     private bool isDisposed;
 
-    public MainWindow()
+    public MainWindow(
+        ExecutionProfileService executionProfiles,
+        LocalCompositionRoot localCompositionRoot)
     {
         InitializeComponent();
         commandLineArgs = Environment.GetCommandLineArgs().Skip(1).ToArray();
-        var allowLoopbackHttp = commandLineArgs.Contains("--allow-loopback-http", StringComparer.OrdinalIgnoreCase);
-        executionProfiles = new ExecutionProfileService(new JsonExecutionProfileStore(), allowLoopbackHttp);
-        localCompositionRoot = new LocalCompositionRoot(executionProfiles);
+        this.executionProfiles = executionProfiles;
+        this.localCompositionRoot = localCompositionRoot;
         connectionOptions = ServerConnectionOptions.FromArguments(commandLineArgs);
         UpdateServerUrlText();
     }

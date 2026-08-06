@@ -25,7 +25,7 @@ $allowedByProject = @{
     'Adm.Application' = @('Adm.Core')
     'Adm.Infrastructure.Windows' = @('Adm.Application', 'Adm.Core')
     'Adm.Server.Host' = @('Adm.Application', 'Adm.Infrastructure.Windows')
-    'Adm.Wpf' = @('Adm.Application')
+    'Adm.Wpf' = @('Adm.Application', 'Adm.Core', 'Adm.Infrastructure.Windows')
 }
 
 $requiredByProject = @{
@@ -33,7 +33,7 @@ $requiredByProject = @{
     'Adm.Application' = @('Adm.Core')
     'Adm.Infrastructure.Windows' = @('Adm.Application', 'Adm.Core')
     'Adm.Server.Host' = @('Adm.Application', 'Adm.Infrastructure.Windows')
-    'Adm.Wpf' = @('Adm.Application')
+    'Adm.Wpf' = @('Adm.Application', 'Adm.Core', 'Adm.Infrastructure.Windows')
 }
 
 function Get-ProjectReferences {
@@ -121,6 +121,26 @@ function Assert-ForbiddenNamespace {
     }
 }
 
+function Assert-WpfInfrastructureNamespaceBoundary {
+    param(
+        [Parameter(Mandatory)]
+        [AllowEmptyCollection()]
+        [string[]]$SourceFiles
+    )
+
+    foreach ($sourceFile in $SourceFiles) {
+        $relativePath = [System.IO.Path]::GetRelativePath((Join-Path $sourceRoot 'Adm.Wpf'), $sourceFile)
+        $normalizedPath = $relativePath.Replace('\', '/')
+        if ($normalizedPath -like 'Composition/*' -or $normalizedPath -eq 'App.xaml.cs') {
+            continue
+        }
+
+        if ((Get-Content -LiteralPath $sourceFile -Raw) -match '(?m)Adm\.Infrastructure\.Windows') {
+            throw "Adm.Wpf uses Infrastructure namespace outside Composition/App.xaml.cs: $sourceFile"
+        }
+    }
+}
+
 function Assert-AssemblyReferences {
     param(
         [Parameter(Mandatory)]
@@ -195,6 +215,9 @@ foreach ($projectName in $expectedProjects) {
 
     $sourceFiles = @(Get-ChildItem -LiteralPath (Split-Path -Parent $projectPath) -Filter '*.cs' -File -Recurse | ForEach-Object { $_.FullName })
     Assert-ForbiddenNamespace -ProjectName $projectName -SourceFiles $sourceFiles
+    if ($projectName -eq 'Adm.Wpf') {
+        Assert-WpfInfrastructureNamespaceBoundary -SourceFiles $sourceFiles
+    }
 
     [xml]$project = Get-Content -LiteralPath $projectPath -Raw
     $targetFramework = @($project.Project.PropertyGroup | Where-Object { $_.PSObject.Properties.Name -contains 'TargetFramework' } | ForEach-Object { [string]$_.TargetFramework } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })[0]

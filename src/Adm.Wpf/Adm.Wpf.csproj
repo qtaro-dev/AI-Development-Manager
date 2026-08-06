@@ -12,6 +12,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Web.WebView2" />
     <ProjectReference Include="..\Adm.Application\Adm.Application.csproj" />
+    <ProjectReference Include="..\Adm.Core\Adm.Core.csproj" />
+    <ProjectReference Include="..\Adm.Infrastructure.Windows\Adm.Infrastructure.Windows.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
