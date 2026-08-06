@@ -25,3 +25,13 @@
 - 利用者向け拒否文言は専門用語を避け、「安全でない保存先です」「このファイル名は使用できません」等とする。
 - ジャンクション、ADS、予約名のWindows実機試験を追加する。
 - 製品コードへの正式採用はP0-023で判断する。
+
+## P2-002 Local Project Root検証
+
+Local Projectの登録入口では、Windows Adapterの`IProjectRootValidator`だけが入力Rootを
+`ValidatedProjectRoot`へ変換する。絶対ローカルパス、存在するディレクトリ、NTFS、Rootと祖先の
+Reparse Pointなし、予約名・末尾ドット／空白なし、アクセス可能であることを確認し、その他の入力は
+Applicationの安定したProject error codeへ変換する。検証はRoot配下を走査せず、Project内容も変更しない。
+
+これは検査と利用の間のTOCTOUを解消するものではない。後続の読取直前再検証とsafe handle利用を
+追加できるよう、検証済みRootの値だけをApplicationへ渡す。
