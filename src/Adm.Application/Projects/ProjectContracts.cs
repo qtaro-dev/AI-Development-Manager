@@ -13,6 +13,23 @@ public enum ProjectErrorCode
 
 public sealed record ProjectError(ProjectErrorCode Code);
 
+public sealed class ProjectCatalogException : Exception
+{
+    public ProjectCatalogException(string code)
+        : base("Project catalog storage failed.")
+    {
+        Code = code;
+    }
+
+    public ProjectCatalogException(string code, Exception innerException)
+        : base("Project catalog storage failed.", innerException)
+    {
+        Code = code;
+    }
+
+    public string Code { get; }
+}
+
 public sealed record RegisteredProjectCatalogSnapshot(
     IReadOnlyList<RegisteredProject> Projects,
     ProjectId? SelectedProjectId);
