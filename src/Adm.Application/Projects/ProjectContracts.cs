@@ -87,7 +87,15 @@ public sealed record RegisterProjectResult(RegisteredProject? Project, ProjectEr
 
 public sealed record UnregisterProjectInput(ProjectId ProjectId);
 
-public sealed record UnregisterProjectResult(ProjectId ProjectId);
+public sealed record UnregisterProjectResult(ProjectId ProjectId, ProjectError? Error)
+{
+    public UnregisterProjectResult(ProjectId projectId)
+        : this(projectId, null)
+    {
+    }
+
+    public bool IsSuccess => Error is null;
+}
 
 public sealed record ListProjectsResult(
     IReadOnlyList<RegisteredProject> Projects,
