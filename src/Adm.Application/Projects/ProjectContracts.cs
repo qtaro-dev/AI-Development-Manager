@@ -9,6 +9,7 @@ public enum ProjectErrorCode
     InvalidRoot,
     UnsupportedFileSystem,
     AccessDenied,
+    PersistenceFailed,
 }
 
 public sealed record ProjectError(ProjectErrorCode Code);
@@ -74,7 +75,15 @@ public interface IProjectIdGenerator
 
 public sealed record RegisterProjectInput(ProjectRootInput Root, string? DisplayName);
 
-public sealed record RegisterProjectResult(RegisteredProject Project);
+public sealed record RegisterProjectResult(RegisteredProject? Project, ProjectError? Error)
+{
+    public RegisterProjectResult(RegisteredProject project)
+        : this(project, null)
+    {
+    }
+
+    public bool IsSuccess => Project is not null && Error is null;
+}
 
 public sealed record UnregisterProjectInput(ProjectId ProjectId);
 
