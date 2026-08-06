@@ -97,10 +97,32 @@ public sealed record UnregisterProjectResult(ProjectId ProjectId, ProjectError? 
     public bool IsSuccess => Error is null;
 }
 
+public sealed record ProjectWarning(ProjectId ProjectId, ProjectErrorCode Code);
+
 public sealed record ListProjectsResult(
     IReadOnlyList<RegisteredProject> Projects,
-    ProjectId? SelectedProjectId);
+    ProjectId? SelectedProjectId,
+    IReadOnlyList<ProjectWarning> Warnings,
+    ProjectError? Error)
+{
+    public ListProjectsResult(
+        IReadOnlyList<RegisteredProject> projects,
+        ProjectId? selectedProjectId)
+        : this(projects, selectedProjectId, [], null)
+    {
+    }
+
+    public bool IsSuccess => Error is null;
+}
 
 public sealed record SelectProjectInput(ProjectId? ProjectId);
 
-public sealed record SelectProjectResult(ProjectId? SelectedProjectId);
+public sealed record SelectProjectResult(ProjectId? SelectedProjectId, ProjectError? Error)
+{
+    public SelectProjectResult(ProjectId? selectedProjectId)
+        : this(selectedProjectId, null)
+    {
+    }
+
+    public bool IsSuccess => Error is null;
+}
