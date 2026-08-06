@@ -11,11 +11,22 @@ import type {
     ExecutionProfile,
     ExecutionProfileReadResult,
     ExecutionProfileUpdate,
+    DataAccessRequestOptions,
+    Project,
+    ProjectList,
+    RegisterProjectInput,
+    RegisterProjectResult,
+    UnregisterProjectResult,
+    SelectProjectResult,
 } from "../port";
 
 export type LocalDataAccessPort = DataAccessPort & { dispose(): void };
 
 const FOUNDATION_STATUS_OPERATION = "getFoundationStatus";
+const PROJECT_LIST_OPERATION = "project.list";
+const PROJECT_REGISTER_OPERATION = "project.register";
+const PROJECT_UNREGISTER_OPERATION = "project.unregister";
+const PROJECT_SELECT_OPERATION = "project.select";
 
 function isFoundationStatus(value: unknown): value is FoundationStatus {
     if (typeof value !== "object" || value === null) return false;
@@ -64,6 +75,50 @@ function isExecutionProfileReadResult(
             candidate.warningCode === null) &&
         typeof candidate.hasPersistedProfile === "boolean"
     );
+}
+
+function isProject(value: unknown): value is Project {
+    if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
+    const candidate = value as Record<string, unknown>;
+    return Object.keys(candidate).length === 5 &&
+        typeof candidate.id === "string" &&
+        typeof candidate.displayName === "string" &&
+        typeof candidate.root === "string" &&
+        typeof candidate.registeredAtUtc === "string" &&
+        typeof candidate.isSelected === "boolean";
+}
+
+function isProjectList(value: unknown): value is ProjectList {
+    if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
+    const candidate = value as Record<string, unknown>;
+    return Object.keys(candidate).length === 3 &&
+        Array.isArray(candidate.projects) && candidate.projects.every(isProject) &&
+        (typeof candidate.selectedProjectId === "string" || candidate.selectedProjectId === null) &&
+        Array.isArray(candidate.warnings) && candidate.warnings.every((warning) => {
+            if (typeof warning !== "object" || warning === null || Array.isArray(warning)) return false;
+            const item = warning as Record<string, unknown>;
+            return Object.keys(item).length === 2 &&
+                typeof item.projectId === "string" && typeof item.code === "string";
+        });
+}
+
+function isRegisterProjectResult(value: unknown): value is RegisterProjectResult {
+    if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
+    const candidate = value as Record<string, unknown>;
+    return Object.keys(candidate).length === 1 && isProject(candidate.project);
+}
+
+function isUnregisterProjectResult(value: unknown): value is UnregisterProjectResult {
+    if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
+    const candidate = value as Record<string, unknown>;
+    return Object.keys(candidate).length === 1 && typeof candidate.projectId === "string";
+}
+
+function isSelectProjectResult(value: unknown): value is SelectProjectResult {
+    if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
+    const candidate = value as Record<string, unknown>;
+    return Object.keys(candidate).length === 1 &&
+        (typeof candidate.selectedProjectId === "string" || candidate.selectedProjectId === null);
 }
 
 export function createLocalDataAccess(
@@ -155,6 +210,46 @@ export function createLocalDataAccess(
                     error,
                     "実行プロファイルを保存できませんでした。",
                 );
+            }
+        },
+        async listProjects(options: DataAccessRequestOptions = {}) {
+            try {
+                const result = await client.request(PROJECT_LIST_OPERATION, {}, options);
+                return isProjectList(result)
+                    ? { kind: "success", value: result }
+                    : failure<ProjectList>("invalid_result", "Local project list result is invalid.", false, "close");
+            } catch (error) {
+                return failureFrom<ProjectList>(error, "Local project list is unavailable.");
+            }
+        },
+        async registerProject(input: RegisterProjectInput, options: DataAccessRequestOptions = {}) {
+            try {
+                const result = await client.request(PROJECT_REGISTER_OPERATION, input, options);
+                return isRegisterProjectResult(result)
+                    ? { kind: "success", value: result }
+                    : failure<RegisterProjectResult>("invalid_result", "Local project registration result is invalid.", false, "close");
+            } catch (error) {
+                return failureFrom<RegisterProjectResult>(error, "Local project registration failed.");
+            }
+        },
+        async unregisterProject(projectId: string, options: DataAccessRequestOptions = {}) {
+            try {
+                const result = await client.request(PROJECT_UNREGISTER_OPERATION, { projectId }, options);
+                return isUnregisterProjectResult(result)
+                    ? { kind: "success", value: result }
+                    : failure<UnregisterProjectResult>("invalid_result", "Local project unregister result is invalid.", false, "close");
+            } catch (error) {
+                return failureFrom<UnregisterProjectResult>(error, "Local project unregister failed.");
+            }
+        },
+        async selectProject(projectId: string | null, options: DataAccessRequestOptions = {}) {
+            try {
+                const result = await client.request(PROJECT_SELECT_OPERATION, { projectId }, options);
+                return isSelectProjectResult(result)
+                    ? { kind: "success", value: result }
+                    : failure<SelectProjectResult>("invalid_result", "Local project selection result is invalid.", false, "close");
+            } catch (error) {
+                return failureFrom<SelectProjectResult>(error, "Local project selection failed.");
             }
         },
         dispose: () => client.dispose(),

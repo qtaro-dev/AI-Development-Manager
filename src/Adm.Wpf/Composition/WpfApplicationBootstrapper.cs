@@ -1,5 +1,7 @@
 using Adm.Infrastructure.Windows.Projects;
 using Adm.Application.ExecutionProfiles;
+using Adm.Application.Projects;
+using Adm.Core.Projects;
 using Adm.Wpf.Configuration;
 
 namespace Adm.Wpf.Composition;
@@ -22,7 +24,22 @@ public sealed class WpfApplicationBootstrapper : IDisposable
         executionProfiles = new ExecutionProfileService(
             new JsonExecutionProfileStore(),
             allowLoopbackHttp);
-        localCompositionRoot = new LocalCompositionRoot(executionProfiles);
+        var clock = new SystemProjectClock();
+        var idGenerator = new GuidProjectIdGenerator();
+        var register = new RegisterLocalProjectUseCase(
+            ProjectRootValidator,
+            ProjectCatalog,
+            clock,
+            idGenerator);
+        var unregister = new UnregisterLocalProjectUseCase(ProjectCatalog);
+        var list = new ListLocalProjectsUseCase(ProjectCatalog, ProjectRootValidator);
+        var select = new SelectLocalProjectUseCase(ProjectCatalog);
+        localCompositionRoot = new LocalCompositionRoot(
+            executionProfiles,
+            register,
+            unregister,
+            list,
+            select);
     }
 
     internal WindowsRegisteredProjectCatalog ProjectCatalog { get; }
@@ -43,5 +60,15 @@ public sealed class WpfApplicationBootstrapper : IDisposable
         disposed = true;
         localCompositionRoot.Dispose();
         GC.SuppressFinalize(this);
+    }
+
+    private sealed class SystemProjectClock : IProjectClock
+    {
+        public DateTimeOffset UtcNow => DateTimeOffset.UtcNow;
+    }
+
+    private sealed class GuidProjectIdGenerator : IProjectIdGenerator
+    {
+        public ProjectId Create() => new(Guid.NewGuid().ToString("N"));
     }
 }

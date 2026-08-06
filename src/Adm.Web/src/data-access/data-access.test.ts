@@ -87,6 +87,42 @@ describe("DataAccess Port", () => {
                     nextAction: "checkSettings" as const,
                 },
             })),
+            listProjects: vi.fn(async () => ({
+                kind: "failure" as const,
+                error: {
+                    code: "adapter_unavailable" as const,
+                    message: "unavailable",
+                    retryable: false,
+                    nextAction: "checkSettings" as const,
+                },
+            })),
+            registerProject: vi.fn(async () => ({
+                kind: "failure" as const,
+                error: {
+                    code: "adapter_unavailable" as const,
+                    message: "unavailable",
+                    retryable: false,
+                    nextAction: "checkSettings" as const,
+                },
+            })),
+            unregisterProject: vi.fn(async () => ({
+                kind: "failure" as const,
+                error: {
+                    code: "adapter_unavailable" as const,
+                    message: "unavailable",
+                    retryable: false,
+                    nextAction: "checkSettings" as const,
+                },
+            })),
+            selectProject: vi.fn(async () => ({
+                kind: "failure" as const,
+                error: {
+                    code: "adapter_unavailable" as const,
+                    message: "unavailable",
+                    retryable: false,
+                    nextAction: "checkSettings" as const,
+                },
+            })),
         };
 
         const port = composeDataAccess({ mode: "local", adapter: fake });

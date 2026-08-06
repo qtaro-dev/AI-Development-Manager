@@ -13,4 +13,12 @@ export type {
     ExecutionProfileMode,
     ExecutionProfileReadResult,
     ExecutionProfileUpdate,
+    DataAccessRequestOptions,
+    Project,
+    ProjectWarning,
+    ProjectList,
+    RegisterProjectInput,
+    RegisterProjectResult,
+    UnregisterProjectResult,
+    SelectProjectResult,
 } from "./port";

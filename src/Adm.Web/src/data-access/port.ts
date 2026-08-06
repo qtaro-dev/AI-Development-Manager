@@ -32,6 +32,39 @@ export type DataAccessFailureCode =
     | "cancelled"
     | "channel_unavailable";
 
+export type DataAccessRequestOptions = {
+    readonly timeoutMs?: number;
+    readonly signal?: AbortSignal;
+};
+
+export type Project = {
+    readonly id: string;
+    readonly displayName: string;
+    readonly root: string;
+    readonly registeredAtUtc: string;
+    readonly isSelected: boolean;
+};
+
+export type ProjectWarning = {
+    readonly projectId: string;
+    readonly code: string;
+};
+
+export type ProjectList = {
+    readonly projects: readonly Project[];
+    readonly selectedProjectId: string | null;
+    readonly warnings: readonly ProjectWarning[];
+};
+
+export type RegisterProjectInput = {
+    readonly root: string;
+    readonly displayName: string | null;
+};
+
+export type RegisterProjectResult = { readonly project: Project };
+export type UnregisterProjectResult = { readonly projectId: string };
+export type SelectProjectResult = { readonly selectedProjectId: string | null };
+
 export type DataAccessFailure = {
     readonly code: DataAccessFailureCode;
     readonly message: string;
@@ -50,6 +83,21 @@ export type DataAccessResult<T> =
  */
 export interface BusinessDataAccessPort {
     getFoundationStatus(): Promise<DataAccessResult<FoundationStatus>>;
+    listProjects(
+        options?: DataAccessRequestOptions,
+    ): Promise<DataAccessResult<ProjectList>>;
+    registerProject(
+        input: RegisterProjectInput,
+        options?: DataAccessRequestOptions,
+    ): Promise<DataAccessResult<RegisterProjectResult>>;
+    unregisterProject(
+        projectId: string,
+        options?: DataAccessRequestOptions,
+    ): Promise<DataAccessResult<UnregisterProjectResult>>;
+    selectProject(
+        projectId: string | null,
+        options?: DataAccessRequestOptions,
+    ): Promise<DataAccessResult<SelectProjectResult>>;
 }
 
 /** WPF execution-profile and host-settings boundary. */

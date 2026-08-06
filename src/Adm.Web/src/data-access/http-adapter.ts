@@ -6,7 +6,25 @@ import type {
     ExecutionProfile,
     ExecutionProfileReadResult,
     ExecutionProfileUpdate,
+    DataAccessRequestOptions,
+    ProjectList,
+    RegisterProjectInput,
+    RegisterProjectResult,
+    UnregisterProjectResult,
+    SelectProjectResult,
 } from "./port";
+
+function projectAdapterUnavailable<T>(): DataAccessResult<T> {
+    return {
+        kind: "failure",
+        error: {
+            code: "adapter_unavailable",
+            message: "Project operations are not available through this adapter.",
+            retryable: false,
+            nextAction: "checkSettings",
+        },
+    };
+}
 
 function isApiVersionResponse(value: unknown): value is ApiVersionResponse {
     if (typeof value !== "object" || value === null) return false;
@@ -94,6 +112,27 @@ export function createHttpDataAccess(
                     nextAction: "checkSettings",
                 },
             };
+        },
+        async listProjects(_options?: DataAccessRequestOptions): Promise<DataAccessResult<ProjectList>> {
+            return projectAdapterUnavailable();
+        },
+        async registerProject(
+            _input: RegisterProjectInput,
+            _options?: DataAccessRequestOptions,
+        ): Promise<DataAccessResult<RegisterProjectResult>> {
+            return projectAdapterUnavailable();
+        },
+        async unregisterProject(
+            _projectId: string,
+            _options?: DataAccessRequestOptions,
+        ): Promise<DataAccessResult<UnregisterProjectResult>> {
+            return projectAdapterUnavailable();
+        },
+        async selectProject(
+            _projectId: string | null,
+            _options?: DataAccessRequestOptions,
+        ): Promise<DataAccessResult<SelectProjectResult>> {
+            return projectAdapterUnavailable();
         },
     };
 }
