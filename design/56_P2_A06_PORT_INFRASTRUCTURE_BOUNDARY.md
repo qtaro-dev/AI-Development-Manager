@@ -35,11 +35,11 @@ Server接続を伴うWPFのhybrid compositionでは、業務DataAccessだけをH
 |---|---|---|
 | `Adm.Core` | なし | Application、Infrastructure、Server Host、WPF、Windows固有Namespace |
 | `Adm.Application` | `Adm.Core` | Infrastructure、Server Host、WPF、Windows固有Namespace |
-| `Adm.Infrastructure.Windows` | `Adm.Application` | Server Host、WPF、PoC |
+| `Adm.Infrastructure.Windows` | `Adm.Application`, `Adm.Core`（Application Portの公開契約にCore型を含む場合） | Server Host、WPF、PoC |
 | `Adm.Server.Host` | `Adm.Application`、`Adm.Infrastructure.Windows` | WPF、PoC |
 | `Adm.Wpf` | `Adm.Application` | Server Host、PoC |
 
-`Adm.Infrastructure.Windows -> Adm.Application`は、Application Portを実装するWindows Adapterに限定して許可する。InfrastructureからServer HostまたはWPFへの参照は常に禁止する。Core／Applicationから上位層への逆参照も禁止する。
+`Adm.Infrastructure.Windows -> Adm.Application`は、Application Portを実装するWindows Adapterに限定して許可する。Application Portの公開契約が`Adm.Core`のドメイン型を使用する場合に限り、`Adm.Infrastructure.Windows -> Adm.Core`も許可する。この補正はP2-001のCoreドメイン型を実装Adapterが扱うための内向き依存であり、Infrastructureへ業務ルールを配置する許可ではない。InfrastructureからServer HostまたはWPFへの参照は常に禁止する。Core／Applicationから上位層への逆参照も禁止する。
 
 ## ファイル処理の配置規則
 
@@ -47,6 +47,8 @@ Project関連のパス境界、ファイル保存、原子的保存、走査、w
 
 ## 検査
 
-Architecture検査はProjectReferenceとBuild済みAssemblyの両方について、許可集合・必須集合・禁止依存を検査する。意図的違反fixtureではInfrastructure→WPFとInfrastructure→Serverを検出し、実プロジェクトではInfrastructure→Applicationを必須参照として確認する。
+Architecture検査はProjectReferenceとBuild済みAssemblyの両方について、許可集合・必須集合・禁止依存を検査する。意図的違反fixtureではInfrastructure→WPFとInfrastructure→Serverを検出し、実プロジェクトではInfrastructure→ApplicationおよびApplication Portの公開契約で必要となるInfrastructure→Coreを必須参照として確認する。
+
+P2-A06では具体的Project型が未確定だったためInfrastructure→Coreを許可行列へ含めていなかった。P2-A07で、P2-001のCoreドメインモデルを移動・複製せず、Windows Adapterに限定してこの不足を補正した。
 
 Local First、独立Composition Root、operation allowlist、固定origin、WebView2専用UserDataFolder、Navigation／Resource境界は変更しない。

@@ -23,7 +23,7 @@ $expectedProjects = @(
 $allowedByProject = @{
     'Adm.Core' = @()
     'Adm.Application' = @('Adm.Core')
-    'Adm.Infrastructure.Windows' = @('Adm.Application')
+    'Adm.Infrastructure.Windows' = @('Adm.Application', 'Adm.Core')
     'Adm.Server.Host' = @('Adm.Application', 'Adm.Infrastructure.Windows')
     'Adm.Wpf' = @('Adm.Application')
 }
@@ -31,7 +31,7 @@ $allowedByProject = @{
 $requiredByProject = @{
     'Adm.Core' = @()
     'Adm.Application' = @('Adm.Core')
-    'Adm.Infrastructure.Windows' = @('Adm.Application')
+    'Adm.Infrastructure.Windows' = @('Adm.Application', 'Adm.Core')
     'Adm.Server.Host' = @('Adm.Application', 'Adm.Infrastructure.Windows')
     'Adm.Wpf' = @('Adm.Application')
 }

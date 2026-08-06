@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Adm.Application\Adm.Application.csproj" />
+    <ProjectReference Include="..\Adm.Core\Adm.Core.csproj" />
     <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" />
   </ItemGroup>
 
