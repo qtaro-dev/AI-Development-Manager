@@ -16,6 +16,18 @@ public sealed class BridgeContractTests
         Assert.Contains("AI Development Manager", BridgeProtocol.Success(request));
     }
 
+    [Fact]
+    public void ProjectFolderRequestUsesTheExplicitAllowlistAndEmptyPayload()
+    {
+        var request = BridgeProtocol.ParseRequest(
+            "{\"version\":\"1\",\"messageType\":\"request\",\"operation\":\"selectProjectFolder\",\"requestId\":\"adm-folder\",\"payload\":{}}",
+            "http://127.0.0.1:5181/",
+            Origin);
+
+        Assert.Equal(BridgeProtocol.SelectProjectFolder, request.Operation);
+        Assert.Contains("selectProjectFolder", BridgeProtocol.FolderSelected(request.RequestId, "C:\\Projects\\Demo"));
+    }
+
     [Theory]
     [InlineData("version", "2")]
     [InlineData("operation", "readFile")]
@@ -96,7 +108,8 @@ public sealed class BridgeContractTests
         Assert.Contains("cancelled", response);
         Assert.DoesNotContain("readFile", response);
         Assert.DoesNotContain("execute", response);
-        Assert.Single(BridgeProtocol.AllowedOperations);
+        Assert.Equal(2, BridgeProtocol.AllowedOperations.Count);
         Assert.Contains(BridgeProtocol.GetHostInfo, BridgeProtocol.AllowedOperations);
+        Assert.Contains(BridgeProtocol.SelectProjectFolder, BridgeProtocol.AllowedOperations);
     }
 }

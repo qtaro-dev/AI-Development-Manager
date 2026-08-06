@@ -3,6 +3,7 @@ import {
     cancelHostRequest,
     getHostInfo,
     isHostBridgeAvailable,
+    selectProjectFolder,
 } from "./bridge";
 
 function installBridge() {
@@ -115,5 +116,37 @@ describe("host bridge", () => {
         });
 
         await expect(pending).rejects.toMatchObject({ code: "bridge_error" });
+    });
+
+    it("selects a project folder and supports cancellation", async () => {
+        const webview = installBridge();
+        webview.postMessage.mockImplementation((request: { requestId: string; operation?: string }) => {
+            queueMicrotask(() => webview.emit({
+                version: "1",
+                messageType: "response",
+                operation: request.operation ?? "selectProjectFolder",
+                requestId: request.requestId,
+                status: "ok",
+                payload: { selected: true, path: "C:\\Projects\\Demo" },
+            }));
+        });
+
+        await expect(selectProjectFolder()).resolves.toEqual({ selected: true, path: "C:\\Projects\\Demo" });
+        expect(webview.postMessage).toHaveBeenCalledWith(expect.objectContaining({ operation: "selectProjectFolder", payload: {} }));
+    });
+
+    it("returns a stable unselected result when the user cancels", async () => {
+        const webview = installBridge();
+        webview.postMessage.mockImplementation((request: { requestId: string; operation?: string }) => {
+            queueMicrotask(() => webview.emit({
+                version: "1",
+                messageType: "response",
+                operation: request.operation ?? "selectProjectFolder",
+                requestId: request.requestId,
+                status: "cancelled",
+            }));
+        });
+
+        await expect(selectProjectFolder()).resolves.toEqual({ selected: false });
     });
 });

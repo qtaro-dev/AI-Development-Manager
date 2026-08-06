@@ -3,6 +3,7 @@ using Adm.Application.ExecutionProfiles;
 using Adm.Application.Projects;
 using Adm.Core.Projects;
 using Adm.Wpf.Configuration;
+using Adm.Wpf.Bridge;
 
 namespace Adm.Wpf.Composition;
 
@@ -10,6 +11,7 @@ public sealed class WpfApplicationBootstrapper : IDisposable
 {
     private readonly ExecutionProfileService executionProfiles;
     private readonly LocalCompositionRoot localCompositionRoot;
+    private readonly ProjectFolderPickerBridge projectFolderPickerBridge;
     private bool disposed;
 
     public WpfApplicationBootstrapper()
@@ -34,6 +36,7 @@ public sealed class WpfApplicationBootstrapper : IDisposable
         var unregister = new UnregisterLocalProjectUseCase(ProjectCatalog);
         var list = new ListLocalProjectsUseCase(ProjectCatalog, ProjectRootValidator);
         var select = new SelectLocalProjectUseCase(ProjectCatalog);
+        projectFolderPickerBridge = new ProjectFolderPickerBridge(new WindowsProjectFolderPicker());
         localCompositionRoot = new LocalCompositionRoot(
             executionProfiles,
             register,
@@ -49,7 +52,7 @@ public sealed class WpfApplicationBootstrapper : IDisposable
     public MainWindow CreateMainWindow()
     {
         ObjectDisposedException.ThrowIf(disposed, this);
-        return new MainWindow(executionProfiles, localCompositionRoot);
+        return new MainWindow(executionProfiles, localCompositionRoot, projectFolderPickerBridge);
     }
 
     public void Dispose()
@@ -58,6 +61,7 @@ public sealed class WpfApplicationBootstrapper : IDisposable
             return;
 
         disposed = true;
+        projectFolderPickerBridge.Dispose();
         localCompositionRoot.Dispose();
         GC.SuppressFinalize(this);
     }

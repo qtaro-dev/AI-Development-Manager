@@ -24,6 +24,7 @@ public partial class MainWindow : Window, IDisposable
     };
     private ServerConnectionOptions connectionOptions;
     private readonly LocalCompositionRoot localCompositionRoot;
+    private readonly ProjectFolderPickerBridge projectFolderPickerBridge;
     private readonly ExecutionProfileService executionProfiles;
     private readonly string[] commandLineArgs;
     private readonly WindowLifecycleCoordinator lifecycle = new();
@@ -34,12 +35,14 @@ public partial class MainWindow : Window, IDisposable
 
     public MainWindow(
         ExecutionProfileService executionProfiles,
-        LocalCompositionRoot localCompositionRoot)
+        LocalCompositionRoot localCompositionRoot,
+        ProjectFolderPickerBridge projectFolderPickerBridge)
     {
         InitializeComponent();
         commandLineArgs = Environment.GetCommandLineArgs().Skip(1).ToArray();
         this.executionProfiles = executionProfiles;
         this.localCompositionRoot = localCompositionRoot;
+        this.projectFolderPickerBridge = projectFolderPickerBridge;
         connectionOptions = ServerConnectionOptions.FromArguments(commandLineArgs);
         UpdateServerUrlText();
     }
@@ -325,6 +328,12 @@ public partial class MainWindow : Window, IDisposable
             return;
         }
 
+        if (TryGetProjectFolderRequest(e.WebMessageAsJson, e.Source, out var projectFolderRequest))
+        {
+            await HandleProjectFolderRequestAsync(projectFolderRequest);
+            return;
+        }
+
         if (connectionOptions.IsLocal)
         {
             string localMessage;
@@ -389,6 +398,52 @@ public partial class MainWindow : Window, IDisposable
         {
             response = BridgeProtocol.Error("bridge_error", "Bridgeメッセージを処理できませんでした。", null);
         }
+        if (!isDisposed && !lifecycle.LifetimeToken.IsCancellationRequested)
+        {
+            WebView.CoreWebView2.PostWebMessageAsJson(response);
+        }
+    }
+
+    private bool TryGetProjectFolderRequest(string json, string source, out BridgeRequest request)
+    {
+        request = null!;
+        try
+        {
+            using var document = JsonDocument.Parse(json);
+            if (document.RootElement.ValueKind != JsonValueKind.Object ||
+                document.RootElement.GetProperty("operation").GetString() != BridgeProtocol.SelectProjectFolder)
+            {
+                return false;
+            }
+
+            var allowedOrigin = connectionOptions.IsLocal
+                ? LocalWebViewPolicy.Origin
+                : connectionOptions.ServerUri!;
+            request = BridgeProtocol.ParseRequest(json, source, allowedOrigin);
+            return true;
+        }
+        catch (Exception) when (json.Length <= BridgeProtocol.MaxMessageBytes)
+        {
+            return false;
+        }
+    }
+
+    private async Task HandleProjectFolderRequestAsync(BridgeRequest request)
+    {
+        string response;
+        try
+        {
+            response = await projectFolderPickerBridge.DispatchAsync(request, this, lifecycle.LifetimeToken);
+        }
+        catch (BridgeProtocolException exception)
+        {
+            response = BridgeProtocol.Error(exception.Code, exception.Message, exception.RequestId, BridgeProtocol.SelectProjectFolder);
+        }
+        catch (Exception)
+        {
+            response = BridgeProtocol.Error("bridge_error", "フォルダー選択を処理できませんでした。", request.RequestId, BridgeProtocol.SelectProjectFolder);
+        }
+
         if (!isDisposed && !lifecycle.LifetimeToken.IsCancellationRequested)
         {
             WebView.CoreWebView2.PostWebMessageAsJson(response);

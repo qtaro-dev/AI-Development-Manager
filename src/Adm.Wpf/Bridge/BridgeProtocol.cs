@@ -7,10 +7,11 @@ public static class BridgeProtocol
 {
     public const string Version = "1";
     public const string GetHostInfo = "getHostInfo";
+    public const string SelectProjectFolder = "selectProjectFolder";
     public const int MaxMessageBytes = 16 * 1024;
     public const int MaxJsonDepth = 8;
     public const string InvalidRequestId = "adm-invalid";
-    public static IReadOnlySet<string> AllowedOperations { get; } = new HashSet<string>(StringComparer.Ordinal) { GetHostInfo };
+    public static IReadOnlySet<string> AllowedOperations { get; } = new HashSet<string>(StringComparer.Ordinal) { GetHostInfo, SelectProjectFolder };
 
     private static readonly string[] RequiredFields = ["version", "messageType", "operation", "requestId", "payload"];
 
@@ -58,7 +59,7 @@ public static class BridgeProtocol
                 throw new BridgeProtocolException("unsupported_version", "対応していないBridgeバージョンです。", requestId);
             if (messageType is not ("request" or "cancel"))
                 throw new BridgeProtocolException("invalid_message_type", "Bridgeメッセージ種別が正しくありません。", requestId);
-            if (operation != GetHostInfo || !AllowedOperations.Contains(operation))
+            if (!AllowedOperations.Contains(operation))
                 throw new BridgeProtocolException("operation_not_allowed", "許可されていないBridge操作です。", requestId);
             if (!IsSafeId(requestId))
                 throw new BridgeProtocolException("invalid_request_id", "Bridge要求IDが正しくありません。", null);
@@ -72,8 +73,10 @@ public static class BridgeProtocol
     }
 
     public static string Success(BridgeRequest request) => JsonSerializer.Serialize(new { version = Version, messageType = "response", operation = request.Operation, requestId = request.RequestId, status = "ok", payload = new { applicationName = "AI Development Manager", bridgeVersion = Version, runtime = "WebView2" } });
+    public static string FolderSelected(string requestId, string path) => JsonSerializer.Serialize(new { version = Version, messageType = "response", operation = SelectProjectFolder, requestId, status = "ok", payload = new { selected = true, path } });
     public static string Cancelled(string requestId) => JsonSerializer.Serialize(new { version = Version, messageType = "response", operation = GetHostInfo, requestId, status = "cancelled" });
-    public static string Error(string code, string message, string? requestId) => JsonSerializer.Serialize(new { version = Version, messageType = "response", operation = GetHostInfo, requestId = requestId ?? InvalidRequestId, status = "error", error = new { code, message, traceId = requestId ?? InvalidRequestId } });
+    public static string FolderCancelled(string requestId) => JsonSerializer.Serialize(new { version = Version, messageType = "response", operation = SelectProjectFolder, requestId, status = "cancelled", payload = new { selected = false } });
+    public static string Error(string code, string message, string? requestId, string operation = GetHostInfo) => JsonSerializer.Serialize(new { version = Version, messageType = "response", operation, requestId = requestId ?? InvalidRequestId, status = "error", error = new { code, message, traceId = requestId ?? InvalidRequestId } });
 
     public static bool IsAllowedSource(string? source, Uri allowedOrigin) =>
         Uri.TryCreate(source, UriKind.Absolute, out var candidate) &&
